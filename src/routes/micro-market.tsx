@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MobileBottomNav } from "@/home/components/MobileBottomNav";
+import { IframePage } from "@/home/components/IframePage";
 
 export const Route = createFileRoute("/micro-market")({
   head: () => ({
@@ -12,21 +12,5 @@ export const Route = createFileRoute("/micro-market")({
 });
 
 function MicroMarketPage() {
-  return (
-    <>
-      <iframe
-        src="/micro-market.html"
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          border: "none",
-        }}
-        title="Micro-Market Intelligence"
-      />
-      <MobileBottomNav defaultActive={null} />
-    </>
-  );
+  return <IframePage src="/micro-market.html" title="Micro-Market Intelligence" />;
 }

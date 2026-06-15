@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MobileBottomNav } from "@/home/components/MobileBottomNav";
+import { IframePage } from "@/home/components/IframePage";
 
 export const Route = createFileRoute("/developer-scorecards")({
   head: () => ({
@@ -12,14 +12,5 @@ export const Route = createFileRoute("/developer-scorecards")({
 });
 
 function DeveloperScorecardsPage() {
-  return (
-    <>
-      <iframe
-        src="/developer-scorecards.html"
-        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", border: "none" }}
-        title="Developer Scorecards Directory"
-      />
-      <MobileBottomNav defaultActive={null} />
-    </>
-  );
+  return <IframePage src="/developer-scorecards.html" title="Developer Scorecards Directory" />;
 }

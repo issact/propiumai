@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MobileBottomNav } from "@/home/components/MobileBottomNav";
+import { IframePage } from "@/home/components/IframePage";
 
 export const Route = createFileRoute("/golf-course-extension")({
   head: () => ({
@@ -12,14 +12,5 @@ export const Route = createFileRoute("/golf-course-extension")({
 });
 
 function GCEXPage() {
-  return (
-    <>
-      <iframe
-        src="/golf-course-extension.html"
-        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", border: "none" }}
-        title="Golf Course Extension Road"
-      />
-      <MobileBottomNav defaultActive={null} />
-    </>
-  );
+  return <IframePage src="/golf-course-extension.html" title="Golf Course Extension Road" />;
 }
