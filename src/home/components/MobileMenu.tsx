@@ -9,7 +9,7 @@ interface MobileMenuProps {
 
 const primaryLinks = [
   { label: 'Home', icon: 'home', href: '/' },
-  { label: 'AI Search', icon: 'auto_awesome', href: '/search' },
+  { label: 'AI Search', icon: 'auto_awesome', href: '/search', static: true },
   { label: 'Compare', icon: 'compare_arrows', href: '#' },
 ];
 
@@ -81,6 +81,33 @@ export function MobileMenu({ open, onClose, activeTab = 'Home' }: MobileMenuProp
           <div style={{ flex: 1 }}>
             {primaryLinks.map((link) => {
               const active = link.label === activeTab;
+              if (link.static) {
+                return (
+                  <div
+                    key={link.label}
+                    className="flex items-center gap-3"
+                    style={{
+                      padding: '14px 12px',
+                      borderRadius: 10,
+                      color: active ? '#F59E0B' : '#e2e8f0',
+                      background: active ? 'rgba(245,158,11,0.1)' : 'transparent',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 14,
+                      fontWeight: active ? 700 : 500,
+                      textDecoration: 'none',
+                      minHeight: 44,
+                      marginBottom: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'default',
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 22, color: active ? '#F59E0B' : '#94a3b8' }}>{link.icon}</span>
+                    {link.label}
+                    {active && <span style={{ marginLeft: 'auto', width: 6, height: 6, borderRadius: '50%', background: '#F59E0B' }} />}
+                  </div>
+                );
+              }
               return (
                 <Link
                   key={link.label}
