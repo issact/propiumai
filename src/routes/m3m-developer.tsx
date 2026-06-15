@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MobileBottomNav } from "@/home/components/MobileBottomNav";
+import { IframePage } from "@/home/components/IframePage";
 
 export const Route = createFileRoute("/m3m-developer")({
   head: () => ({
@@ -12,14 +12,5 @@ export const Route = createFileRoute("/m3m-developer")({
 });
 
 function M3MDeveloperPage() {
-  return (
-    <>
-      <iframe
-        src="/m3m-developer.html"
-        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", border: "none" }}
-        title="M3M India Developer Audit"
-      />
-      <MobileBottomNav defaultActive={null} />
-    </>
-  );
+  return <IframePage src="/m3m-developer.html" title="M3M India Developer Audit" />;
 }
