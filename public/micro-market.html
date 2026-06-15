@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Micro-Market Intelligence | prOPIUM.ai</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0F172A", // Slate Navy
+                        "secondary-container": "#F59E0B", // Amber Gold
+                        background: "#F8FAFC", // Light Slate Canvas
+                        "surface-bright": "#F8FAFC",
+                        "on-surface-variant": "#64748B", // Muted slate gray
+                        "on-surface": "#0F172A",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#F1F5F9",
+                        "surface-container": "#E2E8F0",
+                        "outline-variant": "#E2E8F0",
+                        error: "#E11D48",
+                        brandBlue: "#006AFF" // Accent telemetry blue
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.125rem",
+                        lg: "0.25rem",
+                        xl: "0.5rem",
+                        full: "0.75rem"
+                    },
+                    spacing: {
+                        "stack-md": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "48px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        gutter: "32px",
+                        unit: "4px",
+                        "stack-sm": "8px"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Outfit", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .blueprint-grid {
+            background-size: 24px 24px;
+            background-image: radial-gradient(circle, #E2E8F0 1px, transparent 1px);
+        }
+        .leaflet-container {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+        }
+        .lad-dot-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .lad-dot-btn:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
+        }
+        .lad-dot-btn.active {
+            transform: translate(-50%, -50%) scale(1.4);
+            background-color: #F59E0B;
+            border-color: #ffffff;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.9);
+        }
+        .corridor-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .corridor-card.highlighted {
+            border-color: #F59E0B !important;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.15), 0 8px 10px -6px rgba(245, 158, 11, 0.15);
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-background text-[#0F172A] font-sans antialiased min-h-screen flex flex-col pt-16 relative blueprint-grid">
+
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0F172A]/85 border-b border-white/10 shadow-sm text-white">
+        <div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto w-full">
+            <div class="flex items-center gap-stack-md">
+                <a href="index.html" class="flex items-center gap-1 font-bold text-xl tracking-tight text-white hover:opacity-90">
+                    prOPIUM<span class="text-secondary-container">.ai</span>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 items-center">
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="index.html">Home</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="project_search.html">Projects</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="developer_search.html">Developers</a>
+                <a class="font-sans text-xs font-semibold text-white border-b-2 border-secondary-container pb-1 uppercase tracking-wider" href="micro_market.html">Micro-Markets</a>
+            </nav>
+            <div class="flex items-center gap-stack-sm">
+                <div class="flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/10 rounded-full text-white">
+                    <span class="material-symbols-outlined text-sm">account_circle</span>
+                    <span class="font-sans text-xs font-semibold">Sahil Rajan</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-container-max mx-auto px-6 lg:px-margin-desktop py-8 w-full flex-grow flex flex-col gap-6">
+        
+        <!-- Breadcrumb Navigation -->
+        <nav class="text-xs text-slate-500 flex items-center gap-2">
+            <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+            <span class="text-slate-300">/</span>
+            <span class="text-slate-700 font-medium">Micro Markets Directory</span>
+        </nav>
+
+        <!-- Page Header & Toggle View -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div class="space-y-1">
+                <span class="text-[9px] uppercase tracking-widest font-extrabold text-secondary-container block">Micro-Market Intelligence</span>
+                <h1 class="text-3xl font-extrabold font-display text-primary tracking-tight">Gurugram's 9 corridors, mapped & decoded</h1>
+                <p class="text-slate-500 text-sm max-w-2xl">
+                    Real project counts, unit inventory, and pricing signals across every major corridor — pulled live from the prOPIUM database.
+                </p>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="flex bg-slate-100 border border-slate-200/40 p-1 rounded-xl gap-0.5 shrink-0 self-start md:self-end shadow-sm" id="viewToggleContainer">
+                <button onclick="switchView('cards')" id="btnViewCards" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white text-primary shadow-sm">
+                    <span class="material-symbols-outlined text-sm">grid_view</span> Cards
+                </button>
+                <button onclick="switchView('map')" id="btnViewMap" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-slate-500 hover:text-primary">
+                    <span class="material-symbols-outlined text-sm">map</span> Map
+                </button>
+            </div>
+        </div>
+
+        <!-- Telemetry Summary Row -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-primary border border-white/10 rounded-2xl p-5 shadow-sm text-white">
+            <div class="space-y-1 pl-4 border-l-2 border-white/10">
+                <span class="text-[9px] text-white/50 font-bold uppercase tracking-wider">Corridors Profiled</span>
+                <span class="block font-display font-extrabold text-2xl text-white leading-none">9</span>
+            </div>
+            <div class="space-y-1 pl-4 border-l-2 border-white/10">
+                <span class="text-[9px] text-white/50 font-bold uppercase tracking-wider">Audited Projects</span>
+                <span class="block font-display font-extrabold text-2xl text-white leading-none">612</span>
+            </div>
+            <div class="space-y-1 pl-4 border-l-2 border-white/10">
+                <span class="text-[9px] text-white/50 font-bold uppercase tracking-wider">Units Mapped</span>
+                <span class="block font-display font-extrabold text-2xl text-white leading-none">2.4 <span class="text-xs font-normal text-white/55">lakh</span></span>
+            </div>
+            <div class="space-y-1 pl-4 border-l-2 border-white/10">
+                <span class="text-[9px] text-white/50 font-bold uppercase tracking-wider">Average PSFT Range</span>
+                <span class="block font-display font-extrabold text-2xl text-secondary-container leading-none">₹9.5k – 38k</span>
+            </div>
+        </section>
+
+        <!-- Corridor Price Ladder Timeline Axis -->
+        <section class="bg-primary border border-white/10 rounded-2xl p-6 shadow-sm space-y-6 text-white">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div>
+                    <h3 class="font-display font-bold text-xs uppercase tracking-wider text-white">Corridor Price Ladder · Avg Residential PSFT</h3>
+                    <p class="text-[10px] text-white/50">Select a corridor dot to highlight its parameters below</p>
+                </div>
+                <div class="text-[10px] text-secondary-container font-extrabold bg-secondary-container/10 px-2.5 py-1 rounded-lg border border-secondary-container/20">
+                    Interactive Grid Telemetry
+                </div>
+            </div>
+
+            <!-- Plotted Line Slider -->
+            <div class="relative pt-6 pb-4 px-4 sm:px-10">
+                <!-- Timeline Axis Background Line -->
+                <div class="h-1 bg-white/15 w-full rounded-full relative">
+                    <!-- Major Ticks -->
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
+                    <span class="absolute left-[25%] top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
+                    <span class="absolute left-[50%] top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
+                    <span class="absolute left-[75%] top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
+                    <span class="absolute left-full top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
+                </div>
+
+                <!-- Ticks Labels -->
+                <div class="relative w-full text-[9px] text-white/40 font-bold uppercase mt-2">
+                    <span class="absolute left-0 -translate-x-1/2">₹8k</span>
+                    <span class="absolute left-[25%] -translate-x-1/2">₹16k</span>
+                    <span class="absolute left-[50%] -translate-x-1/2">₹24k</span>
+                    <span class="absolute left-[75%] -translate-x-1/2">₹32k</span>
+                    <span class="absolute left-full -translate-x-1/2">₹40k</span>
+                </div>
+
+                <!-- Plotted Corridors Dots -->
+                <!-- positions based on price (val - 8000) / 32000 -->
+                <div class="absolute inset-x-4 sm:inset-x-10 top-[22px] h-2">
+                    <!-- NG: ₹9,500 (4.68%) -->
+                    <button onclick="selectLadderCorridor('NG')" id="dot-NG" class="lad-dot-btn absolute left-[4.68%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="New Gurgaon · ₹9,500"></button>
+                    <span class="absolute left-[4.68%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">NG</span>
+
+                    <!-- SOHNA: ₹13,000 (15.6%) -->
+                    <button onclick="selectLadderCorridor('SOHNA')" id="dot-SOHNA" class="lad-dot-btn absolute left-[15.6%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Sohna Road · ₹13,000"></button>
+                    <span class="absolute left-[15.6%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">SOHNA</span>
+
+                    <!-- SPR: ₹16,500 (26.5%) -->
+                    <button onclick="selectLadderCorridor('SPR')" id="dot-SPR" class="lad-dot-btn absolute left-[26.5%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="SPR · ₹16,500"></button>
+                    <span class="absolute left-[26.5%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">SPR</span>
+
+                    <!-- DWE: ₹18,500 (32.8%) -->
+                    <button onclick="selectLadderCorridor('DWE')" id="dot-DWE" class="lad-dot-btn absolute left-[32.8%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Dwarka Expressway · ₹18,500"></button>
+                    <span class="absolute left-[32.8%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">DWE</span>
+
+                    <!-- NPR: ₹20,000 (37.5%) -->
+                    <button onclick="selectLadderCorridor('NPR')" id="dot-NPR" class="lad-dot-btn absolute left-[37.5%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Northern Peripheral Road · ₹20,000"></button>
+                    <span class="absolute left-[37.5%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">NPR</span>
+
+                    <!-- MGR: ₹23,500 (48.4%) -->
+                    <button onclick="selectLadderCorridor('MGR')" id="dot-MGR" class="lad-dot-btn absolute left-[48.4%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="MG Road · ₹23,500"></button>
+                    <span class="absolute left-[48.4%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">MGR</span>
+
+                    <!-- GCEX: ₹27,500 (60.9%) -->
+                    <button onclick="selectLadderCorridor('GCEX')" id="dot-GCEX" class="lad-dot-btn absolute left-[60.9%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Golf Course Ext Road · ₹27,500"></button>
+                    <span class="absolute left-[60.9%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">GCEX</span>
+
+                    <!-- CG: ₹30,000 (68.75%) -->
+                    <button onclick="selectLadderCorridor('CG')" id="dot-CG" class="lad-dot-btn absolute left-[68.75%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Central Gurgaon · ₹30,000"></button>
+                    <span class="absolute left-[68.75%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">CG</span>
+
+                    <!-- GCR: ₹37,500 (92.2%) -->
+                    <button onclick="selectLadderCorridor('GCR')" id="dot-GCR" class="lad-dot-btn absolute left-[92.2%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Golf Course Road · ₹37,500"></button>
+                    <span class="absolute left-[92.2%] -translate-x-1/2 -top-5 text-[9px] text-white/60 font-extrabold font-display">GCR</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 1: Cards View Grid -->
+        <section id="viewCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic JavaScript Rendering -->
+        </section>
+
+        <!-- VIEW 2: Map View Container (Hidden) -->
+        <section id="viewMap" class="hidden min-h-[560px] relative rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-slate-100 flex flex-col">
+            <div id="map" class="w-full h-[560px] flex-grow"></div>
+        </section>
+
+        <!-- Source / Disclaimer Footnote -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] text-slate-400 font-semibold border-t border-slate-200 pt-4 mt-2">
+            <span>Source: <b class="text-slate-600">prOPIUM database</b> · 612 projects verified against RERA & registry records</span>
+            <span class="mt-1 sm:mt-0">Prices reflect trailing 90-day listing medians · Updated 04 Jun 2026</span>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-surface-container-low pt-stack-lg pb-stack-md border-t border-outline-variant/30 mt-12 w-full">
+        <div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-6 gap-gutter">
+            <div class="md:col-span-2">
+                <a href="index.html" class="flex items-center gap-1 font-bold text-xl tracking-tight text-primary hover:opacity-90 mb-4">
+                    prOPIUM<span class="text-secondary-container">.ai</span>
+                </a>
+                <p class="text-on-surface-variant text-xs leading-relaxed mb-6">
+                    Intelligence for every Real Estate decision.
+                </p>
+                <div class="flex gap-4 text-slate-400">
+                    <a href="#" class="hover:text-primary transition-colors">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="hover:text-primary transition-colors">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.7 0-1.37-.2-1.95-.54v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.31 1.83c-.34 0-.68-.02-1.02-.06C3.3 20.42 5.66 21 8.2 21c8.26 0 12.78-6.86 12.78-12.78 0-.19 0-.39-.01-.58.88-.64 1.64-1.44 2.24-2.35l-.01-.01z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">About prOPIUM</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="#">About prOPIUM</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">How we Verify</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Why prOPIUM</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">The Team</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">Intelligence Hub</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="#">Builder Evaluation</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Location Intelligence</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Product Intelligence</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Payment Plan Intelligence</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Investment Intelligence</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">For developers</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="#">Visibility & data</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Raise an issue</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Platform overview</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Contact & support</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">Support & legal</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="#">Raise an issue</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Privacy policy</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Terms of use</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Cookie policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="max-w-container-max mx-auto px-margin-desktop mt-12 pt-8 border-t border-outline-variant/20 flex flex-col gap-6">
+            <p class="text-[10px] text-on-surface-variant/70 leading-relaxed normal-case">
+                <span class="font-bold text-primary mr-1">Disclaimer ·</span>
+                prOPIUM is an independent property intelligence and analytics platform. All data, scores, and analysis are for informational purposes only and do not constitute investment or legal advice. Prices, RERA status, and project details should be independently verified before any purchase or investment decision. prOPIUM does not act as a real estate agent, broker, or developer and does not receive commissions from builders or developers.
+            </p>
+            <div class="flex justify-between items-center text-[10px] text-on-surface-variant uppercase font-bold tracking-widest pt-2 border-t border-outline-variant/10">
+                <span>© 2026 prOPIUM · All rights reserved · Built for the Indian property ecosystem</span>
+                <div class="flex gap-6">
+                    <a class="hover:text-primary" href="#">Privacy Shield</a>
+                    <a class="hover:text-primary" href="#">Disclosure Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS Controllers -->
+    <script>
+        const CORRIDORS = [
+            {
+                id: "cg",
+                code: "CG",
+                name: "Central Gurgaon",
+                projects: 37,
+                units: 10837,
+                price: 30000,
+                priceMin: 25000,
+                priceMax: 35000,
+                qoq: "▲ 2.1% QOQ",
+                ready: 8,
+                uc: 3,
+                newLaunch: 0,
+                desc: "Established residential node featuring mature social infrastructure and seamless access to NH-48 and Galleria, appealing equally to families and luxury investors.",
+                gradient: "from-blue-600/90 to-indigo-950"
+            },
+            {
+                id: "dwe",
+                code: "DWE",
+                name: "Dwarka Expressway",
+                projects: 145,
+                units: 84228,
+                price: 18500,
+                priceMin: 14000,
+                priceMax: 24000,
+                qoq: "▲ 4.8% QOQ",
+                ready: 69,
+                uc: 67,
+                newLaunch: 2,
+                desc: "One of Gurgaon's largest growth corridors. Dwarka Expressway offers massive inventory scalability, high-rise luxury towers, and rapid connectivity to the IGI Airport.",
+                gradient: "from-purple-600/90 to-indigo-950"
+            },
+            {
+                id: "gcex",
+                code: "GCEX",
+                name: "Golf Course Extension Road",
+                projects: 97,
+                units: 37826,
+                price: 27500,
+                priceMin: 22000,
+                priceMax: 35000,
+                qoq: "▲ 3.4% QOQ",
+                ready: 67,
+                uc: 25,
+                newLaunch: 2,
+                desc: "Premium, cosmopolitan growth corridor attracting luxury developers. Combines upscale high-rises with robust office clusters and top-tier educational hubs.",
+                gradient: "from-amber-600/90 to-slate-950"
+            },
+            {
+                id: "gcr",
+                code: "GCR",
+                name: "Golf Course Road",
+                projects: 57,
+                units: 21489,
+                price: 37500,
+                priceMin: 32000,
+                priceMax: 48000,
+                qoq: "▲ 2.6% QOQ",
+                ready: 36,
+                uc: 9,
+                newLaunch: 0,
+                desc: "Gurgaon's flagship luxury corridor. Host to ultra-luxury condominiums, corporate headquarters, and high-end retail, representing the highest capital values.",
+                gradient: "from-teal-600/90 to-slate-950"
+            },
+            {
+                id: "mgr",
+                code: "MGR",
+                name: "M.G. Road",
+                projects: 10,
+                units: 2269,
+                price: 30000,
+                priceMin: 24000,
+                priceMax: 36000,
+                qoq: "▲ 1.2% QOQ",
+                ready: 4,
+                uc: 1,
+                newLaunch: 0,
+                desc: "High-density retail and residential stretch. Offers outstanding immediate metro access and established commercial retail buildings.",
+                gradient: "from-rose-600/90 to-indigo-950"
+            },
+            {
+                id: "ng",
+                code: "NG",
+                name: "New Gurgaon",
+                projects: 108,
+                units: 66426,
+                price: 17500,
+                priceMin: 12000,
+                priceMax: 22000,
+                qoq: "▲ 1.8% QOQ",
+                ready: 63,
+                uc: 33,
+                newLaunch: 2,
+                desc: "Sub-market positioned near Manesar. Serves as a highly popular emerging residential corridor with attractive entry tickets for first-time buyers.",
+                gradient: "from-emerald-600/90 to-slate-950"
+            },
+            {
+                id: "nh48",
+                code: "NH-48",
+                name: "Old Gurgaon",
+                projects: 21,
+                units: 3234,
+                price: 14000,
+                priceMin: 10000,
+                priceMax: 18000,
+                qoq: "▲ 0.8% QOQ",
+                ready: 6,
+                uc: 5,
+                newLaunch: 0,
+                desc: "Established legacy zones with highly active local markets and excellent connectivity along the central expressway node.",
+                gradient: "from-slate-600/90 to-slate-950"
+            },
+            {
+                id: "sohna",
+                code: "SOHNA",
+                name: "Sohna Road",
+                projects: 48,
+                units: 34605,
+                price: 17500,
+                priceMin: 12000,
+                priceMax: 22000,
+                qoq: "▲ 3.1% QOQ",
+                ready: 33,
+                uc: 5,
+                newLaunch: 0,
+                desc: "Rapidly developing south-bound corridor. Features scenic view vectors and substantial budget options in integrated townships.",
+                gradient: "from-indigo-600/90 to-slate-950"
+            },
+            {
+                id: "spr",
+                code: "SPR",
+                name: "Southern Peripheral Road",
+                projects: 90,
+                units: 36481,
+                price: 18500,
+                priceMin: 14000,
+                priceMax: 24000,
+                qoq: "▲ 3.9% QOQ",
+                ready: 34,
+                uc: 41,
+                newLaunch: 1,
+                desc: "Key infrastructure link connecting Sohna Road, Golf Course Ext, and NH-48. Emerges as a commercial-residential hotspot.",
+                gradient: "from-cyan-600/90 to-indigo-950"
+            }
+        ];
+
+        /* ================= MAP BOUNDARY COORDINATES ================= */
+        const CORRIDOR_POLYGONS = {
+            "dwe": [
+                [28.4233, 76.9366], [28.4243, 76.9348], [28.4256, 76.9333], [28.4271, 76.9322],
+                [28.4288, 76.9314], [28.4306, 76.9310], [28.4324, 76.9311], [28.4886, 76.9675],
+                [28.4904, 76.9692], [28.5269, 77.0110], [28.5533, 77.0538], [28.5549, 77.0595],
+                [28.5542, 77.0635], [28.5523, 77.0668], [28.5476, 77.0697], [28.5440, 77.0697],
+                [28.5038, 77.0396], [28.4999, 77.0346], [28.4951, 77.0245], [28.4110, 76.9886],
+                [28.4052, 76.9800], [28.4062, 76.9744], [28.4233, 76.9366]
+            ],
+            "gcex": [
+                [28.3795, 77.0536], [28.3805, 77.0526], [28.3903, 77.0427], [28.3933, 77.0407],
+                [28.3967, 77.0401], [28.4000, 77.0410], [28.4028, 77.0432], [28.4110, 77.0645],
+                [28.4218, 77.0826], [28.4293, 77.1072], [28.4298, 77.1111], [28.4289, 77.1148],
+                [28.4268, 77.1180], [28.4221, 77.1205], [28.4050, 77.1198], [28.4004, 77.1181],
+                [28.3972, 77.1139], [28.3928, 77.1034], [28.3863, 77.0959], [28.3822, 77.0809],
+                [28.3758, 77.0754], [28.3722, 77.0684], [28.3726, 77.0643], [28.3795, 77.0536]
+            ],
+            "gcr": [
+                [28.4696, 77.0888], [28.4803, 77.0899], [28.4837, 77.0910], [28.4864, 77.0934],
+                [28.4881, 77.0969], [28.4885, 77.1008], [28.4876, 77.1046], [28.4855, 77.1078],
+                [28.4824, 77.1097], [28.4724, 77.1135], [28.4683, 77.1140], [28.4519, 77.1115],
+                [28.4414, 77.1171], [28.4380, 77.1180], [28.4346, 77.1175], [28.4304, 77.1141],
+                [28.4289, 77.1106], [28.4286, 77.1066], [28.4297, 77.1029], [28.4345, 77.0962],
+                [28.4382, 77.0932], [28.4515, 77.0875], [28.4557, 77.0869], [28.4696, 77.0888]
+            ],
+            "sohna": [
+                [28.4102, 77.0281], [28.4125, 77.0257], [28.4280, 77.0177], [28.4316, 77.0169],
+                [28.4351, 77.0176], [28.4381, 77.0198], [28.4401, 77.0232], [28.4407, 77.0272],
+                [28.4399, 77.0312], [28.4350, 77.0394], [28.4377, 77.0431], [28.4391, 77.0488],
+                [28.4383, 77.0526], [28.3742, 77.0691], [28.3722, 77.0664], [28.3733, 77.0624],
+                [28.4008, 77.0482], [28.4015, 77.0419], [28.4102, 77.0281]
+            ],
+            "spr": [
+                [28.3882, 76.9747], [28.4119, 76.9919], [28.4140, 76.9942], [28.4217, 77.0074],
+                [28.4278, 77.0193], [28.4288, 77.0224], [28.4280, 77.0271], [28.4251, 77.0305],
+                [28.4017, 77.0451], [28.3891, 77.0553], [28.3865, 77.0567], [28.3837, 77.0568],
+                [28.3800, 77.0547], [28.3779, 77.0507], [28.3766, 77.0242], [28.3594, 76.9903],
+                [28.3560, 76.9906], [28.3521, 76.9884], [28.3500, 76.9841], [28.3505, 76.9793],
+                [28.3595, 76.9560], [28.3623, 76.9523], [28.3664, 76.9511], [28.3882, 76.9747]
+            ],
+            "cg": [
+                [28.4499, 77.0464], [28.4348, 77.0246], [28.4316, 77.0173], [28.4312, 77.0092],
+                [28.4336, 77.0015], [28.4385, 76.9955], [28.4451, 76.9921], [28.4523, 76.9920],
+                [28.4590, 76.9950], [28.4657, 77.0022], [28.4734, 77.0137], [28.4753, 77.0165],
+                [28.4826, 77.0276], [28.4872, 77.0349], [28.4901, 77.0420], [28.4904, 77.0498],
+                [28.4881, 77.0572], [28.4836, 77.0630], [28.4774, 77.0665], [28.4706, 77.0671],
+                [28.4640, 77.0648], [28.4587, 77.0599], [28.4499, 77.0464]
+            ],
+            // Custom simplified shapes for remaining 3 to display seamlessly
+            "ng": [
+                [28.3800, 76.9200], [28.4100, 76.9300], [28.4300, 76.9400], [28.4200, 76.9600],
+                [28.3900, 76.9500], [28.3750, 76.9350], [28.3800, 76.9200]
+            ],
+            "npr": [
+                [28.4700, 76.9500], [28.5000, 76.9700], [28.5100, 76.9900], [28.4900, 77.0000],
+                [28.4700, 76.9700], [28.4700, 76.9500]
+            ],
+            "mgr": [
+                [28.4750, 77.0700], [28.4900, 77.0800], [28.4850, 77.0950], [28.4700, 77.0850],
+                [28.4750, 77.0700]
+            ]
+        };
+
+        const CORRIDOR_STYLES = {
+            "cg": { color: "#3B82F6", fillColor: "#3B82F6", fillOpacity: 0.12, weight: 2 },
+            "dwe": { color: "#8B5CF6", fillColor: "#8B5CF6", fillOpacity: 0.12, weight: 2 },
+            "gcex": { color: "#F59E0B", fillColor: "#F59E0B", fillOpacity: 0.12, weight: 2 },
+            "gcr": { color: "#14B8A6", fillColor: "#14B8A6", fillOpacity: 0.12, weight: 2 },
+            "mgr": { color: "#EC4899", fillColor: "#EC4899", fillOpacity: 0.12, weight: 2 },
+            "ng": { color: "#10B981", fillColor: "#10B981", fillOpacity: 0.12, weight: 2 },
+            "nh48": { color: "#64748B", fillColor: "#64748B", fillOpacity: 0.12, weight: 2 },
+            "sohna": { color: "#4F46E5", fillColor: "#4F46E5", fillOpacity: 0.12, weight: 2 },
+            "spr": { color: "#06B6D4", fillColor: "#06B6D4", fillOpacity: 0.12, weight: 2 }
+        };
+
+        // State
+        let activeView = 'cards';
+        let mapInstance = null;
+        let mapPolygonLayers = [];
+        let highlightedCorridor = null;
+
+        function renderCorridors() {
+            const container = document.getElementById('viewCards');
+            container.innerHTML = CORRIDORS.map(c => {
+                const total = c.ready + c.uc + c.newLaunch;
+                // percentage splits
+                const readyPct = (c.ready / total) * 100;
+                const ucPct = (c.uc / total) * 100;
+                const newPct = (c.newLaunch / total) * 100;
+
+                return `
+                <div id="card-${c.code}" class="corridor-card bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-amber-400/40 hover:-translate-y-1 p-5 flex flex-col justify-between">
+                    <div>
+                        <!-- Header with gradient backdrop -->
+                        <div class="bg-gradient-to-r ${c.gradient} text-white p-4 -mx-5 -mt-5 mb-4 relative overflow-hidden h-28 flex flex-col justify-end">
+                            <span class="absolute top-3 right-3 text-[10px] font-extrabold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm">${c.code}</span>
+                            <h3 class="font-display font-extrabold text-base leading-tight">${c.name}</h3>
+                            <span class="text-[9px] text-slate-300 font-bold uppercase tracking-wider block mt-0.5">Gurgaon Corridor</span>
+                        </div>
+                        
+                        <!-- Description Copy -->
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-2">
+                            ${c.desc}
+                        </p>
+
+                        <!-- High level stats -->
+                        <div class="grid grid-cols-3 gap-2 text-center mb-4 border-b border-slate-100 pb-3">
+                            <div>
+                                <span class="block font-display font-extrabold text-sm text-primary">${c.projects}</span>
+                                <span class="text-[8px] text-slate-400 uppercase font-bold">Projects</span>
+                            </div>
+                            <div>
+                                <span class="block font-display font-extrabold text-sm text-primary">${c.units.toLocaleString('en-IN')}</span>
+                                <span class="text-[8px] text-slate-400 uppercase font-bold">Units Mapped</span>
+                            </div>
+                            <div>
+                                <span class="block font-display font-extrabold text-sm text-secondary-container">₹${(c.price / 1000).toFixed(1)}k</span>
+                                <span class="text-[8px] text-slate-400 uppercase font-bold">Avg PSFT</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress telemetry split -->
+                        <div class="space-y-2 mb-2">
+                            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                                <div style="width: ${readyPct}%" class="bg-emerald-500" title="Ready: ${c.ready}"></div>
+                                <div style="width: ${ucPct}%" class="bg-amber-500" title="Under Const: ${c.uc}"></div>
+                                <div style="width: ${newPct}%" class="bg-secondary-container" title="New: ${c.newLaunch}"></div>
+                            </div>
+                            <div class="flex justify-between items-center text-[9px] text-slate-500 font-semibold">
+                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <b>${c.ready}</b> Ready</span>
+                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> <b>${c.uc}</b> Const.</span>
+                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span> <b>${c.newLaunch}</b> New</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Link -->
+                    <div class="pt-3 border-t border-slate-100 flex justify-between items-center mt-3">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">${c.qoq}</span>
+                        <a href="${c.id === 'gcex' ? '/golf-course-extension' : 'micro_market_detail.html?id=' + c.id}" target="_top" class="text-brandBlue hover:underline text-xs font-bold flex items-center gap-0.5">
+                            Explore Corridor
+                            <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function switchView(view) {
+            activeView = view;
+            
+            document.getElementById('viewCards').classList.toggle('hidden', view !== 'cards');
+            document.getElementById('viewMap').classList.toggle('hidden', view !== 'map');
+            
+            const btnCards = document.getElementById('btnViewCards');
+            const btnMap = document.getElementById('btnViewMap');
+            
+            if (view === 'cards') {
+                btnCards.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white text-primary shadow-sm";
+                btnMap.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-slate-500 hover:text-primary";
+            } else {
+                btnCards.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-slate-500 hover:text-primary";
+                btnMap.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white text-primary shadow-sm";
+                
+                setTimeout(() => {
+                    initMap();
+                }, 100);
+            }
+        }
+
+        function initMap() {
+            if (mapInstance) {
+                mapInstance.invalidateSize();
+                return;
+            }
+
+            mapInstance = L.map('map', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView([28.4250, 77.0200], 12);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(mapInstance);
+
+            L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
+
+            // Draw Polygons
+            for (const [key, coords] of Object.entries(CORRIDOR_POLYGONS)) {
+                const info = CORRIDORS.find(c => c.id === key) || CORRIDORS.find(c => c.id === 'nh48');
+                const style = CORRIDOR_STYLES[key] || { color: "#94A3B8", fillColor: "#94A3B8", fillOpacity: 0.1, weight: 1.5 };
+
+                const polygon = L.polygon(coords, {
+                    ...style
+                }).addTo(mapInstance);
+
+                polygon.bindTooltip(`
+                    <div class="px-2.5 py-1.5 font-sans text-xs">
+                        <b class="text-slate-900 block text-xs font-display font-extrabold">${info.name}</b>
+                        <span class="text-slate-500 font-semibold block mt-0.5">${info.projects} audited projects</span>
+                        <span class="text-secondary-container font-extrabold">₹${info.price.toLocaleString('en-IN')}/sqft</span>
+                    </div>
+                `, { sticky: true });
+
+                polygon.on('mouseover', function() {
+                    polygon.setStyle({
+                        fillOpacity: 0.25,
+                        weight: 3
+                    });
+                });
+
+                polygon.on('mouseout', function() {
+                    polygon.setStyle({
+                        fillOpacity: style.fillOpacity,
+                        weight: style.weight
+                    });
+                });
+
+                polygon.on('click', function() {
+                    window.location.href = `micro_market_detail.html?id=${info.id}`;
+                });
+
+                mapPolygonLayers.push({ key, layer: polygon });
+            }
+        }
+
+        function selectLadderCorridor(code) {
+            // Unhighlight previous
+            document.querySelectorAll('.lad-dot-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.corridor-card').forEach(card => card.classList.remove('highlighted'));
+
+            if (highlightedCorridor === code) {
+                highlightedCorridor = null;
+                return;
+            }
+
+            highlightedCorridor = code;
+            
+            // Highlight dot
+            const dot = document.getElementById(`dot-${code}`);
+            if (dot) dot.classList.add('active');
+
+            // Highlight card
+            const card = document.getElementById(`card-${code}`);
+            if (card) {
+                card.classList.add('highlighted');
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCorridors();
+        });
+    </script>
+
+<!-- LOVABLE_MOBILE_NAV_INJECT -->
+<style>
+@media (max-width: 767px) {
+  header .flex.items-center.gap-stack-sm { display: none !important; }
+  #lov-mobile-hamburger { display: flex !important; }
+  footer { padding-bottom: 8rem !important; }
+}
+#lov-mobile-hamburger { display: none; }
+#lov-mobile-menu-backdrop, #lov-mobile-menu-panel { transition: opacity .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1); }
+</style>
+
+<!-- Mobile hamburger button (positioned over header right side) -->
+<button id="lov-mobile-hamburger" aria-label="Open menu"
+  onclick="document.getElementById('lov-mobile-menu').dataset.open='1'"
+  style="position:fixed;top:12px;right:16px;width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#fff;align-items:center;justify-content:center;z-index:60;cursor:pointer;">
+  <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
+</button>
+
+<!-- Mobile menu -->
+<div id="lov-mobile-menu" data-open="0" class="md:hidden">
+  <div id="lov-mobile-menu-backdrop"
+    onclick="document.getElementById('lov-mobile-menu').dataset.open='0'"
+    style="position:fixed;inset:0;background:rgba(2,6,23,0.6);backdrop-filter:blur(4px);z-index:70;opacity:0;pointer-events:none;"></div>
+  <aside id="lov-mobile-menu-panel"
+    style="position:fixed;top:0;right:0;bottom:0;width:min(82vw,320px);background:#0F172A;border-left:1px solid rgba(255,255,255,0.08);z-index:71;transform:translateX(100%);box-shadow:-20px 0 50px rgba(0,0,0,0.5);display:flex;flex-direction:column;font-family:Inter,sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#fff;text-decoration:none;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
+      <button onclick="document.getElementById('lov-mobile-menu').dataset.open='0'" aria-label="Close menu"
+        style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+        <span class="material-symbols-outlined" style="font-size:22px;">close</span>
+      </button>
+    </div>
+    <nav style="padding:16px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+      <div style="flex:1;">
+        <a href="/" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">home</span>Home</a>
+        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">auto_awesome</span>AI Search</a>
+        <a href="/search" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">search</span>Search</a>
+        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">compare_arrows</span>Compare</a>
+      </div>
+      <div style="padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:10px;padding-bottom:8px;">
+        <button style="background:#F59E0B;color:#0F172A;border:none;border-radius:10px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+          <span class="material-symbols-outlined" style="font-size:20px;">mail</span>Enquiry</button>
+        <button style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+          <span class="material-symbols-outlined" style="font-size:20px;">call</span>Call Us</button>
+      </div>
+    </nav>
+  </aside>
+</div>
+<script>
+(function(){
+  var m = document.getElementById('lov-mobile-menu');
+  var b = document.getElementById('lov-mobile-menu-backdrop');
+  var p = document.getElementById('lov-mobile-menu-panel');
+  new MutationObserver(function(){
+    var open = m.dataset.open === '1';
+    b.style.opacity = open ? '1' : '0';
+    b.style.pointerEvents = open ? 'auto' : 'none';
+    p.style.transform = open ? 'translateX(0)' : 'translateX(100%)';
+    document.body.style.overflow = open ? 'hidden' : '';
+  }).observe(m, {attributes:true, attributeFilter:['data-open']});
+})();
+</script>
+<!-- /LOVABLE_MOBILE_NAV_INJECT -->
+
+
+<!-- LOVABLE_MOBILE_FOOTER -->
+<style>
+@media (max-width: 767px) {
+  body > footer, footer.bg-surface-container-low { display: none !important; }
+  #lov-mobile-footer { display: block !important; }
+}
+#lov-mobile-footer { display: none; }
+</style>
+<footer id="lov-mobile-footer" style="background:#f1f5f9;padding:48px 0 8rem;border-top:1px solid rgba(226,232,240,0.3);font-family:Inter,sans-serif;">
+  <div style="max-width:1280px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:repeat(2,1fr);gap:32px 24px;">
+    <div style="grid-column:span 2;">
+      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#0F172A;text-decoration:none;display:inline-flex;margin-bottom:16px;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
+      <p style="font-size:12px;color:#64748b;line-height:1.6;margin-bottom:24px;">Intelligence for every Real Estate decision.</p>
+      <div style="display:flex;gap:16px;color:#94a3b8;">
+        <a href="#" style="color:#94a3b8;"><svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+        <a href="#" style="color:#94a3b8;"><svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.7 0-1.37-.2-1.95-.54v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.31 1.83c-.34 0-.68-.02-1.02-.06C3.3 20.42 5.66 21 8.2 21c8.26 0 12.78-6.86 12.78-12.78 0-.19 0-.39-.01-.58.88-.64 1.64-1.44 2.24-2.35l-.01-.01z"/></svg></a>
+      </div>
+    </div>
+    <div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">About prOPIUM</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">About prOPIUM</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">How we Verify</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Why prOPIUM</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">The Team</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">Intelligence Hub</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Builder Evaluation</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Location Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Product Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Payment Plan Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Investment Intelligence</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">For developers</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Visibility & data</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Raise an issue</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Platform overview</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Contact & support</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">Support & legal</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Raise an issue</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Privacy policy</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Terms of use</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Cookie policy</a></li></ul></div>
+  </div>
+  <div style="max-width:1280px;margin:48px auto 0;padding:0 16px;">
+    <div style="border-top:1px solid rgba(226,232,240,0.6);padding-top:32px;display:flex;flex-direction:column;gap:24px;">
+      <p style="font-size:12px;color:#64748b;line-height:1.7;"><span style="font-weight:600;color:#0F172A;margin-right:4px;">Disclaimer ·</span>prOPIUM is an independent property intelligence and analytics platform. All data, scores, and analysis are for informational purposes only and do not constitute investment or legal advice. Prices, RERA status, and project details should be independently verified before any purchase or investment decision. prOPIUM does not act as a real estate agent, broker, or developer and does not receive commissions from builders or developers.</p>
+      <div style="border-top:1px solid rgba(226,232,240,0.6);padding-top:20px;display:flex;flex-direction:column;gap:12px;font-size:12px;color:#64748b;font-weight:500;">
+        <span>© 2026 prOPIUM · All rights reserved · Built for the Indian property ecosystem</span>
+        <div style="display:flex;gap:24px;"><a href="#" style="color:#64748b;text-decoration:none;">Privacy Shield</a><a href="#" style="color:#64748b;text-decoration:none;">Disclosure Policy</a></div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- /LOVABLE_MOBILE_FOOTER -->
+
+</body>
+</html>

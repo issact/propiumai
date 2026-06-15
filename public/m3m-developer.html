@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Developer Audit Dashboard | prOPIUM.ai</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0F172A", // Slate Navy
+                        "secondary-container": "#F59E0B", // Amber Gold
+                        background: "#F8FAFC", // Light Slate Canvas
+                        "surface-bright": "#F8FAFC",
+                        "on-surface-variant": "#64748B", // Muted slate gray
+                        "on-surface": "#0F172A",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#F1F5F9",
+                        "surface-container": "#E2E8F0",
+                        "outline-variant": "#E2E8F0",
+                        error: "#E11D48",
+                        brandBlue: "#006AFF" // Accent telemetry blue
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.125rem",
+                        lg: "0.25rem",
+                        xl: "0.5rem",
+                        full: "0.75rem"
+                    },
+                    spacing: {
+                        "stack-md": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "48px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        gutter: "32px",
+                        unit: "4px",
+                        "stack-sm": "8px"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Outfit", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .blueprint-grid {
+            background-size: 24px 24px;
+            background-image: radial-gradient(circle, #E2E8F0 1px, transparent 1px);
+        }
+        .score-circle-svg {
+            transform: rotate(-90deg);
+        }
+        .strip::-webkit-scrollbar {
+            display: none;
+        }
+        .strip {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .custom-map-pin {
+            background: none;
+            border: none;
+        }
+        /* Leaflet popup customization */
+        .leaflet-popup-content-wrapper {
+            background: #0F172A !important;
+            color: #FFFFFF !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+            padding: 2px !important;
+        }
+        .leaflet-popup-tip {
+            background: #0F172A !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-[#0F172A] font-sans antialiased min-h-screen flex flex-col pt-16 relative blueprint-grid">
+
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0F172A]/85 border-b border-white/10 shadow-sm text-white">
+        <div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto w-full">
+            <div class="flex items-center gap-stack-md">
+                <a href="index.html" class="flex items-center gap-1 font-bold text-xl tracking-tight text-white hover:opacity-90">
+                    prOPIUM<span class="text-secondary-container">.ai</span>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 items-center">
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="index.html">Home</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="project_search.html">Projects</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="developer_search.html">Developers</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="micro_market.html">Micro-Markets</a>
+            </nav>
+            <div class="flex items-center gap-stack-sm">
+                <div class="flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/10 rounded-full text-white">
+                    <span class="material-symbols-outlined text-sm">account_circle</span>
+                    <span class="font-sans text-xs font-semibold">Sahil Rajan</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-container-max mx-auto px-6 lg:px-margin-desktop py-8 w-full flex-grow flex flex-col gap-6">
+        
+        <!-- Breadcrumb Navigation -->
+        <nav class="text-xs text-slate-500 flex items-center gap-2">
+            <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+            <span class="text-slate-300">/</span>
+            <a href="developer_search.html" class="hover:text-primary transition-colors">Developers</a>
+            <span class="text-slate-300">/</span>
+            <span id="breadcrumbDevName" class="text-slate-700 font-medium">Developer Profile</span>
+        </nav>
+
+        <!-- TOP CONTROL BAR -->
+        <section class="bg-[#0F172A] border border-white/10 rounded-2xl p-4 shadow-xl flex flex-col gap-4 relative text-white">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
+                <!-- Left Side: Autocomplete and Advanced Buttons -->
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="relative flex-grow sm:flex-grow-0" style="min-width: 280px;">
+                        <div class="flex items-center bg-white border border-slate-200 rounded-xl px-3.5 py-2 hover:border-slate-300 transition-colors">
+                            <span class="material-symbols-outlined text-slate-400 text-sm mr-2 select-none">search</span>
+                            <input id="devSearchInput" type="text" placeholder="Search developer..." class="w-full bg-transparent border-0 focus:ring-0 text-xs font-bold text-slate-800 p-0 outline-none cursor-pointer" readonly onclick="toggleDevDropdown(event)">
+                            <span id="clearDevSearchBtn" onclick="clearDevSearch(event)" class="material-symbols-outlined text-slate-400 text-sm hover:text-rose-500 cursor-pointer select-none ml-2">close</span>
+                        </div>
+                        <!-- Dropdown popover -->
+                        <div id="devDropdownPopover" class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl p-1 max-h-60 overflow-y-auto hidden text-slate-800">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                    
+                    <button onclick="toggleAdvancedSearch()" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm text-secondary-container">tune</span> Advanced Filters
+                        <span id="filterChevron" class="material-symbols-outlined text-xs transition-transform duration-200">keyboard_arrow_down</span>
+                    </button>
+                </div>
+
+                <!-- Right Side: Results count, Clear, and View Toggle -->
+                <div class="flex flex-wrap items-center justify-between md:justify-end gap-4 w-full md:w-auto border-t md:border-t-0 border-white/10 pt-3 md:pt-0">
+                    <div class="flex items-center gap-3">
+                        <span id="projectsCountLabel" class="text-xs font-semibold text-slate-300">0 results</span>
+                        <button onclick="resetActiveFilters()" class="text-slate-400 hover:text-white text-xs font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">restart_alt</span> Reset Filters
+                        </button>
+                    </div>
+
+                    <div class="h-6 w-[1px] bg-white/10 hidden sm:block"></div>
+
+                    <!-- View Switcher -->
+                    <div class="flex bg-slate-950/60 border border-white/10 p-1 rounded-xl gap-0.5" id="viewSwitcherContainer">
+                        <button onclick="setView('list')" id="viewBtnList" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white text-primary shadow-sm">
+                            <span class="material-symbols-outlined text-sm">list</span> List
+                        </button>
+                        <button onclick="setView('cards')" id="viewBtnCards" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-slate-400 hover:text-white">
+                            <span class="material-symbols-outlined text-sm">grid_view</span> Cards
+                        </button>
+                        <button onclick="setView('map')" id="viewBtnMap" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-slate-400 hover:text-white">
+                            <span class="material-symbols-outlined text-sm">map</span> Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide-Down Advanced Filters Grid -->
+            <div id="advancedFiltersGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-5 pt-4 border-t border-white/10 text-slate-300">
+                
+                <!-- Corridor Multi-Select -->
+                <div class="relative custom-multiselect" id="filterSelectCorridor">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Corridor</label>
+                    <div onclick="toggleLocalDropdown(event, 'popoverCorridor')" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2.5 px-3.5 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span id="labelCorridor" class="truncate">All Corridors</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div id="popoverCorridor" class="popover-dropdown absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <!-- Dynamic items -->
+                    </div>
+                </div>
+
+                <!-- Locality / Sector Multi-Select -->
+                <div class="relative custom-multiselect" id="filterSelectLocation">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Location / Sector</label>
+                    <div onclick="toggleLocalDropdown(event, 'popoverLocation')" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2.5 px-3.5 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span id="labelLocation" class="truncate">All Locations</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div id="popoverLocation" class="popover-dropdown absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <!-- Dynamic items -->
+                    </div>
+                </div>
+
+                <!-- Target Segment Multi-Select -->
+                <div class="relative custom-multiselect" id="filterSelectSegment">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Target Segment</label>
+                    <div onclick="toggleLocalDropdown(event, 'popoverSegment')" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2.5 px-3.5 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span id="labelSegment" class="truncate">All Target Segments</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div id="popoverSegment" class="popover-dropdown absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Luxury" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Luxury
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Ultra Luxury" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Ultra Luxury
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Premium" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Premium
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Status Multi-Select -->
+                <div class="relative custom-multiselect" id="filterSelectStatus">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Status</label>
+                    <div onclick="toggleLocalDropdown(event, 'popoverStatus')" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2.5 px-3.5 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span id="labelStatus" class="truncate">All Statuses</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div id="popoverStatus" class="popover-dropdown absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Ready to Move In" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Ready to Move In
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Under Construction" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Under Construction
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="New Launch" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            New Launch
+                        </label>
+                    </div>
+                </div>
+
+                <!-- BHK Configuration Multi-Select -->
+                <div class="relative custom-multiselect" id="filterSelectBHK">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">BHK Configuration</label>
+                    <div onclick="toggleLocalDropdown(event, 'popoverBHK')" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2.5 px-3.5 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span id="labelBHK" class="truncate">Any BHK</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div id="popoverBHK" class="popover-dropdown absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="2 BHK" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            2 BHK
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="3 BHK" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            3 BHK
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="4 BHK" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            4 BHK
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Penthouse" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Penthouse
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Budget Range Multi-Select -->
+                <div class="relative custom-multiselect" id="filterSelectBudget">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Budget Range</label>
+                    <div onclick="toggleLocalDropdown(event, 'popoverBudget')" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2.5 px-3.5 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span id="labelBudget" class="truncate">Any Budget</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div id="popoverBudget" class="popover-dropdown absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Under 2 Cr" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Under 2 Cr
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="2 - 5 Cr" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            2 - 5 Cr
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="5 - 10 Cr" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            5 - 10 Cr
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="10 Cr+" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            10 Cr+
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Project Type Multi-Select -->
+                <div class="relative custom-multiselect" id="filterSelectType">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Project Type</label>
+                    <div onclick="toggleLocalDropdown(event, 'popoverType')" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2.5 px-3.5 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span id="labelType" class="truncate">All Project Types</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div id="popoverType" class="popover-dropdown absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="High Rise" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            High Rise
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Low Rise" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Low Rise
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Plot" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Plot
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Structure Type Multi-Select -->
+                <div class="relative custom-multiselect" id="filterSelectStructure">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Structure Type</label>
+                    <div onclick="toggleLocalDropdown(event, 'popoverStructure')" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2.5 px-3.5 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span id="labelStructure" class="truncate">All Structure Types</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div id="popoverStructure" class="popover-dropdown absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Apartment" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Apartment
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Independent Floor" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Independent Floor
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Penthouse" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Penthouse
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Villa" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Villa
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- DEVELOPER HEADER CARD -->
+        <section class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div class="flex flex-col sm:flex-row items-start gap-4">
+                <!-- Logo Container -->
+                <div id="devProfileLogo" class="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2 shrink-0 overflow-hidden shadow-inner">
+                    <!-- Dynamic Logo -->
+                </div>
+                <!-- Details -->
+                <div class="space-y-1.5">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h1 id="devProfileName" class="text-2xl font-extrabold font-display text-primary tracking-tight">Developer Name</h1>
+                        <span id="devProfileBadges" class="flex gap-1.5">
+                            <!-- Badges -->
+                        </span>
+                    </div>
+                    <p id="devProfileDesc" class="text-slate-500 text-xs max-w-3xl leading-relaxed">
+                        Developer description loading...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Builder Score Badge -->
+            <div class="flex items-center gap-4 border-l border-slate-100 pl-6 shrink-0 w-full lg:w-auto justify-between lg:justify-end">
+                <div>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest block text-right">prOPIUM Standard</span>
+                    <span class="text-xs text-slate-600 font-semibold block text-right mt-0.5">Builder Score</span>
+                </div>
+                <div id="devScoreBadge" class="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary text-white border border-white/5 shadow-md flex-col text-center">
+                    <span id="devProfileScore" class="font-display font-extrabold text-xl leading-none">00</span>
+                    <span class="text-[8px] text-slate-400 font-bold uppercase mt-1 leading-none">/ 25</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- "WHERE THEY BUILD" SEGMENTED CORRIDOR BAR -->
+        <section class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Where They Build</h3>
+                <span id="corridorBarLegend" class="text-[10px] text-slate-500 font-semibold">0 projects across corridors · tap to filter</span>
+            </div>
+            
+            <!-- Segmented Bar Container -->
+            <div class="w-full h-8 bg-slate-100 rounded-xl overflow-hidden flex" id="corridorSegmentBar">
+                <!-- Javascript will render colored blocks based on corridor distribution -->
+            </div>
+        </section>
+
+        <!-- METRICS & scorecard GRID -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+            
+            <!-- LEFT CARD: Project & Unit scale metrics -->
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between gap-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <span id="metricProjectsTracked" class="block font-display font-extrabold text-3xl text-primary leading-none">0</span>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mt-1.5">Projects Tracked</span>
+                    </div>
+                    <div>
+                        <span id="metricTotalUnits" class="block font-display font-extrabold text-3xl text-primary leading-none">0</span>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mt-1.5">Total Units</span>
+                    </div>
+                </div>
+
+                <!-- Unit split progress bar -->
+                <div class="space-y-2.5">
+                    <div class="flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                        <span id="lblUnitsReady">0 Ready</span>
+                        <span id="lblUnitsUC">0 Under Const</span>
+                    </div>
+                    <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden flex w-full">
+                        <div id="unitBarReady" class="h-full bg-emerald-500" style="width: 50%"></div>
+                        <div id="unitBarUC" class="h-full bg-amber-500" style="width: 50%"></div>
+                    </div>
+                    <span id="unitMixLegend" class="text-[9px] text-slate-400 block italic">Mix based on verified units database.</span>
+                </div>
+            </div>
+
+            <!-- RIGHT CARD: Ratings scorecard -->
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Audit Scorecard Parameters</h3>
+                
+                <div class="space-y-3" id="scorecardParametersList">
+                    <!-- JavaScript renders 5 rating rows -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- PROJECTS STACK HEADER & CONTROLS -->
+        <section class="space-y-4">
+            
+            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+                <!-- Status tabs -->
+                <div class="flex bg-slate-100 border border-slate-200/40 p-1 rounded-xl gap-0.5 self-start" id="statusTabsContainer">
+                    <button onclick="setStatusFilter('all')" id="tabAll" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider bg-white text-primary shadow-sm">
+                        All <span id="cntAll" class="text-[10px] text-slate-400 font-normal ml-0.5">0</span>
+                    </button>
+                    <button onclick="setStatusFilter('Ready to Move In')" id="tabReady" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider text-slate-500 hover:text-primary">
+                        Ready to Move <span id="cntReady" class="text-[10px] text-slate-400 font-normal ml-0.5">0</span>
+                    </button>
+                    <button onclick="setStatusFilter('Under Construction')" id="tabUC" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider text-slate-500 hover:text-primary">
+                        Under Const <span id="cntUC" class="text-[10px] text-slate-400 font-normal ml-0.5">0</span>
+                    </button>
+                </div>
+
+                <!-- Sort & Clear controls -->
+                <div class="flex items-center gap-4 justify-between sm:justify-end">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider whitespace-nowrap">Sort by</span>
+                        <select id="sortSelect" onchange="handleSort()" class="bg-white border border-slate-200 rounded-xl text-xs font-bold py-1.5 pl-3 pr-8 text-slate-700 focus:ring-0 focus:border-slate-300">
+                            <option value="score">Audit Score &darr;</option>
+                            <option value="possession">Possession Date</option>
+                            <option value="price">Price (Min &uarr;)</option>
+                            <option value="units">Units Count</option>
+                        </select>
+                    </div>
+
+                    <!-- Active filter reset -->
+                    <button onclick="resetActiveFilters()" id="resetActiveFiltersBtn" class="hidden text-xs text-brandBlue font-bold hover:underline">
+                        Reset Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 1: High-Density List Table View (Hidden by default) -->
+            <div id="viewList" class="hidden bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr class="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                                <th class="py-3.5 px-6">Project Name</th>
+                                <th class="py-3.5 px-4">Locality & Corridor</th>
+                                <th class="py-3.5 px-4">BHK Configurations</th>
+                                <th class="py-3.5 px-4 text-right">Carpet / Built-up Eff.</th>
+                                <th class="py-3.5 px-6 text-right">prOPIUM Score</th>
+                                <th class="py-3.5 px-6 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listTableBody" class="divide-y divide-slate-100">
+                            <!-- Javascript Renders Rows Here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW 2: Grid of Visual Cards (Hidden by default) -->
+            <div id="viewCards" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Javascript Renders Project Cards Here -->
+            </div>
+
+            <!-- VIEW 3: Interactive Split Map View (Hidden by default) -->
+            <div id="viewMap" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                <!-- Left Side: Project List Pane -->
+                <div class="lg:col-span-5 flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-2 strip" id="mapViewListContainer">
+                    <!-- Dynamic project list cards for map view -->
+                </div>
+                <!-- Right Side: Interactive Map Container -->
+                <div class="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm h-[500px] flex flex-col relative">
+                    <div id="map" class="w-full h-full flex-grow"></div>
+                </div>
+            </div>
+
+            <!-- Empty Projects State -->
+            <div id="emptyProjectsState" class="hidden py-16 bg-white border border-slate-200/80 rounded-2xl text-center space-y-3 shadow-sm">
+                <span class="material-symbols-outlined text-slate-300 text-4xl block">info</span>
+                <h4 class="font-display text-sm font-bold text-primary">No Projects Match Selected Filters</h4>
+                <p class="text-xs text-slate-500 max-w-xs mx-auto">Try clearing your status filters or tapping "All Corridors" on the corridor bar.</p>
+                <button onclick="resetActiveFilters()" class="text-brandBlue hover:underline text-xs font-bold">Clear Filters</button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-surface-container-low pt-stack-lg pb-stack-md border-t border-outline-variant/30 mt-12 w-full">
+        <!-- Footer matches search page exactly -->
+        <div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-6 gap-gutter">
+            <div class="md:col-span-2">
+                <a href="index.html" class="flex items-center gap-1 font-bold text-xl tracking-tight text-primary hover:opacity-90 mb-4">
+                    prOPIUM<span class="text-secondary-container">.ai</span>
+                </a>
+                <p class="text-on-surface-variant text-xs leading-relaxed mb-6">
+                    Intelligence for every Real Estate decision.
+                </p>
+                <div class="flex gap-4 text-slate-400">
+                    <a href="#" class="hover:text-primary transition-colors">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="hover:text-primary transition-colors">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.7 0-1.37-.2-1.95-.54v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.31 1.83c-.34 0-.68-.02-1.02-.06C3.3 20.42 5.66 21 8.2 21c8.26 0 12.78-6.86 12.78-12.78 0-.19 0-.39-.01-.58.88-.64 1.64-1.44 2.24-2.35l-.01-.01z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">About prOPIUM</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="#">About prOPIUM</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">How we Verify</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Why prOPIUM</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">The Team</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">Intelligence Hub</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="#">Builder Evaluation</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Location Intelligence</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Product Intelligence</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Payment Plan Intelligence</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Investment Intelligence</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">For developers</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="#">Visibility & data</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Raise an issue</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Platform overview</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Contact & support</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">Support & legal</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="#">Raise an issue</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Privacy policy</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Terms of use</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Cookie policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="max-w-container-max mx-auto px-margin-desktop mt-12 pt-8 border-t border-outline-variant/20 flex flex-col gap-6">
+            <p class="text-[10px] text-on-surface-variant/70 leading-relaxed normal-case">
+                <span class="font-bold text-primary mr-1">Disclaimer ·</span>
+                prOPIUM is an independent property intelligence and analytics platform. All data, scores, and analysis are for informational purposes only and do not constitute investment or legal advice. Prices, RERA status, and project details should be independently verified before any purchase or investment decision. prOPIUM does not act as a real estate agent, broker, or developer and does not receive commissions from builders or developers.
+            </p>
+            <div class="flex justify-between items-center text-[10px] text-on-surface-variant uppercase font-bold tracking-widest pt-2 border-t border-outline-variant/10">
+                <span>© 2026 prOPIUM · All rights reserved · Built for the Indian property ecosystem</span>
+                <div class="flex gap-6">
+                    <a class="hover:text-primary" href="#">Privacy Shield</a>
+                    <a class="hover:text-primary" href="#">Disclosure Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS database & dynamic logic -->
+    <script>
+        // DEVELOPERS mock DB
+        const DEVELOPERS = [
+            {
+                id: "dlf",
+                name: "DLF Limited",
+                logo: "https://property.p2s.ai/api/developers/1/public-logo",
+                est: 1946,
+                city: "New Delhi",
+                delivered: "150+ projects",
+                segments: "Residential · Commercial · Retail",
+                score: 22,
+                units: 25459,
+                ready: 39,
+                uc: 6,
+                newLaunch: 0,
+                description: "DLF has over 75 years of track record in real estate development, famous for developing Gurugram into a major financial hub (DLF Cybercity) and creating luxury residential communities.",
+                corridors: { "Golf Course Extension Road": 2, "Southern Peripheral Road": 1, "Golf Course Road": 1 },
+                ratings: {
+                    brandPerception: 5,
+                    constructionQuality: 5,
+                    deliveryRecord: 4,
+                    financialStrength: 5,
+                    litigation: 3
+                }
+            },
+            {
+                id: "m3m",
+                name: "M3M India Pvt Ltd",
+                logo: "https://property.p2s.ai/api/developers/219/public-logo",
+                est: 2010,
+                city: "Gurugram",
+                delivered: "50 projects",
+                segments: "Residential · Commercial",
+                score: 17,
+                units: 15820,
+                ready: 14,
+                uc: 10,
+                newLaunch: 0,
+                description: "M3M India is a leading real estate developer known for high-end residential and commercial projects in Gurgaon. The name stands for Magnificence in the Trinity of Men, Materials, and Money.",
+                corridors: { "Golf Course Extension Road": 10, "Southern Peripheral Road": 6, "Dwarka Expressway": 5, "Other": 3 },
+                ratings: {
+                    brandPerception: 4,
+                    constructionQuality: 4,
+                    deliveryRecord: 3,
+                    financialStrength: 4,
+                    litigation: 2
+                }
+            },
+            {
+                id: "emaar",
+                name: "Emaar India",
+                logo: "https://property.p2s.ai/api/developers/330/public-logo",
+                est: 2005,
+                city: "Gurugram",
+                delivered: "35+ projects",
+                segments: "Residential · Commercial",
+                score: 19,
+                units: 11501,
+                ready: 16,
+                uc: 5,
+                newLaunch: 1,
+                description: "Emaar is a globally renowned developer (builder of Burj Khalifa) with a significant footprint in India, delivering iconic master-planned luxury communities like Emaar Marbella and Palm Drive.",
+                corridors: { "Golf Course Extension Road": 15, "Southern Peripheral Road": 8, "Golf Course Road": 5, "Other": 7 },
+                ratings: {
+                    brandPerception: 4,
+                    constructionQuality: 4,
+                    deliveryRecord: 3,
+                    financialStrength: 4,
+                    litigation: 4
+                }
+            },
+            {
+                id: "sobha",
+                name: "Sobha Limited",
+                logo: "",
+                est: 1995,
+                city: "Bengaluru",
+                delivered: "100+ projects",
+                segments: "Premium Residential",
+                score: 21,
+                units: 7085,
+                ready: 2,
+                uc: 4,
+                newLaunch: 0,
+                description: "Sobha is India's only backward-integrated real estate developer, renowned for outstanding construction quality, execution capabilities, and premium interior finishes.",
+                corridors: { "Dwarka Expressway": 5, "Golf Course Extension Road": 2, "Other": 1 },
+                ratings: {
+                    brandPerception: 5,
+                    constructionQuality: 5,
+                    deliveryRecord: 4,
+                    financialStrength: 4,
+                    litigation: 3
+                }
+            },
+            {
+                id: "mahindra",
+                name: "Mahindra Lifespaces",
+                logo: "",
+                est: 1994,
+                city: "Mumbai",
+                delivered: "45+ projects",
+                segments: "Residential · Industrial",
+                score: 20,
+                units: 2253,
+                ready: 5,
+                uc: 3,
+                newLaunch: 0,
+                description: "Mahindra Lifespaces is the real estate development arm of the Mahindra Group, committed to sustainable urbanization and high corporate governance standards.",
+                corridors: { "Golf Course Extension Road": 3, "Golf Course Road": 2, "Other": 3 },
+                ratings: {
+                    brandPerception: 4,
+                    constructionQuality: 4,
+                    deliveryRecord: 4,
+                    financialStrength: 5,
+                    litigation: 4
+                }
+            },
+            {
+                id: "tata",
+                name: "Tata Housing",
+                logo: "",
+                est: 1984,
+                city: "Mumbai",
+                delivered: "60+ projects",
+                segments: "Residential",
+                score: 21,
+                units: 1744,
+                ready: 2,
+                uc: 4,
+                newLaunch: 0,
+                description: "Tata Housing is a trusted subsidiary of Tata Sons, focusing on high-quality design, execution, and value-driven premium living spaces across India.",
+                corridors: { "Dwarka Expressway": 4, "Golf Course Extension Road": 1, "Other": 1 },
+                ratings: {
+                    brandPerception: 5,
+                    constructionQuality: 4,
+                    deliveryRecord: 4,
+                    financialStrength: 5,
+                    litigation: 4
+                }
+            },
+            {
+                id: "tarc",
+                name: "TARC Limited",
+                logo: "",
+                est: 2020,
+                city: "New Delhi",
+                delivered: "5 projects",
+                segments: "Luxury Residential",
+                score: 18,
+                units: 518,
+                ready: 0,
+                uc: 1,
+                newLaunch: 0,
+                description: "TARC is a leading premium real estate developer focused on luxury boutique developments in New Delhi and Gurugram, creating curated lifestyle spaces.",
+                corridors: { "Golf Course Extension Road": 3, "Other": 2 },
+                ratings: {
+                    brandPerception: 3,
+                    constructionQuality: 4,
+                    deliveryRecord: 3,
+                    financialStrength: 3,
+                    litigation: 5
+                }
+            },
+            {
+                id: "conscient",
+                name: "Conscient Infrastructure",
+                logo: "https://property.p2s.ai/api/developers/204/public-logo",
+                est: 1990,
+                city: "Gurugram",
+                delivered: "20+ projects",
+                segments: "Residential · Commercial",
+                score: 20,
+                units: 448,
+                ready: 0,
+                uc: 1,
+                newLaunch: 0,
+                description: "Conscient Infrastructure has delivered high-end residential, commercial, and educational institutions in India. Known for partnerships with top designers and transparent compliance.",
+                corridors: { "Southern Peripheral Road": 3, "Golf Course Extension Road": 2, "Other": 1 },
+                ratings: {
+                    brandPerception: 4,
+                    constructionQuality: 4,
+                    deliveryRecord: 4,
+                    financialStrength: 4,
+                    litigation: 4
+                }
+            },
+            {
+                id: "central-park",
+                name: "Central Park",
+                logo: "",
+                est: 2001,
+                city: "Gurugram",
+                delivered: "12 projects",
+                segments: "Luxury Residential · Hospitality",
+                score: 19,
+                units: 350,
+                ready: 1,
+                uc: 0,
+                newLaunch: 0,
+                description: "Central Park is pioneer in luxury hospitality-centric residential developments, introducing concept living and world-class resort lifestyles to Gurugram.",
+                corridors: { "Sohna Road": 6, "Golf Course Road": 2, "Other": 4 },
+                ratings: {
+                    brandPerception: 4,
+                    constructionQuality: 4,
+                    deliveryRecord: 3,
+                    financialStrength: 4,
+                    litigation: 3
+                }
+            }
+        ];
+
+        // PROJECTS database matching project_search.html
+        const PROJECTS = [
+            {
+                "id": "tarc-ishva",
+                "name": "Tarc Ishva",
+                "developer": "TARC Limited",
+                "sector": "Sector 63A",
+                "corridor": "Golf Course Extension Road",
+                "bhk": ["3 BHK", "4 BHK", "Penthouse"],
+                "area": 9.15,
+                "units": 518,
+                "status": "Under Construction",
+                "priceMin": 8.5,
+                "priceMax": 10.5,
+                "score": 84,
+                "carpetEff": 50,
+                "builtupEff": 67,
+                "img": "m3m_altitude_lobby.png",
+                "lat": 28.415,
+                "lng": 77.085,
+                "targetSegment": "Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "trump-tower-gurgaon",
+                "name": "Trump Tower (Gurgaon)",
+                "developer": "M3M India Pvt Ltd",
+                "sector": "Sector 65",
+                "corridor": "Golf Course Extension Road",
+                "bhk": ["2 BHK", "3 BHK", "4 BHK"],
+                "area": 2.83,
+                "units": 252,
+                "status": "Ready to Move In",
+                "priceMin": 11.5,
+                "priceMax": 22.08,
+                "score": 76,
+                "carpetEff": 64,
+                "builtupEff": 85,
+                "img": "m3m_altitude_lounge.png",
+                "lat": 28.411,
+                "lng": 77.074,
+                "targetSegment": "Ultra Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "dlf-the-arbour",
+                "name": "DLF The Arbour",
+                "developer": "DLF Limited",
+                "sector": "Sector 63",
+                "corridor": "Golf Course Extension Road",
+                "bhk": ["4 BHK"],
+                "area": 25.08,
+                "units": 1137,
+                "status": "Under Construction",
+                "priceMin": 7.5,
+                "priceMax": 8.5,
+                "score": 72,
+                "carpetEff": 57,
+                "builtupEff": 74,
+                "img": "m3m_altitude_hero.png",
+                "lat": 28.4168,
+                "lng": 77.0805,
+                "targetSegment": "Ultra Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "m3m-altitude",
+                "name": "M3M Altitude",
+                "developer": "M3M India Pvt Ltd",
+                "sector": "Sector 65",
+                "corridor": "Golf Course Extension Road",
+                "bhk": ["3 BHK", "4 BHK", "Penthouse"],
+                "area": 2.79,
+                "units": 342,
+                "status": "Under Construction",
+                "priceMin": 9.46,
+                "priceMax": 11.31,
+                "score": 27,
+                "carpetEff": 57,
+                "builtupEff": 73,
+                "img": "m3m_altitude_hero.png",
+                "lat": 28.4124,
+                "lng": 77.0724,
+                "targetSegment": "Ultra Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "m3m-golfestate",
+                "name": "M3M Golfestate — Fairway East",
+                "developer": "M3M India Pvt Ltd",
+                "sector": "Sector 65",
+                "corridor": "Golf Course Extension Road",
+                "bhk": ["3 BHK", "4 BHK", "Penthouse"],
+                "area": 5.6,
+                "units": 160,
+                "status": "Ready to Move In",
+                "priceMin": 4.1,
+                "priceMax": 7.6,
+                "score": 37,
+                "carpetEff": 53,
+                "builtupEff": 70,
+                "img": "m3m_altitude_lobby.png",
+                "lat": 28.4120,
+                "lng": 77.0750,
+                "targetSegment": "Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "mahindra-luminare",
+                "name": "Mahindra Luminare",
+                "developer": "Mahindra Lifespaces",
+                "sector": "Sector 59",
+                "corridor": "Golf Course Extension Road",
+                "bhk": ["3 BHK", "4 BHK", "Penthouse"],
+                "area": 6.94,
+                "units": 380,
+                "status": "Ready to Move In",
+                "priceMin": 6.5,
+                "priceMax": 9.0,
+                "score": 68,
+                "carpetEff": 56,
+                "builtupEff": 76,
+                "img": "m3m_altitude_balcony.png",
+                "lat": 28.4215,
+                "lng": 77.1002,
+                "targetSegment": "Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "sobha-city",
+                "name": "Sobha City",
+                "developer": "Sobha Limited",
+                "sector": "Sector 108",
+                "corridor": "Dwarka Expressway",
+                "bhk": ["2 BHK", "3 BHK"],
+                "area": 23.0,
+                "units": 1056,
+                "status": "Ready to Move In",
+                "priceMin": 2.2,
+                "priceMax": 2.9,
+                "score": 24,
+                "carpetEff": 57,
+                "builtupEff": 64,
+                "img": "m3m_altitude_lobby.png",
+                "lat": 28.517407,
+                "lng": 76.9944,
+                "targetSegment": "Premium",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "tata-la-vida",
+                "name": "Tata La Vida",
+                "developer": "Tata Housing",
+                "sector": "Sector 113",
+                "corridor": "Dwarka Expressway",
+                "bhk": ["2 BHK", "3 BHK"],
+                "area": 12.0,
+                "units": 674,
+                "status": "Ready to Move In",
+                "priceMin": 1.5,
+                "priceMax": 2.3,
+                "score": 23,
+                "carpetEff": 59,
+                "builtupEff": 71,
+                "img": "m3m_altitude_lounge.png",
+                "lat": 28.534515,
+                "lng": 77.02028,
+                "targetSegment": "Premium",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "dlf-privana-south",
+                "name": "DLF Privana South",
+                "developer": "DLF Limited",
+                "sector": "Sector 77",
+                "corridor": "Southern Peripheral Road",
+                "bhk": ["4 BHK", "Penthouse"],
+                "area": 25.14,
+                "units": 1113,
+                "status": "Under Construction",
+                "priceMin": 7.2,
+                "priceMax": 9.5,
+                "score": 59,
+                "carpetEff": 59,
+                "builtupEff": 76,
+                "img": "m3m_altitude_hero.png",
+                "lat": 28.380354,
+                "lng": 76.990843,
+                "targetSegment": "Ultra Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "parq-by-conscient",
+                "name": "Conscient ParQ",
+                "developer": "Conscient Infrastructure",
+                "sector": "Sector 80",
+                "corridor": "Southern Peripheral Road",
+                "bhk": ["2 BHK", "3 BHK", "4 BHK"],
+                "area": 5.6,
+                "units": 448,
+                "status": "Under Construction",
+                "priceMin": 3.5,
+                "priceMax": 4.8,
+                "score": 50,
+                "carpetEff": 55,
+                "builtupEff": 69,
+                "img": "m3m_altitude_balcony.png",
+                "lat": 28.374274,
+                "lng": 76.961834,
+                "targetSegment": "Premium",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "dlf-carlton-estate",
+                "name": "DLF Carlton Estate",
+                "developer": "DLF Limited",
+                "sector": "Sector 54",
+                "corridor": "Golf Course Road",
+                "bhk": ["2 BHK", "3 BHK", "4 BHK"],
+                "area": 7.2,
+                "units": 650,
+                "status": "Ready to Move In",
+                "priceMin": 3.2,
+                "priceMax": 4.5,
+                "score": 22,
+                "carpetEff": 60,
+                "builtupEff": 70,
+                "img": "m3m_altitude_lobby.png",
+                "lat": 28.447892,
+                "lng": 77.094594,
+                "targetSegment": "Premium",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "central-park-ii-bellevue",
+                "name": "Central Park II Bellevue",
+                "developer": "Central Park",
+                "sector": "Sector 48",
+                "corridor": "Sohna Road",
+                "bhk": ["3 BHK", "4 BHK"],
+                "area": 12.5,
+                "units": 350,
+                "status": "Ready to Move In",
+                "priceMin": 3.8,
+                "priceMax": 4.9,
+                "score": 20,
+                "carpetEff": 58,
+                "builtupEff": 68,
+                "img": "m3m_altitude_lounge.png",
+                "lat": 28.414324,
+                "lng": 77.043512,
+                "targetSegment": "Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            },
+            {
+                "id": "emaar-digihomes",
+                "name": "Emaar DigiHomes",
+                "developer": "Emaar India",
+                "sector": "Sector 62",
+                "corridor": "Golf Course Extension Road",
+                "bhk": ["2 BHK", "3 BHK"],
+                "area": 5.64,
+                "units": 370,
+                "status": "Ready to Move In",
+                "priceMin": 2.1,
+                "priceMax": 3.4,
+                "score": 62,
+                "carpetEff": 55,
+                "builtupEff": 71,
+                "img": "m3m_altitude_balcony.png",
+                "lat": 28.4116,
+                "lng": 77.0945,
+                "targetSegment": "Luxury",
+                "projectType": "High Rise",
+                "structureType": "Apartment"
+            }
+        ];
+
+        // Global State
+        let currentDev = null;
+        let activeStatusFilter = 'all';
+        let activeCorridorFilter = 'all';
+        let activeView = 'list';
+        let mapInstance = null;
+        let mapMarkers = [];
+
+        function initPage() {
+            // Get Developer ID from query param
+            const params = new URLSearchParams(window.location.search);
+            const devId = params.get('id') || 'm3m'; // Default to M3M India Pvt Ltd
+            
+            currentDev = DEVELOPERS.find(d => d.id === devId) || DEVELOPERS[1]; // fallback to M3M
+            
+            document.title = `${currentDev.name} Audit Profile | prOPIUM.ai`;
+            document.getElementById('breadcrumbDevName').textContent = currentDev.name;
+            document.getElementById('devSearchInput').value = currentDev.name;
+
+            // Render details
+            renderHeader();
+            renderCorridorBar();
+            renderMetrics();
+            renderScorecard();
+            populateFilterDropdowns();
+            
+            // Set view
+            setView(activeView);
+        }
+
+        function toggleDevDropdown(event) {
+            event.stopPropagation();
+            const popover = document.getElementById('devDropdownPopover');
+            const isHidden = popover.classList.contains('hidden');
+            
+            if (isHidden) {
+                // Populate popover
+                let popHtml = "";
+                DEVELOPERS.forEach(dev => {
+                    const isActive = dev.id === currentDev.id;
+                    popHtml += `
+                        <div onclick="selectDeveloper('${dev.id}')" 
+                             class="flex justify-between items-center px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors ${isActive ? 'bg-slate-50 font-bold text-primary' : ''}">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded bg-slate-100 flex items-center justify-center font-display font-bold text-[8px] overflow-hidden">
+                                    ${dev.logo ? `<img src="${dev.logo}" class="w-full h-full object-contain">` : dev.name.split(' ').map(w => w[0]).join('').substring(0, 2)}
+                                </div>
+                                <span>${dev.name}</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400">${dev.score}/25</span>
+                        </div>
+                    `;
+                });
+                popover.innerHTML = popHtml;
+                popover.classList.remove('hidden');
+            } else {
+                popover.classList.add('hidden');
+            }
+        }
+
+        function selectDeveloper(devId) {
+            window.location.href = `developer_detail.html?id=${devId}`;
+        }
+
+        function clearDevSearch(event) {
+            event.stopPropagation();
+            window.location.href = 'developer_search.html';
+        }
+
+        function resetDeveloperPage() {
+            window.location.href = 'developer_search.html';
+        }
+
+        function toggleAdvancedSearch() {
+            const panel = document.getElementById('advancedFiltersGrid');
+            panel.classList.toggle('hidden');
+            const chevron = document.getElementById('filterChevron');
+            if (panel.classList.contains('hidden')) {
+                chevron.style.transform = 'rotate(0deg)';
+            } else {
+                chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function toggleLocalDropdown(event, popoverId) {
+            event.stopPropagation();
+            document.querySelectorAll('.popover-dropdown').forEach(p => {
+                if (p.id !== popoverId) p.classList.add('hidden');
+            });
+            const popover = document.getElementById(popoverId);
+            popover.classList.toggle('hidden');
+        }
+
+        function getCheckedValues(popoverId) {
+            const checkboxes = document.querySelectorAll(`#${popoverId} input[type="checkbox"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function updateFilterLabels() {
+            const corridorChecked = getCheckedValues('popoverCorridor');
+            document.getElementById('labelCorridor').textContent = corridorChecked.length > 0 
+                ? (corridorChecked.length === 1 ? corridorChecked[0] : `${corridorChecked.length} Corridors`)
+                : "All Corridors";
+
+            const locationChecked = getCheckedValues('popoverLocation');
+            document.getElementById('labelLocation').textContent = locationChecked.length > 0 
+                ? (locationChecked.length === 1 ? locationChecked[0] : `${locationChecked.length} Locations`)
+                : "All Locations";
+
+            const segmentChecked = getCheckedValues('popoverSegment');
+            document.getElementById('labelSegment').textContent = segmentChecked.length > 0 
+                ? (segmentChecked.length === 1 ? segmentChecked[0] : `${segmentChecked.length} Segments`)
+                : "All Target Segments";
+
+            const statusChecked = getCheckedValues('popoverStatus');
+            document.getElementById('labelStatus').textContent = statusChecked.length > 0 
+                ? (statusChecked.length === 1 ? statusChecked[0] : `${statusChecked.length} Statuses`)
+                : "All Statuses";
+
+            const bhkChecked = getCheckedValues('popoverBHK');
+            document.getElementById('labelBHK').textContent = bhkChecked.length > 0 
+                ? (bhkChecked.length === 1 ? bhkChecked[0] : `${bhkChecked.length} BHKs`)
+                : "Any BHK";
+
+            const budgetChecked = getCheckedValues('popoverBudget');
+            document.getElementById('labelBudget').textContent = budgetChecked.length > 0 
+                ? (budgetChecked.length === 1 ? budgetChecked[0] : `${budgetChecked.length} Budgets`)
+                : "Any Budget";
+
+            const typeChecked = getCheckedValues('popoverType');
+            document.getElementById('labelType').textContent = typeChecked.length > 0 
+                ? (typeChecked.length === 1 ? typeChecked[0] : `${typeChecked.length} Types`)
+                : "All Project Types";
+
+            const structureChecked = getCheckedValues('popoverStructure');
+            document.getElementById('labelStructure').textContent = structureChecked.length > 0 
+                ? (structureChecked.length === 1 ? structureChecked[0] : `${structureChecked.length} Structures`)
+                : "All Structure Types";
+        }
+
+        function runLocalFilters() {
+            updateFilterLabels();
+            renderViews();
+        }
+
+        function populateFilterDropdowns() {
+            const corridors = [...new Set(PROJECTS.map(p => p.corridor))].sort();
+            const locations = [...new Set(PROJECTS.map(p => p.sector))].sort();
+
+            const popoverCorridor = document.getElementById('popoverCorridor');
+            popoverCorridor.innerHTML = corridors.map(c => `
+                <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                    <input type="checkbox" value="${c}" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                    ${c}
+                </label>
+            `).join('');
+
+            const popoverLocation = document.getElementById('popoverLocation');
+            popoverLocation.innerHTML = locations.map(l => `
+                <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                    <input type="checkbox" value="${l}" onchange="runLocalFilters()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                    ${l}
+                </label>
+            `).join('');
+        }
+
+        // Close popover on document click
+        document.addEventListener('click', (e) => {
+            const popover = document.getElementById('devDropdownPopover');
+            if (popover) popover.classList.add('hidden');
+
+            if (!e.target.closest('.custom-multiselect')) {
+                document.querySelectorAll('.popover-dropdown').forEach(p => p.classList.add('hidden'));
+            }
+        });
+
+        function renderHeader() {
+            // Logo
+            const logoContainer = document.getElementById('devProfileLogo');
+            if (currentDev.logo) {
+                logoContainer.innerHTML = `<img src="${currentDev.logo}" alt="${currentDev.name} Logo" class="max-w-full max-h-full object-contain">`;
+            } else {
+                logoContainer.innerHTML = `<div class="font-display font-extrabold text-[#0F172A] text-xl tracking-tight">${currentDev.name.split(' ').map(w => w[0]).join('').substring(0, 3)}</div>`;
+            }
+
+            // Name
+            document.getElementById('devProfileName').textContent = currentDev.name;
+
+            // Badges
+            const badgesContainer = document.getElementById('devProfileBadges');
+            badgesContainer.innerHTML = `
+                <span class="bg-slate-100 text-slate-600 border border-slate-200/50 text-[9px] font-bold px-2 py-0.5 rounded font-sans uppercase tracking-wider">Est. ${currentDev.est} · ${currentDev.city}</span>
+                <span class="bg-slate-100 text-slate-600 border border-slate-200/50 text-[9px] font-bold px-2 py-0.5 rounded font-sans uppercase tracking-wider">${currentDev.delivered}</span>
+                <span class="bg-slate-100 text-slate-600 border border-slate-200/50 text-[9px] font-bold px-2 py-0.5 rounded font-sans uppercase tracking-wider">${currentDev.segments.split(' · ')[0]}</span>
+            `;
+
+            // Description
+            document.getElementById('devProfileDesc').textContent = currentDev.description;
+
+            // Score
+            document.getElementById('devProfileScore').textContent = currentDev.score;
+            
+            // Score Color
+            const scoreBadge = document.getElementById('devScoreBadge');
+            const scoreVal = document.getElementById('devProfileScore');
+            
+            scoreVal.classList.remove('text-emerald-500', 'text-amber-500', 'text-rose-500');
+            if (currentDev.score >= 21) {
+                scoreVal.classList.add('text-emerald-500');
+            } else if (currentDev.score >= 18) {
+                scoreVal.classList.add('text-amber-500');
+            } else {
+                scoreVal.classList.add('text-rose-500');
+            }
+        }
+
+        function renderCorridorBar() {
+            const bar = document.getElementById('corridorSegmentBar');
+            const legend = document.getElementById('corridorBarLegend');
+            
+            const distribution = currentDev.corridors;
+            const totalProjects = Object.values(distribution).reduce((a, b) => a + b, 0);
+            
+            legend.textContent = `${totalProjects} tracked projects across ${Object.keys(distribution).length} corridors · tap to filter`;
+            
+            // Color mapping for corridors
+            const colors = {
+                "Golf Course Road": "bg-teal-600 hover:bg-teal-700",
+                "Golf Course Extension Road": "bg-emerald-600 hover:bg-emerald-700",
+                "Dwarka Expressway": "bg-violet-600 hover:bg-violet-700",
+                "Southern Peripheral Road": "bg-blue-600 hover:bg-blue-700",
+                "Sohna Road": "bg-indigo-600 hover:bg-indigo-700",
+                "Other": "bg-slate-500 hover:bg-slate-600"
+            };
+
+            const defaultColor = "bg-amber-600 hover:bg-amber-700";
+
+            let barHtml = "";
+            for (const [name, count] of Object.entries(distribution)) {
+                if (count === 0) continue;
+                const pct = (count / totalProjects) * 100;
+                const color = colors[name] || defaultColor;
+                
+                // Friendly short name
+                let shortName = name;
+                if (name === "Golf Course Extension Road") shortName = "GCEX";
+                else if (name === "Southern Peripheral Road") shortName = "SPR";
+                else if (name === "Dwarka Expressway") shortName = "Dwarka Expy";
+                else if (name === "Golf Course Road") shortName = "GCR";
+
+                const isActive = activeCorridorFilter === name;
+
+                barHtml += `
+                    <div onclick="setCorridorFilter('${name}')" 
+                          style="width: ${pct}%" 
+                          class="${color} h-full flex items-center justify-center text-white text-[10px] font-bold tracking-wider cursor-pointer border-r border-white/10 select-none transition-all ${isActive ? 'ring-2 ring-inset ring-amber-400 opacity-100 scale-y-105' : 'opacity-85 hover:opacity-100'}"
+                          title="${name}: ${count} projects">
+                        ${shortName} <span class="font-normal opacity-90 ml-1">${count}</span>
+                    </div>
+                `;
+            }
+            
+            bar.innerHTML = barHtml;
+        }
+
+        function renderMetrics() {
+            document.getElementById('metricProjectsTracked').textContent = currentDev.ready + currentDev.uc + currentDev.newLaunch;
+            document.getElementById('metricTotalUnits').textContent = currentDev.units.toLocaleString('en-IN');
+
+            // Ready / UC split values
+            document.getElementById('lblUnitsReady').textContent = `${currentDev.ready} Ready · ${(Math.round(currentDev.units * 0.35)).toLocaleString('en-IN')} units`;
+            document.getElementById('lblUnitsUC').textContent = `${currentDev.uc} Under Const · ${(Math.round(currentDev.units * 0.65)).toLocaleString('en-IN')} units`;
+
+            const totalStatuses = currentDev.ready + currentDev.uc;
+            const readyPct = (currentDev.ready / totalStatuses) * 100;
+            const ucPct = (currentDev.uc / totalStatuses) * 100;
+
+            document.getElementById('unitBarReady').style.width = readyPct + '%';
+            document.getElementById('unitBarUC').style.width = ucPct + '%';
+        }
+
+        function renderScorecard() {
+            const list = document.getElementById('scorecardParametersList');
+            const params = currentDev.ratings;
+
+            const friendlyLabels = {
+                brandPerception: "Brand Perception",
+                constructionQuality: "Construction Quality",
+                deliveryRecord: "Delivery Record",
+                financialStrength: "Financial Strength",
+                litigation: "Litigation Risk"
+            };
+
+            const colors = {
+                brandPerception: "bg-emerald-500",
+                constructionQuality: "bg-emerald-500",
+                deliveryRecord: "bg-amber-500",
+                financialStrength: "bg-emerald-500",
+                litigation: "bg-rose-500" // Litigation matches the client design's red/litigation risk profile
+            };
+
+            let scorecardHtml = "";
+            for (const [key, rating] of Object.entries(params)) {
+                const label = friendlyLabels[key] || key;
+                const barColor = colors[key] || "bg-brandBlue";
+
+                // Generate rating pills
+                let pillsHtml = "";
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        pillsHtml += `<span class="w-3.5 h-1.5 rounded-sm ${barColor} block"></span>`;
+                    } else {
+                        pillsHtml += `<span class="w-3.5 h-1.5 rounded-sm bg-slate-100 block border border-slate-200/40"></span>`;
+                    }
+                }
+
+                scorecardHtml += `
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-500 font-semibold">${label}</span>
+                        <div class="flex gap-1.5 items-center">
+                            <div class="flex gap-1 items-center">
+                                ${pillsHtml}
+                            </div>
+                            <span class="text-[10px] text-slate-800 font-extrabold w-6 text-right">${rating}/5</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            list.innerHTML = scorecardHtml;
+        }
+
+        /* ================= VIEW SWITCHER CONTROL ================= */
+        function setView(view) {
+            activeView = view;
+            
+            // Toggle Display Container
+            document.getElementById('viewList').classList.toggle('hidden', view !== 'list');
+            document.getElementById('viewCards').classList.toggle('hidden', view !== 'cards');
+            document.getElementById('viewMap').classList.toggle('hidden', view !== 'map');
+            
+            // Toggle Active Switch Buttons
+            const btnL = document.getElementById('viewBtnList');
+            const btnC = document.getElementById('viewBtnCards');
+            const btnM = document.getElementById('viewBtnMap');
+            
+            btnL.className = view === 'list' 
+                ? "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider bg-white text-primary shadow-sm flex items-center gap-1.5" 
+                : "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider text-slate-500 hover:text-primary flex items-center gap-1.5";
+                
+            btnC.className = view === 'cards' 
+                ? "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider bg-white text-primary shadow-sm flex items-center gap-1.5" 
+                : "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider text-slate-500 hover:text-primary flex items-center gap-1.5";
+                
+            btnM.className = view === 'map' 
+                ? "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider bg-white text-primary shadow-sm flex items-center gap-1.5" 
+                : "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider text-slate-500 hover:text-primary flex items-center gap-1.5";
+            
+            if (view === 'map') {
+                setTimeout(() => {
+                    initMap();
+                }, 100);
+            }
+            
+            renderViews();
+        }
+
+        /* ================= MAP INITIALIZATION ================= */
+        function initMap() {
+            if (mapInstance) {
+                mapInstance.invalidateSize();
+                return;
+            }
+            // Center around Gurgaon Sector 65/63 (lat: 28.415, lng: 77.08)
+            mapInstance = L.map('map', {
+                zoomControl: false
+            }).setView([28.4150, 77.0800], 12);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            }).addTo(mapInstance);
+            
+            L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
+            
+            updateMapMarkers();
+        }
+
+        function updateMapMarkers() {
+            if (!mapInstance) return;
+            
+            // Clear markers
+            mapMarkers.forEach(m => mapInstance.removeLayer(m));
+            mapMarkers = [];
+            
+            // Get developer projects matching active filters
+            let devProjects = PROJECTS.filter(p => p.developer.toLowerCase().includes(currentDev.name.toLowerCase().split(' ')[0]));
+            if (activeStatusFilter !== 'all') {
+                devProjects = devProjects.filter(p => p.status === activeStatusFilter);
+            }
+            if (activeCorridorFilter !== 'all') {
+                devProjects = devProjects.filter(p => p.corridor === activeCorridorFilter);
+            }
+            
+            const bounds = [];
+            devProjects.forEach((p, idx) => {
+                if (!p.lat || !p.lng) return;
+                
+                const targetLink = p.id === 'm3m-altitude' ? '/project_detail.html' : '/project_detail_locked.html';
+                
+                let scoreColor = 'border-amber-500';
+                if (p.score >= 70) {
+                    scoreColor = 'border-emerald-500';
+                } else if (p.score >= 40) {
+                    scoreColor = 'border-amber-500';
+                } else {
+                    scoreColor = 'border-rose-500';
+                }
+
+                const customPin = L.divIcon({
+                    className: "custom-map-pin",
+                    html: `<div id="map-pin-${idx}" class="w-8 h-8 rounded-full bg-[#0F172A] border-2 ${scoreColor} text-white text-[9px] font-bold flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95">${p.score}</div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+                
+                const marker = L.marker([p.lat, p.lng], { icon: customPin }).addTo(mapInstance);
+                
+                marker.bindPopup(`
+                    <div class="p-2.5 space-y-1.5 font-sans">
+                        <span class="text-[9px] bg-white/10 text-slate-300 font-bold px-1.5 py-0.5 rounded uppercase">${p.developer}</span>
+                        <h4 class="font-display font-extrabold text-xs text-white leading-none">${p.name}</h4>
+                        <p class="text-[10px] text-slate-400">${p.sector}, ${p.corridor}</p>
+                        <div class="flex justify-between items-center text-[10px] border-t border-white/10 pt-1.5 mt-1.5">
+                            <span class="font-extrabold text-amber-500">₹${p.priceMin.toFixed(2)} - ${p.priceMax.toFixed(2)} Cr</span>
+                            <a href="${targetLink}" class="text-brandBlue font-bold hover:underline">Dossier →</a>
+                        </div>
+                    </div>
+                `);
+                
+                mapMarkers.push(marker);
+                bounds.push([p.lat, p.lng]);
+            });
+            
+            if (bounds.length > 0) {
+                mapInstance.fitBounds(bounds, { padding: [40, 40] });
+            }
+        }
+
+        function highlightMarker(idx) {
+            const pin = document.getElementById(`map-pin-${idx}`);
+            if (pin) {
+                pin.classList.remove('bg-[#0F172A]');
+                pin.classList.add('bg-amber-500', 'text-[#0F172A]', 'scale-110');
+            }
+        }
+
+        function resetMarker(idx) {
+            const pin = document.getElementById(`map-pin-${idx}`);
+            if (pin) {
+                pin.classList.remove('bg-amber-500', 'text-[#0F172A]', 'scale-110');
+                pin.classList.add('bg-[#0F172A]');
+            }
+        }
+
+        /* ================= VIEWS RENDERING CONTROLLER ================= */
+        function renderViews() {
+            // Get projects matching developer name
+            let devProjects = PROJECTS.filter(p => p.developer.toLowerCase().includes(currentDev.name.toLowerCase().split(' ')[0]));
+            
+            // Update Tab counts
+            const allCount = devProjects.length;
+            const readyCount = devProjects.filter(p => p.status === 'Ready to Move In').length;
+            const ucCount = devProjects.filter(p => p.status === 'Under Construction').length;
+
+            document.getElementById('cntAll').textContent = allCount;
+            document.getElementById('cntReady').textContent = readyCount;
+            document.getElementById('cntUC').textContent = ucCount;
+
+            // Apply advanced filters
+            const selectedCorridors = getCheckedValues('popoverCorridor');
+            const selectedLocations = getCheckedValues('popoverLocation');
+            const selectedSegments = getCheckedValues('popoverSegment');
+            const selectedStatuses = getCheckedValues('popoverStatus');
+            const selectedBHKs = getCheckedValues('popoverBHK');
+            const selectedBudgets = getCheckedValues('popoverBudget');
+            const selectedTypes = getCheckedValues('popoverType');
+            const selectedStructures = getCheckedValues('popoverStructure');
+
+            if (selectedCorridors.length > 0) {
+                devProjects = devProjects.filter(p => selectedCorridors.includes(p.corridor));
+            } else if (activeCorridorFilter !== 'all') {
+                devProjects = devProjects.filter(p => p.corridor === activeCorridorFilter);
+            }
+
+            if (selectedLocations.length > 0) {
+                devProjects = devProjects.filter(p => selectedLocations.includes(p.sector));
+            }
+            if (selectedSegments.length > 0) {
+                devProjects = devProjects.filter(p => selectedSegments.includes(p.targetSegment));
+            }
+
+            if (selectedStatuses.length > 0) {
+                devProjects = devProjects.filter(p => selectedStatuses.includes(p.status));
+            } else if (activeStatusFilter !== 'all') {
+                devProjects = devProjects.filter(p => p.status === activeStatusFilter);
+            }
+
+            if (selectedBHKs.length > 0) {
+                devProjects = devProjects.filter(p => p.bhk.some(b => selectedBHKs.includes(b)));
+            }
+            if (selectedBudgets.length > 0) {
+                devProjects = devProjects.filter(p => {
+                    return selectedBudgets.some(b => {
+                        if (b === "Under 2 Cr") return p.priceMin < 2;
+                        if (b === "2 - 5 Cr") return p.priceMin <= 5 && p.priceMax >= 2;
+                        if (b === "5 - 10 Cr") return p.priceMin <= 10 && p.priceMax >= 5;
+                        if (b === "10 Cr+") return p.priceMax >= 10;
+                        return true;
+                    });
+                });
+            }
+            if (selectedTypes.length > 0) {
+                devProjects = devProjects.filter(p => selectedTypes.includes(p.projectType));
+            }
+            if (selectedStructures.length > 0) {
+                devProjects = devProjects.filter(p => selectedStructures.includes(p.structureType));
+            }
+
+            // Results count label in the top search bar
+            document.getElementById('projectsCountLabel').textContent = `${devProjects.length} result${devProjects.length !== 1 ? 's' : ''}`;
+
+            // Show active resets
+            const isFiltered = activeStatusFilter !== 'all' || activeCorridorFilter !== 'all' ||
+                selectedCorridors.length > 0 || selectedLocations.length > 0 ||
+                selectedSegments.length > 0 || selectedStatuses.length > 0 ||
+                selectedBHKs.length > 0 || selectedBudgets.length > 0 ||
+                selectedTypes.length > 0 || selectedStructures.length > 0;
+            document.getElementById('resetActiveFiltersBtn').classList.toggle('hidden', !isFiltered);
+
+            // Handle Empty projects
+            const isZero = devProjects.length === 0;
+            document.getElementById('emptyProjectsState').classList.toggle('hidden', !isZero);
+
+            // Hide/Show containers
+            document.getElementById('viewList').classList.toggle('hidden', isZero || activeView !== 'list');
+            document.getElementById('viewCards').classList.toggle('hidden', isZero || activeView !== 'cards');
+            document.getElementById('viewMap').classList.toggle('hidden', isZero || activeView !== 'map');
+
+            if (isZero) return;
+
+            // Apply sorting
+            const sortBy = document.getElementById('sortSelect').value;
+            if (sortBy === 'score') {
+                devProjects.sort((a, b) => b.score - a.score);
+            } else if (sortBy === 'possession') {
+                devProjects.sort((a, b) => b.launchYear - a.launchYear); // approximate by launchYear
+            } else if (sortBy === 'price') {
+                devProjects.sort((a, b) => a.priceMin - b.priceMin);
+            } else if (sortBy === 'units') {
+                devProjects.sort((a, b) => b.units - a.units);
+            }
+
+            if (activeView === 'list') {
+                renderListView(devProjects);
+            } else if (activeView === 'cards') {
+                renderCardsView(devProjects);
+            } else if (activeView === 'map') {
+                renderMapViewList(devProjects);
+                updateMapMarkers();
+            }
+        }
+
+        function renderListView(projects) {
+            const tbody = document.getElementById('listTableBody');
+            tbody.innerHTML = projects.map(p => {
+                const targetLink = p.id === 'm3m-altitude' ? '/project_detail.html' : '/project_detail_locked.html';
+                let scoreColor = 'text-rose-500';
+                if (p.score >= 70) scoreColor = 'text-emerald-500';
+                else if (p.score >= 40) scoreColor = 'text-amber-500';
+
+                return `
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <span class="flex-shrink-0 w-2.5 h-2.5 rounded-full ${p.status === 'Ready to Move In' ? 'bg-emerald-500' : 'bg-amber-500'}" title="${p.status}"></span>
+                            <div>
+                                <h4 class="font-bold text-slate-950 font-display text-sm">${p.name}</h4>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${p.developer}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <span class="block font-semibold text-slate-700 text-[11px]">${p.sector}</span>
+                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block font-semibold">${p.corridor}</span>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="flex gap-1 flex-wrap">
+                            ${p.bhk.map(b => `<span class="bg-slate-100 text-slate-500 border border-slate-200/30 px-2 py-0.5 rounded text-[9px] font-semibold">${b}</span>`).join('')}
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 text-right">
+                        <div class="inline-block w-36 text-[10px] space-y-1">
+                            <div class="flex justify-between font-semibold">
+                                <span class="text-slate-400">Carpet:</span>
+                                <span class="text-slate-800 font-bold">${p.carpetEff}%</span>
+                            </div>
+                            <div class="flex justify-between font-semibold">
+                                <span class="text-slate-400">Built-up:</span>
+                                <span class="text-slate-800 font-bold">${p.builtupEff}%</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-right font-display font-extrabold text-sm ${scoreColor}">
+                        ${p.score} <span class="text-[10px] text-slate-400 font-normal">/ 100</span>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <div class="flex justify-end gap-2 items-center">
+                            <span class="font-display font-extrabold text-xs text-slate-900 mr-4">₹${p.priceMin.toFixed(2)} - ${p.priceMax.toFixed(2)} Cr</span>
+                            <a href="${targetLink}" class="bg-primary hover:bg-slate-900 text-white text-[9px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider transition-all">
+                                Dossier →
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function renderCardsView(projects) {
+            const container = document.getElementById('viewCards');
+            container.innerHTML = projects.map(p => {
+                const targetLink = p.id === 'm3m-altitude' ? '/project_detail.html' : '/project_detail_locked.html';
+                let scoreColorClass = 'text-rose-500';
+                if (p.score >= 70) scoreColorClass = 'text-emerald-500';
+                else if (p.score >= 40) scoreColorClass = 'text-amber-500';
+
+                return `
+                <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-secondary-container/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <!-- Image Block -->
+                        <div class="relative h-48 w-full overflow-hidden bg-slate-900">
+                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none"></div>
+                            
+                            <!-- Construction Badge -->
+                            <span class="absolute top-3 left-3 bg-[#0F172A] text-white text-[9px] px-2.5 py-1 rounded font-bold uppercase tracking-wider">
+                                ${p.status}
+                            </span>
+                            
+                            <!-- prOPIUM Score Badge -->
+                            <div class="absolute top-3 right-3 flex flex-col items-center bg-[#0F172A] text-white border border-white/10 px-3 py-1.5 rounded-xl text-center shadow-lg">
+                                <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider leading-none">Audit Score</span>
+                                <span class="font-display font-extrabold text-sm ${scoreColorClass} mt-0.5 leading-none">${p.score}</span>
+                            </div>
+                        </div>
+
+                        <!-- Info Content -->
+                        <div class="p-5 space-y-3">
+                            <div>
+                                <span class="text-[9px] bg-slate-100 text-slate-600 border border-slate-200/50 font-bold px-2 py-0.5 rounded font-sans uppercase tracking-wider">
+                                    ${p.developer}
+                                </span>
+                                <h3 class="font-display font-extrabold text-base text-primary mt-1">${p.name}</h3>
+                                <p class="text-slate-400 text-xs flex items-center gap-0.5 mt-0.5">
+                                    <span class="material-symbols-outlined text-[13px] text-secondary-container">location_on</span>
+                                    ${p.sector}, ${p.corridor}
+                                </p>
+                            </div>
+
+                            <div class="flex flex-wrap gap-1">
+                                ${p.bhk.map(b => `<span class="bg-slate-50 text-slate-500 border border-slate-200/50 px-2 py-0.5 rounded text-[10px] font-semibold">${b}</span>`).join('')}
+                            </div>
+                            
+                            <!-- Telemetry bars -->
+                            <div class="space-y-2 pt-2 border-t border-slate-100">
+                                <div>
+                                    <div class="flex justify-between items-center text-[10px] text-slate-500 font-semibold mb-0.5">
+                                        <span>Carpet Efficiency</span>
+                                        <span class="font-bold text-slate-900">${p.carpetEff}%</span>
+                                    </div>
+                                    <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-emerald-500" style="width: ${p.carpetEff}%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center text-[10px] text-slate-500 font-semibold mb-0.5">
+                                        <span>Built-up Efficiency</span>
+                                        <span class="font-bold text-slate-900">${p.builtupEff}%</span>
+                                    </div>
+                                    <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-amber-500" style="width: ${p.builtupEff}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer / Actions -->
+                    <div class="p-5 pt-0 border-t border-slate-100/50 flex justify-between items-center">
+                        <div>
+                            <span class="text-slate-400 block text-[9px] font-bold uppercase tracking-wider">Current budget</span>
+                            <span class="font-display font-extrabold text-sm text-secondary-container">₹${p.priceMin.toFixed(2)} - ${p.priceMax.toFixed(2)} Cr</span>
+                        </div>
+                        <a href="${targetLink}" class="bg-primary hover:bg-slate-900 text-white text-[10px] font-bold px-3.5 py-2 rounded-xl uppercase tracking-wider transition-all flex items-center gap-1 shadow-sm">
+                            Dossier →
+                        </a>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderMapViewList(projects) {
+            const container = document.getElementById('mapViewListContainer');
+            container.innerHTML = projects.map((p, idx) => {
+                const targetLink = p.id === 'm3m-altitude' ? '/project_detail.html' : '/project_detail_locked.html';
+                let scoreColor = 'text-rose-500';
+                if (p.score >= 70) scoreColor = 'text-emerald-500';
+                else if (p.score >= 40) scoreColor = 'text-amber-500';
+
+                return `
+                <div onmouseenter="highlightMarker(${idx})" onmouseleave="resetMarker(${idx})" 
+                     class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between gap-3 cursor-pointer">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-display font-extrabold text-sm text-primary">${p.name}</h4>
+                            <p class="text-[10px] text-slate-400 mt-0.5">${p.sector}, ${p.corridor}</p>
+                        </div>
+                        <span class="font-display font-extrabold text-xs ${scoreColor}">${p.score} <span class="text-[9px] text-slate-400 font-normal">/100</span></span>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-slate-50 pt-2.5">
+                        <span class="font-display font-extrabold text-xs text-amber-500">₹${p.priceMin.toFixed(2)} - ${p.priceMax.toFixed(2)} Cr</span>
+                        <a href="${targetLink}" class="bg-primary hover:bg-slate-900 text-white text-[8px] font-bold px-2.5 py-1.5 rounded-lg uppercase tracking-wider transition-all">
+                            Dossier →
+                        </a>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function setStatusFilter(status) {
+            activeStatusFilter = status;
+            
+            // Sync with advanced filters
+            document.querySelectorAll('#popoverStatus input[type="checkbox"]').forEach(cb => {
+                cb.checked = (status === 'all' || cb.value === status);
+            });
+            updateFilterLabels();
+
+            // Highlight Tab
+            const tabs = {
+                'all': 'tabAll',
+                'Ready to Move In': 'tabReady',
+                'Under Construction': 'tabUC'
+            };
+
+            for (const [key, id] of Object.entries(tabs)) {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    if (key === status) {
+                        btn.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider bg-white text-primary shadow-sm";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider text-slate-500 hover:text-primary";
+                    }
+                }
+            }
+
+            renderViews();
+        }
+
+        function setCorridorFilter(corridor) {
+            if (activeCorridorFilter === corridor) {
+                activeCorridorFilter = 'all'; // toggle off
+            } else {
+                activeCorridorFilter = corridor;
+            }
+            
+            // Sync with advanced filters
+            document.querySelectorAll('#popoverCorridor input[type="checkbox"]').forEach(cb => {
+                cb.checked = (activeCorridorFilter === 'all' || cb.value === activeCorridorFilter);
+            });
+            updateFilterLabels();
+
+            // Re-render corridor bar to show active border
+            renderCorridorBar();
+            
+            renderViews();
+        }
+
+        function handleSort() {
+            renderViews();
+        }
+
+        function resetActiveFilters() {
+            // Uncheck all advanced filter checkboxes
+            document.querySelectorAll('.popover-dropdown input[type="checkbox"]').forEach(cb => cb.checked = false);
+            activeStatusFilter = 'all';
+            activeCorridorFilter = 'all';
+            updateFilterLabels();
+            renderCorridorBar();
+
+            // Highlight Tab
+            const tabs = {
+                'all': 'tabAll',
+                'Ready to Move In': 'tabReady',
+                'Under Construction': 'tabUC'
+            };
+            for (const [key, id] of Object.entries(tabs)) {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    if (key === 'all') {
+                        btn.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider bg-white text-primary shadow-sm";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider text-slate-500 hover:text-primary";
+                    }
+                }
+            }
+
+            renderViews();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initPage();
+        });
+    </script>
+
+<!-- LOVABLE_MOBILE_NAV_INJECT -->
+<style>
+@media (max-width: 767px) {
+  header .flex.items-center.gap-stack-sm { display: none !important; }
+  #lov-mobile-hamburger { display: flex !important; }
+  footer { padding-bottom: 8rem !important; }
+}
+#lov-mobile-hamburger { display: none; }
+#lov-mobile-menu-backdrop, #lov-mobile-menu-panel { transition: opacity .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1); }
+</style>
+
+<!-- Mobile hamburger button (positioned over header right side) -->
+<button id="lov-mobile-hamburger" aria-label="Open menu"
+  onclick="document.getElementById('lov-mobile-menu').dataset.open='1'"
+  style="position:fixed;top:12px;right:16px;width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#fff;align-items:center;justify-content:center;z-index:60;cursor:pointer;">
+  <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
+</button>
+
+<!-- Mobile menu -->
+<div id="lov-mobile-menu" data-open="0" class="md:hidden">
+  <div id="lov-mobile-menu-backdrop"
+    onclick="document.getElementById('lov-mobile-menu').dataset.open='0'"
+    style="position:fixed;inset:0;background:rgba(2,6,23,0.6);backdrop-filter:blur(4px);z-index:70;opacity:0;pointer-events:none;"></div>
+  <aside id="lov-mobile-menu-panel"
+    style="position:fixed;top:0;right:0;bottom:0;width:min(82vw,320px);background:#0F172A;border-left:1px solid rgba(255,255,255,0.08);z-index:71;transform:translateX(100%);box-shadow:-20px 0 50px rgba(0,0,0,0.5);display:flex;flex-direction:column;font-family:Inter,sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#fff;text-decoration:none;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
+      <button onclick="document.getElementById('lov-mobile-menu').dataset.open='0'" aria-label="Close menu"
+        style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+        <span class="material-symbols-outlined" style="font-size:22px;">close</span>
+      </button>
+    </div>
+    <nav style="padding:16px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+      <div style="flex:1;">
+        <a href="/" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">home</span>Home</a>
+        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">auto_awesome</span>AI Search</a>
+        <a href="/search" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">search</span>Search</a>
+        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">compare_arrows</span>Compare</a>
+      </div>
+      <div style="padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:10px;padding-bottom:8px;">
+        <button style="background:#F59E0B;color:#0F172A;border:none;border-radius:10px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+          <span class="material-symbols-outlined" style="font-size:20px;">mail</span>Enquiry</button>
+        <button style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+          <span class="material-symbols-outlined" style="font-size:20px;">call</span>Call Us</button>
+      </div>
+    </nav>
+  </aside>
+</div>
+<script>
+(function(){
+  var m = document.getElementById('lov-mobile-menu');
+  var b = document.getElementById('lov-mobile-menu-backdrop');
+  var p = document.getElementById('lov-mobile-menu-panel');
+  new MutationObserver(function(){
+    var open = m.dataset.open === '1';
+    b.style.opacity = open ? '1' : '0';
+    b.style.pointerEvents = open ? 'auto' : 'none';
+    p.style.transform = open ? 'translateX(0)' : 'translateX(100%)';
+    document.body.style.overflow = open ? 'hidden' : '';
+  }).observe(m, {attributes:true, attributeFilter:['data-open']});
+})();
+</script>
+<!-- /LOVABLE_MOBILE_NAV_INJECT -->
+
+
+<!-- LOVABLE_MOBILE_FOOTER -->
+<style>
+@media (max-width: 767px) {
+  body > footer, footer.bg-surface-container-low { display: none !important; }
+  #lov-mobile-footer { display: block !important; }
+}
+#lov-mobile-footer { display: none; }
+</style>
+<footer id="lov-mobile-footer" style="background:#f1f5f9;padding:48px 0 8rem;border-top:1px solid rgba(226,232,240,0.3);font-family:Inter,sans-serif;">
+  <div style="max-width:1280px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:repeat(2,1fr);gap:32px 24px;">
+    <div style="grid-column:span 2;">
+      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#0F172A;text-decoration:none;display:inline-flex;margin-bottom:16px;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
+      <p style="font-size:12px;color:#64748b;line-height:1.6;margin-bottom:24px;">Intelligence for every Real Estate decision.</p>
+      <div style="display:flex;gap:16px;color:#94a3b8;">
+        <a href="#" style="color:#94a3b8;"><svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+        <a href="#" style="color:#94a3b8;"><svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.7 0-1.37-.2-1.95-.54v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.31 1.83c-.34 0-.68-.02-1.02-.06C3.3 20.42 5.66 21 8.2 21c8.26 0 12.78-6.86 12.78-12.78 0-.19 0-.39-.01-.58.88-.64 1.64-1.44 2.24-2.35l-.01-.01z"/></svg></a>
+      </div>
+    </div>
+    <div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">About prOPIUM</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">About prOPIUM</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">How we Verify</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Why prOPIUM</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">The Team</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">Intelligence Hub</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Builder Evaluation</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Location Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Product Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Payment Plan Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Investment Intelligence</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">For developers</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Visibility & data</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Raise an issue</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Platform overview</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Contact & support</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">Support & legal</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Raise an issue</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Privacy policy</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Terms of use</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Cookie policy</a></li></ul></div>
+  </div>
+  <div style="max-width:1280px;margin:48px auto 0;padding:0 16px;">
+    <div style="border-top:1px solid rgba(226,232,240,0.6);padding-top:32px;display:flex;flex-direction:column;gap:24px;">
+      <p style="font-size:12px;color:#64748b;line-height:1.7;"><span style="font-weight:600;color:#0F172A;margin-right:4px;">Disclaimer ·</span>prOPIUM is an independent property intelligence and analytics platform. All data, scores, and analysis are for informational purposes only and do not constitute investment or legal advice. Prices, RERA status, and project details should be independently verified before any purchase or investment decision. prOPIUM does not act as a real estate agent, broker, or developer and does not receive commissions from builders or developers.</p>
+      <div style="border-top:1px solid rgba(226,232,240,0.6);padding-top:20px;display:flex;flex-direction:column;gap:12px;font-size:12px;color:#64748b;font-weight:500;">
+        <span>© 2026 prOPIUM · All rights reserved · Built for the Indian property ecosystem</span>
+        <div style="display:flex;gap:24px;"><a href="#" style="color:#64748b;text-decoration:none;">Privacy Shield</a><a href="#" style="color:#64748b;text-decoration:none;">Disclosure Policy</a></div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- /LOVABLE_MOBILE_FOOTER -->
+
+</body>
+</html>
