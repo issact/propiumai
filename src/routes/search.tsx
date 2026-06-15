@@ -26,17 +26,27 @@ function SearchPage() {
     return () => window.removeEventListener("message", onMsg);
   }, []);
 
+  const handleLoad = () => {
+    const doc = iframeRef.current?.contentDocument;
+    if (!doc) return;
+    if (!doc.getElementById("__propium_hide_header")) {
+      const style = doc.createElement("style");
+      style.id = "__propium_hide_header";
+      style.textContent = `@media (min-width: 768px) { header.fixed.top-0 { display: none !important; } }`;
+      doc.head.appendChild(style);
+    }
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <div className="md:hidden">
-        <TopNav activeTab="Search" />
-        <div style={{ height: 64 }} />
-      </div>
+      <TopNav activeTab="Search" />
+      <div style={{ height: 64 }} />
       <iframe
         ref={iframeRef}
         src="/search.html"
         title="Property Audits Directory"
         scrolling="no"
+        onLoad={handleLoad}
         style={{
           border: "none",
           width: "100%",
