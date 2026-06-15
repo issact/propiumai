@@ -33,7 +33,6 @@ export function TopNav({ activeTab = 'Home' }: TopNavProps = {}) {
 
   const mainLinks = [
     { label: 'Home', href: '/', beta: false },
-    { label: 'AI Search', href: '/search', beta: true },
     { label: 'Compare', href: '#', beta: false },
   ];
 
