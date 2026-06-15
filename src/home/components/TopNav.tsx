@@ -89,8 +89,9 @@ export function TopNav({ activeTab = 'Home' }: TopNavProps = {}) {
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <button
-                className="transition-colors flex items-center gap-1 cursor-pointer bg-transparent border-none"
+              <Link
+                to="/search"
+                className="transition-colors flex items-center gap-1 cursor-pointer"
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 12,
@@ -115,7 +116,7 @@ export function TopNav({ activeTab = 'Home' }: TopNavProps = {}) {
                 >
                   expand_more
                 </span>
-              </button>
+              </Link>
               {dropdownOpen && (
                 <div
                   className="absolute top-full left-1/2 -translate-x-1/2 mt-2 py-2 rounded-xl border"
