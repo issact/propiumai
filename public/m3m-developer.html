@@ -1375,9 +1375,9 @@
                 barHtml += `
                     <div onclick="setCorridorFilter('${name}')" 
                           style="width: ${pct}%" 
-                          class="${color} h-full flex items-center justify-center text-white text-[10px] font-bold tracking-wider cursor-pointer border-r border-white/10 select-none transition-all ${isActive ? 'ring-2 ring-inset ring-amber-400 opacity-100 scale-y-105' : 'opacity-85 hover:opacity-100'}"
+                          class="${color} h-full min-w-0 overflow-hidden flex items-center justify-center text-white text-[10px] font-bold tracking-wider cursor-pointer border-r border-white/10 select-none transition-all ${isActive ? 'ring-2 ring-inset ring-amber-400 opacity-100 scale-y-105' : 'opacity-85 hover:opacity-100'}"
                           title="${name}: ${count} projects">
-                        ${shortName} <span class="font-normal opacity-90 ml-1">${count}</span>
+                        <span class="truncate px-1">${shortName} <span class="font-normal opacity-90 ml-1">${count}</span></span>
                     </div>
                 `;
             }
