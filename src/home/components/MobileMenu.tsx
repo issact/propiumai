@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 interface MobileMenuProps {
   open: boolean;
@@ -8,12 +9,19 @@ interface MobileMenuProps {
 
 const primaryLinks = [
   { label: 'Home', icon: 'home', href: '/' },
-  { label: 'AI Search', icon: 'auto_awesome', href: '#' },
-  { label: 'Search', icon: 'search', href: '/search' },
+  { label: 'AI Search', icon: 'auto_awesome', href: '/search' },
   { label: 'Compare', icon: 'compare_arrows', href: '#' },
 ];
 
+const searchSubLinks = [
+  { label: 'Projects', href: '/directories' },
+  { label: 'Micro Markets', href: '/micro-market' },
+  { label: 'Developers', href: '/developer-scorecards' },
+];
+
 export function MobileMenu({ open, onClose, activeTab = 'Home' }: MobileMenuProps) {
+  const [searchExpanded, setSearchExpanded] = useState(false);
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -51,9 +59,9 @@ export function MobileMenu({ open, onClose, activeTab = 'Home' }: MobileMenuProp
           className="flex items-center justify-between"
           style={{ padding: '20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
         >
-          <a href="/" style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 20, color: '#ffffff', textDecoration: 'none' }}>
+          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 20, color: '#ffffff', textDecoration: 'none' }}>
             prOPIUM<span style={{ color: '#F59E0B' }}>.ai</span>
-          </a>
+          </Link>
           <button
             onClick={onClose}
             aria-label="Close menu"
@@ -74,9 +82,9 @@ export function MobileMenu({ open, onClose, activeTab = 'Home' }: MobileMenuProp
             {primaryLinks.map((link) => {
               const active = link.label === activeTab;
               return (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
+                  to={link.href}
                   onClick={onClose}
                   className="flex items-center gap-3"
                   style={{
@@ -97,9 +105,72 @@ export function MobileMenu({ open, onClose, activeTab = 'Home' }: MobileMenuProp
                   <span className="material-symbols-outlined" style={{ fontSize: 22, color: active ? '#F59E0B' : '#94a3b8' }}>{link.icon}</span>
                   {link.label}
                   {active && <span style={{ marginLeft: 'auto', width: 6, height: 6, borderRadius: '50%', background: '#F59E0B' }} />}
-                </a>
+                </Link>
               );
             })}
+
+            {/* Search expandable section */}
+            <div style={{ marginBottom: 2 }}>
+              <button
+                onClick={() => setSearchExpanded((v) => !v)}
+                className="flex items-center gap-3 w-full"
+                style={{
+                  padding: '14px 12px',
+                  borderRadius: 10,
+                  color: activeTab === 'Search' ? '#F59E0B' : '#e2e8f0',
+                  background: activeTab === 'Search' ? 'rgba(245,158,11,0.1)' : 'transparent',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: 14,
+                  fontWeight: activeTab === 'Search' ? 700 : 500,
+                  border: 'none',
+                  cursor: 'pointer',
+                  minHeight: 44,
+                  display: 'flex',
+                  alignItems: 'center',
+                  textAlign: 'left',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 22, color: activeTab === 'Search' ? '#F59E0B' : '#94a3b8' }}>search</span>
+                Search
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    marginLeft: 'auto',
+                    fontSize: 18,
+                    transition: 'transform 0.2s ease',
+                    transform: searchExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                    color: activeTab === 'Search' ? '#F59E0B' : '#94a3b8',
+                  }}
+                >
+                  expand_more
+                </span>
+              </button>
+              {searchExpanded && (
+                <div style={{ paddingLeft: 46 }}>
+                  {searchSubLinks.map((sub) => (
+                    <Link
+                      key={sub.label}
+                      to={sub.href}
+                      onClick={onClose}
+                      style={{
+                        display: 'block',
+                        padding: '10px 12px',
+                        borderRadius: 8,
+                        color: '#cbd5e1',
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 13,
+                        fontWeight: 500,
+                        textDecoration: 'none',
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#cbd5e1'; }}
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div style={{ paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 8 }}>
