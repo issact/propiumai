@@ -72,25 +72,12 @@
             font-family: 'Inter', sans-serif;
             background: #f1f5f9;
         }
-        .lad-dot-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .lad-dot-btn:hover {
-            transform: translate(-50%, -50%) scale(1.3);
-            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
-        }
-        .lad-dot-btn.active {
-            transform: translate(-50%, -50%) scale(1.4);
-            background-color: #F59E0B;
-            border-color: #ffffff;
-            box-shadow: 0 0 12px rgba(245, 158, 11, 0.9);
-        }
         .corridor-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .corridor-card.highlighted {
-            border-color: #F59E0B !important;
-            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.15), 0 8px 10px -6px rgba(245, 158, 11, 0.15);
+        .corridor-card:hover {
+            border-color: rgba(245, 158, 11, 0.5) !important;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
             transform: translateY(-4px);
         }
     </style>
@@ -168,81 +155,6 @@
             <div class="space-y-1 pl-4 border-l-2 border-white/10">
                 <span class="text-[9px] text-white/50 font-bold uppercase tracking-wider">Average PSFT Range</span>
                 <span class="block font-display font-extrabold text-2xl text-secondary-container leading-none">₹9.5k – 38k</span>
-            </div>
-        </section>
-
-        <!-- Corridor Price Ladder Timeline Axis -->
-        <section class="bg-primary border border-white/10 rounded-2xl p-6 shadow-sm space-y-6 text-white">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div>
-                    <h3 class="font-display font-bold text-xs uppercase tracking-wider text-white">Corridor Price Ladder · Avg Residential PSFT</h3>
-                    <p class="text-[10px] text-white/50">Select a corridor dot to highlight its parameters below</p>
-                </div>
-                <div class="text-[10px] text-secondary-container font-extrabold bg-secondary-container/10 px-2.5 py-1 rounded-lg border border-secondary-container/20">
-                    Interactive Grid Telemetry
-                </div>
-            </div>
-
-            <!-- Plotted Line Slider -->
-            <div class="relative pt-10 sm:pt-6 pb-4 px-4 sm:px-10">
-                <!-- Timeline Axis Background Line -->
-                <div class="h-1 bg-white/15 w-full rounded-full relative">
-                    <!-- Major Ticks -->
-                    <span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
-                    <span class="absolute left-[25%] top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
-                    <span class="absolute left-[50%] top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
-                    <span class="absolute left-[75%] top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
-                    <span class="absolute left-full top-1/2 -translate-y-1/2 w-1.5 h-3 bg-white/30"></span>
-                </div>
-
-                <!-- Ticks Labels -->
-                <div class="relative w-full text-[9px] text-white/40 font-bold uppercase mt-2">
-                    <span class="absolute left-0 -translate-x-1/2">₹8k</span>
-                    <span class="absolute left-[25%] -translate-x-1/2">₹16k</span>
-                    <span class="absolute left-[50%] -translate-x-1/2">₹24k</span>
-                    <span class="absolute left-[75%] -translate-x-1/2">₹32k</span>
-                    <span class="absolute left-full -translate-x-1/2">₹40k</span>
-                </div>
-
-                <!-- Plotted Corridors Dots -->
-                <!-- positions based on price (val - 8000) / 32000 -->
-                <div class="absolute inset-x-4 sm:inset-x-10 top-[22px] h-2">
-                    <!-- NG: ₹9,500 (4.68%) -->
-                    <button onclick="selectLadderCorridor('NG')" id="dot-NG" class="lad-dot-btn absolute left-[4.68%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="New Gurgaon · ₹9,500"></button>
-                    <span class="absolute left-[4.68%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">NG</span>
-
-                    <!-- SOHNA: ₹13,000 (15.6%) -->
-                    <button onclick="selectLadderCorridor('SOHNA')" id="dot-SOHNA" class="lad-dot-btn absolute left-[15.6%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Sohna Road · ₹13,000"></button>
-                    <span class="absolute left-[15.6%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">SOHNA</span>
-
-                    <!-- SPR: ₹16,500 (26.5%) -->
-                    <button onclick="selectLadderCorridor('SPR')" id="dot-SPR" class="lad-dot-btn absolute left-[26.5%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="SPR · ₹16,500"></button>
-                    <span class="absolute left-[26.5%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">SPR</span>
-
-                    <!-- DWE: ₹18,500 (32.8%) -->
-                    <button onclick="selectLadderCorridor('DWE')" id="dot-DWE" class="lad-dot-btn absolute left-[32.8%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Dwarka Expressway · ₹18,500"></button>
-                    <span class="absolute left-[32.8%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">DWE</span>
-
-                    <!-- NPR: ₹20,000 (37.5%) -->
-                    <button onclick="selectLadderCorridor('NPR')" id="dot-NPR" class="lad-dot-btn absolute left-[37.5%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Northern Peripheral Road · ₹20,000"></button>
-                    <span class="absolute left-[37.5%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">NPR</span>
-
-                    <!-- MGR: ₹23,500 (48.4%) -->
-                    <button onclick="selectLadderCorridor('MGR')" id="dot-MGR" class="lad-dot-btn absolute left-[48.4%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="MG Road · ₹23,500"></button>
-                    <span class="absolute left-[48.4%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">MGR</span>
-
-                    <!-- GCEX: ₹27,500 (60.9%) -->
-                    <button onclick="selectLadderCorridor('GCEX')" id="dot-GCEX" class="lad-dot-btn absolute left-[60.9%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Golf Course Ext Road · ₹27,500"></button>
-                    <span class="absolute left-[60.9%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">GCEX</span>
-
-                    <!-- CG: ₹30,000 (68.75%) -->
-                    <button onclick="selectLadderCorridor('CG')" id="dot-CG" class="lad-dot-btn absolute left-[68.75%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Central Gurgaon · ₹30,000"></button>
-                    <span class="absolute left-[68.75%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">CG</span>
-
-                    <!-- GCR: ₹37,500 (92.2%) -->
-                    <button onclick="selectLadderCorridor('GCR')" id="dot-GCR" class="lad-dot-btn absolute left-[92.2%] top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-slate-800 cursor-pointer z-10" title="Golf Course Road · ₹37,500"></button>
-                    <span class="absolute left-[92.2%] -translate-x-1/2 -top-6 sm:-top-5 text-[8px] sm:text-[9px] text-white/60 font-extrabold font-display origin-bottom-left rotate-[-55deg] sm:rotate-0 whitespace-nowrap">GCR</span>
-                </div>
             </div>
         </section>
 
@@ -362,7 +274,8 @@
                 uc: 3,
                 newLaunch: 0,
                 desc: "Established residential node featuring mature social infrastructure and seamless access to NH-48 and Galleria, appealing equally to families and luxury investors.",
-                gradient: "from-blue-600/90 to-indigo-950"
+                gradient: "from-blue-600/90 to-indigo-950",
+                image: "https://images.pexels.com/photos/1732414/pexels-photo-1732414.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "dwe",
@@ -378,7 +291,8 @@
                 uc: 67,
                 newLaunch: 2,
                 desc: "One of Gurgaon's largest growth corridors. Dwarka Expressway offers massive inventory scalability, high-rise luxury towers, and rapid connectivity to the IGI Airport.",
-                gradient: "from-purple-600/90 to-indigo-950"
+                gradient: "from-purple-600/90 to-indigo-950",
+                image: "https://images.pexels.com/photos/2119714/pexels-photo-2119714.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "gcex",
@@ -394,7 +308,8 @@
                 uc: 25,
                 newLaunch: 2,
                 desc: "Premium, cosmopolitan growth corridor attracting luxury developers. Combines upscale high-rises with robust office clusters and top-tier educational hubs.",
-                gradient: "from-amber-600/90 to-slate-950"
+                gradient: "from-amber-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "gcr",
@@ -410,7 +325,8 @@
                 uc: 9,
                 newLaunch: 0,
                 desc: "Gurgaon's flagship luxury corridor. Host to ultra-luxury condominiums, corporate headquarters, and high-end retail, representing the highest capital values.",
-                gradient: "from-teal-600/90 to-slate-950"
+                gradient: "from-teal-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "mgr",
@@ -426,7 +342,8 @@
                 uc: 1,
                 newLaunch: 0,
                 desc: "High-density retail and residential stretch. Offers outstanding immediate metro access and established commercial retail buildings.",
-                gradient: "from-rose-600/90 to-indigo-950"
+                gradient: "from-rose-600/90 to-indigo-950",
+                image: "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "ng",
@@ -442,7 +359,8 @@
                 uc: 33,
                 newLaunch: 2,
                 desc: "Sub-market positioned near Manesar. Serves as a highly popular emerging residential corridor with attractive entry tickets for first-time buyers.",
-                gradient: "from-emerald-600/90 to-slate-950"
+                gradient: "from-emerald-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "nh48",
@@ -458,7 +376,8 @@
                 uc: 5,
                 newLaunch: 0,
                 desc: "Established legacy zones with highly active local markets and excellent connectivity along the central expressway node.",
-                gradient: "from-slate-600/90 to-slate-950"
+                gradient: "from-slate-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "sohna",
@@ -474,7 +393,8 @@
                 uc: 5,
                 newLaunch: 0,
                 desc: "Rapidly developing south-bound corridor. Features scenic view vectors and substantial budget options in integrated townships.",
-                gradient: "from-indigo-600/90 to-slate-950"
+                gradient: "from-indigo-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "spr",
@@ -490,7 +410,8 @@
                 uc: 41,
                 newLaunch: 1,
                 desc: "Key infrastructure link connecting Sohna Road, Golf Course Ext, and NH-48. Emerges as a commercial-residential hotspot.",
-                gradient: "from-cyan-600/90 to-indigo-950"
+                gradient: "from-cyan-600/90 to-indigo-950",
+                image: "https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=600"
             }
         ];
 
@@ -574,70 +495,68 @@
         let activeView = 'cards';
         let mapInstance = null;
         let mapPolygonLayers = [];
-        let highlightedCorridor = null;
 
         function renderCorridors() {
             const container = document.getElementById('viewCards');
             container.innerHTML = CORRIDORS.map(c => {
                 const total = c.ready + c.uc + c.newLaunch;
-                // percentage splits
                 const readyPct = (c.ready / total) * 100;
                 const ucPct = (c.uc / total) * 100;
                 const newPct = (c.newLaunch / total) * 100;
 
                 return `
-                <div id="card-${c.code}" class="corridor-card bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-amber-400/40 hover:-translate-y-1 p-5 flex flex-col justify-between">
-                    <div>
-                        <!-- Header with gradient backdrop -->
-                        <div class="bg-gradient-to-r ${c.gradient} text-white p-4 -mx-5 -mt-5 mb-4 relative overflow-hidden h-28 flex flex-col justify-end">
-                            <span class="absolute top-3 right-3 text-[10px] font-extrabold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm">${c.code}</span>
-                            <h3 class="font-display font-extrabold text-base leading-tight">${c.name}</h3>
-                            <span class="text-[9px] text-slate-300 font-bold uppercase tracking-wider block mt-0.5">Gurgaon Corridor</span>
-                        </div>
-                        
-                        <!-- Description Copy -->
-                        <p class="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-2">
-                            ${c.desc}
-                        </p>
-
-                        <!-- High level stats -->
-                        <div class="grid grid-cols-3 gap-2 text-center mb-4 border-b border-slate-100 pb-3">
-                            <div>
-                                <span class="block font-display font-extrabold text-sm text-primary">${c.projects}</span>
-                                <span class="text-[8px] text-slate-400 uppercase font-bold">Projects</span>
-                            </div>
-                            <div>
-                                <span class="block font-display font-extrabold text-sm text-primary">${c.units.toLocaleString('en-IN')}</span>
-                                <span class="text-[8px] text-slate-400 uppercase font-bold">Units Mapped</span>
-                            </div>
-                            <div>
-                                <span class="block font-display font-extrabold text-sm text-secondary-container">₹${(c.price / 1000).toFixed(1)}k</span>
-                                <span class="text-[8px] text-slate-400 uppercase font-bold">Avg PSFT</span>
-                            </div>
-                        </div>
-
-                        <!-- Progress telemetry split -->
-                        <div class="space-y-2 mb-2">
-                            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex">
-                                <div style="width: ${readyPct}%" class="bg-emerald-500" title="Ready: ${c.ready}"></div>
-                                <div style="width: ${ucPct}%" class="bg-amber-500" title="Under Const: ${c.uc}"></div>
-                                <div style="width: ${newPct}%" class="bg-secondary-container" title="New: ${c.newLaunch}"></div>
-                            </div>
-                            <div class="flex justify-between items-center text-[9px] text-slate-500 font-semibold">
-                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <b>${c.ready}</b> Ready</span>
-                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> <b>${c.uc}</b> Const.</span>
-                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span> <b>${c.newLaunch}</b> New</span>
-                            </div>
-                        </div>
+                <div id="card-${c.code}" class="corridor-card" style="background:#1E2130; border:1px solid rgba(255,255,255,0.08); border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.3); display:flex; flex-direction:column; cursor:pointer;">
+                    <!-- Image header -->
+                    <div class="text-white relative overflow-hidden flex flex-col justify-end" style="height:112px; padding:16px; background-image:url('${c.image}'); background-size:cover; background-position:center;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(15,23,42,0.35) 0%, rgba(15,23,42,0.72) 60%, rgba(15,23,42,0.88) 100%);"></div>
+                        <span style="position:absolute; top:12px; right:12px; font-family:Inter,sans-serif; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:2px; backdrop-filter:blur(4px); z-index:1;">${c.code}</span>
+                        <h3 style="font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#ffffff; line-height:1.3; margin-bottom:4px; position:relative; z-index:1;">${c.name}</h3>
+                        <span style="font-family:Inter,sans-serif; font-size:9px; color:rgba(203,213,225,0.8); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; position:relative; z-index:1;">Gurgaon Corridor</span>
                     </div>
 
-                    <!-- Footer Link -->
-                    <div class="pt-3 border-t border-slate-100 flex justify-between items-center mt-3">
-                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">${c.qoq}</span>
-                        <a href="${c.id === 'gcex' ? '/golf-course-extension' : 'micro_market_detail.html?id=' + c.id}" target="_top" class="text-brandBlue hover:underline text-xs font-bold flex items-center gap-0.5">
-                            Explore Corridor
-                            <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
-                        </a>
+                    <!-- Card body -->
+                    <div style="padding:20px; display:flex; flex-direction:column; flex-grow:1; background:#263044;">
+                        <!-- Description -->
+                        <p style="font-family:Inter,sans-serif; font-size:12px; color:#94a3b8; line-height:1.6; margin-bottom:16px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${c.desc}</p>
+
+                        <!-- Stats grid -->
+                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:16px;">
+                            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:6px; padding:8px 6px; text-align:center;">
+                                <span style="display:block; font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#F1F5F9;">${c.projects}</span>
+                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Projects</span>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:6px; padding:8px 6px; text-align:center;">
+                                <span style="display:block; font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#F1F5F9;">${c.units.toLocaleString('en-IN')}</span>
+                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Units Mapped</span>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:6px; padding:8px 6px; text-align:center;">
+                                <span style="display:block; font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#F59E0B;">₹${(c.price / 1000).toFixed(1)}k</span>
+                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Avg PSFT</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress bar -->
+                        <div style="margin-bottom:8px;">
+                            <div style="width:100%; background:rgba(255,255,255,0.08); height:6px; border-radius:99px; overflow:hidden; display:flex;">
+                                <div style="width:${readyPct}%; background:#10b981; height:100%;"></div>
+                                <div style="width:${ucPct}%; background:#F59E0B; height:100%;"></div>
+                                <div style="width:${newPct}%; background:#3b82f6; height:100%;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                                <span style="font-family:Inter,sans-serif; font-size:9px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block;"></span>${c.ready} Ready</span>
+                                <span style="font-family:Inter,sans-serif; font-size:9px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:#F59E0B;display:inline-block;"></span>${c.uc} Const.</span>
+                                <span style="font-family:Inter,sans-serif; font-size:9px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:#3b82f6;display:inline-block;"></span>${c.newLaunch} New</span>
+                            </div>
+                        </div>
+
+                        <!-- Footer CTA -->
+                        <div style="border-top:1px solid rgba(255,255,255,0.07); margin-top:16px; padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-family:Inter,sans-serif; font-size:10px; color:#475569; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">${c.qoq}</span>
+                            <a href="${c.id === 'gcex' ? '/golf-course-extension' : '#'}" target="_top" style="color:#F59E0B; font-family:Inter,sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; text-decoration:none; display:flex; align-items:center; gap:2px;">
+                                Explore
+                                <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+                            </a>
+                        </div>
                     </div>
                 </div>`;
             }).join('');
@@ -718,30 +637,6 @@
                 });
 
                 mapPolygonLayers.push({ key, layer: polygon });
-            }
-        }
-
-        function selectLadderCorridor(code) {
-            // Unhighlight previous
-            document.querySelectorAll('.lad-dot-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.corridor-card').forEach(card => card.classList.remove('highlighted'));
-
-            if (highlightedCorridor === code) {
-                highlightedCorridor = null;
-                return;
-            }
-
-            highlightedCorridor = code;
-            
-            // Highlight dot
-            const dot = document.getElementById(`dot-${code}`);
-            if (dot) dot.classList.add('active');
-
-            // Highlight card
-            const card = document.getElementById(`card-${code}`);
-            if (card) {
-                card.classList.add('highlighted');
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
