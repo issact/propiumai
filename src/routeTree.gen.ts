@@ -9,37 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as DeveloperScorecardsRouteImport } from './routes/developer-scorecards'
-import { Route as DirectoriesRouteImport } from './routes/directories'
-import { Route as GolfCourseExtensionRouteImport } from './routes/golf-course-extension'
-import { Route as M3mDeveloperRouteImport } from './routes/m3m-developer'
-import { Route as MicroMarketRouteImport } from './routes/micro-market'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as MicroMarketRouteImport } from './routes/micro-market'
+import { Route as M3mDeveloperRouteImport } from './routes/m3m-developer'
+import { Route as GolfCourseExtensionRouteImport } from './routes/golf-course-extension'
+import { Route as DirectoriesRouteImport } from './routes/directories'
+import { Route as DeveloperScorecardsRouteImport } from './routes/developer-scorecards'
+import { Route as IndexRouteImport } from './routes/index'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeveloperScorecardsRoute = DeveloperScorecardsRouteImport.update({
-  id: '/developer-scorecards',
-  path: '/developer-scorecards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DirectoriesRoute = DirectoriesRouteImport.update({
-  id: '/directories',
-  path: '/directories',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GolfCourseExtensionRoute = GolfCourseExtensionRouteImport.update({
-  id: '/golf-course-extension',
-  path: '/golf-course-extension',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const M3mDeveloperRoute = M3mDeveloperRouteImport.update({
-  id: '/m3m-developer',
-  path: '/m3m-developer',
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MicroMarketRoute = MicroMarketRouteImport.update({
@@ -47,9 +27,29 @@ const MicroMarketRoute = MicroMarketRouteImport.update({
   path: '/micro-market',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
+const M3mDeveloperRoute = M3mDeveloperRouteImport.update({
+  id: '/m3m-developer',
+  path: '/m3m-developer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GolfCourseExtensionRoute = GolfCourseExtensionRouteImport.update({
+  id: '/golf-course-extension',
+  path: '/golf-course-extension',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DirectoriesRoute = DirectoriesRouteImport.update({
+  id: '/directories',
+  path: '/directories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeveloperScorecardsRoute = DeveloperScorecardsRouteImport.update({
+  id: '/developer-scorecards',
+  path: '/developer-scorecards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -123,39 +123,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/developer-scorecards': {
-      id: '/developer-scorecards'
-      path: '/developer-scorecards'
-      fullPath: '/developer-scorecards'
-      preLoaderRoute: typeof DeveloperScorecardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/directories': {
-      id: '/directories'
-      path: '/directories'
-      fullPath: '/directories'
-      preLoaderRoute: typeof DirectoriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/golf-course-extension': {
-      id: '/golf-course-extension'
-      path: '/golf-course-extension'
-      fullPath: '/golf-course-extension'
-      preLoaderRoute: typeof GolfCourseExtensionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/m3m-developer': {
-      id: '/m3m-developer'
-      path: '/m3m-developer'
-      fullPath: '/m3m-developer'
-      preLoaderRoute: typeof M3mDeveloperRouteImport
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/micro-market': {
@@ -165,11 +137,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MicroMarketRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
+    '/m3m-developer': {
+      id: '/m3m-developer'
+      path: '/m3m-developer'
+      fullPath: '/m3m-developer'
+      preLoaderRoute: typeof M3mDeveloperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/golf-course-extension': {
+      id: '/golf-course-extension'
+      path: '/golf-course-extension'
+      fullPath: '/golf-course-extension'
+      preLoaderRoute: typeof GolfCourseExtensionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/directories': {
+      id: '/directories'
+      path: '/directories'
+      fullPath: '/directories'
+      preLoaderRoute: typeof DirectoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/developer-scorecards': {
+      id: '/developer-scorecards'
+      path: '/developer-scorecards'
+      fullPath: '/developer-scorecards'
+      preLoaderRoute: typeof DeveloperScorecardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
