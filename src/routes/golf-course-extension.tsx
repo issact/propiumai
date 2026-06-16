@@ -1481,45 +1481,6 @@ function GCEXPage() {
           </div>
         </div>
 
-        {/* Inventory Class Split — standalone row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 20 }}>
-          <div
-            className="lg:col-span-7"
-            style={{
-              background: "#ffffff",
-              border: "1px solid rgba(226,232,240,0.8)",
-              borderRadius: 16,
-              padding: 20,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-            }}
-          >
-            <h3
-              style={{
-                fontFamily: "Outfit, sans-serif",
-                fontSize: 12,
-                fontWeight: 700,
-                color: "#0F172A",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                marginBottom: 2,
-              }}
-            >
-              Inventory Class Split
-            </h3>
-            <p
-              style={{
-                fontFamily: "Inter, sans-serif",
-                fontSize: 10,
-                color: "#94a3b8",
-                marginBottom: 16,
-              }}
-            >
-              Residential segment distribution across active GCEX projects
-            </p>
-            <InventoryPieChart />
-          </div>
-        </div>
-
         {/* Infrastructure */}
         <section
           style={{
