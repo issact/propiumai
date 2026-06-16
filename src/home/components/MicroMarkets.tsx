@@ -16,6 +16,7 @@ const markets = [
     trendDir: 'up' as const,
     sparkline: 'M0,15 L20,13 L40,14 L60,8 L80,10 L100,2',
     ready: 68, construction: 88, newLaunch: 2,
+    href: '/micro-market' as const,
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ const markets = [
     trendDir: 'up' as const,
     sparkline: 'M0,18 L20,15 L40,16 L60,11 L80,9 L100,3',
     ready: 67, construction: 25, newLaunch: 2,
+    href: '/golf-course-extension' as const,
   },
   {
     id: 3,
@@ -46,6 +48,7 @@ const markets = [
     trendDir: 'up' as const,
     sparkline: 'M0,12 L20,10 L40,11 L60,6 L80,5 L100,1',
     ready: 38, construction: 9, newLaunch: 0,
+    href: '/micro-market' as const,
   },
   {
     id: 4,
@@ -61,6 +64,7 @@ const markets = [
     trendDir: 'up' as const,
     sparkline: 'M0,15 L20,14 L40,11 L60,9 L80,10 L100,5',
     ready: 35, construction: 5, newLaunch: 0,
+    href: '/micro-market' as const,
   },
 ];
 
@@ -167,10 +171,13 @@ function MarketCard({ market }: { market: typeof markets[0] }) {
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: '#475569', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block' }}>Price Range</span>
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 800, color: '#F1F5F9', marginTop: 2, display: 'block' }}>{market.priceRange}</span>
           </div>
-          <span className="flex items-center gap-0.5" style={{ color: hovered ? '#d97706' : '#F59E0B', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Inter, sans-serif', transition: 'color 0.2s' }}>
+          <Link
+            to={market.href}
+            style={{ color: hovered ? '#d97706' : '#F59E0B', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Inter, sans-serif', transition: 'color 0.2s', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 2 }}
+          >
             Report
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>arrow_forward</span>
-          </span>
+          </Link>
         </div>
       </div>
     </div>
