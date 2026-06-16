@@ -274,7 +274,8 @@
                 uc: 3,
                 newLaunch: 0,
                 desc: "Established residential node featuring mature social infrastructure and seamless access to NH-48 and Galleria, appealing equally to families and luxury investors.",
-                gradient: "from-blue-600/90 to-indigo-950"
+                gradient: "from-blue-600/90 to-indigo-950",
+                image: "https://images.pexels.com/photos/1732414/pexels-photo-1732414.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "dwe",
@@ -290,7 +291,8 @@
                 uc: 67,
                 newLaunch: 2,
                 desc: "One of Gurgaon's largest growth corridors. Dwarka Expressway offers massive inventory scalability, high-rise luxury towers, and rapid connectivity to the IGI Airport.",
-                gradient: "from-purple-600/90 to-indigo-950"
+                gradient: "from-purple-600/90 to-indigo-950",
+                image: "https://images.pexels.com/photos/2119714/pexels-photo-2119714.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "gcex",
@@ -306,7 +308,8 @@
                 uc: 25,
                 newLaunch: 2,
                 desc: "Premium, cosmopolitan growth corridor attracting luxury developers. Combines upscale high-rises with robust office clusters and top-tier educational hubs.",
-                gradient: "from-amber-600/90 to-slate-950"
+                gradient: "from-amber-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "gcr",
@@ -322,7 +325,8 @@
                 uc: 9,
                 newLaunch: 0,
                 desc: "Gurgaon's flagship luxury corridor. Host to ultra-luxury condominiums, corporate headquarters, and high-end retail, representing the highest capital values.",
-                gradient: "from-teal-600/90 to-slate-950"
+                gradient: "from-teal-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "mgr",
@@ -338,7 +342,8 @@
                 uc: 1,
                 newLaunch: 0,
                 desc: "High-density retail and residential stretch. Offers outstanding immediate metro access and established commercial retail buildings.",
-                gradient: "from-rose-600/90 to-indigo-950"
+                gradient: "from-rose-600/90 to-indigo-950",
+                image: "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "ng",
@@ -354,7 +359,8 @@
                 uc: 33,
                 newLaunch: 2,
                 desc: "Sub-market positioned near Manesar. Serves as a highly popular emerging residential corridor with attractive entry tickets for first-time buyers.",
-                gradient: "from-emerald-600/90 to-slate-950"
+                gradient: "from-emerald-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "nh48",
@@ -370,7 +376,8 @@
                 uc: 5,
                 newLaunch: 0,
                 desc: "Established legacy zones with highly active local markets and excellent connectivity along the central expressway node.",
-                gradient: "from-slate-600/90 to-slate-950"
+                gradient: "from-slate-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "sohna",
@@ -386,7 +393,8 @@
                 uc: 5,
                 newLaunch: 0,
                 desc: "Rapidly developing south-bound corridor. Features scenic view vectors and substantial budget options in integrated townships.",
-                gradient: "from-indigo-600/90 to-slate-950"
+                gradient: "from-indigo-600/90 to-slate-950",
+                image: "https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=600"
             },
             {
                 id: "spr",
@@ -402,7 +410,8 @@
                 uc: 41,
                 newLaunch: 1,
                 desc: "Key infrastructure link connecting Sohna Road, Golf Course Ext, and NH-48. Emerges as a commercial-residential hotspot.",
-                gradient: "from-cyan-600/90 to-indigo-950"
+                gradient: "from-cyan-600/90 to-indigo-950",
+                image: "https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=600"
             }
         ];
 
@@ -497,11 +506,12 @@
 
                 return `
                 <div id="card-${c.code}" class="corridor-card" style="background:#1E2130; border:1px solid rgba(255,255,255,0.08); border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.3); display:flex; flex-direction:column; cursor:pointer;">
-                    <!-- Gradient header -->
-                    <div class="bg-gradient-to-r ${c.gradient} text-white relative overflow-hidden flex flex-col justify-end" style="height:112px; padding:16px;">
-                        <span style="position:absolute; top:12px; right:12px; font-family:Inter,sans-serif; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:2px; backdrop-filter:blur(4px);">${c.code}</span>
-                        <h3 style="font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#ffffff; line-height:1.3; margin-bottom:4px;">${c.name}</h3>
-                        <span style="font-family:Inter,sans-serif; font-size:9px; color:rgba(203,213,225,0.8); font-weight:700; text-transform:uppercase; letter-spacing:0.1em;">Gurgaon Corridor</span>
+                    <!-- Image header -->
+                    <div class="text-white relative overflow-hidden flex flex-col justify-end" style="height:112px; padding:16px; background-image:url('${c.image}'); background-size:cover; background-position:center;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(15,23,42,0.35) 0%, rgba(15,23,42,0.72) 60%, rgba(15,23,42,0.88) 100%);"></div>
+                        <span style="position:absolute; top:12px; right:12px; font-family:Inter,sans-serif; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:2px; backdrop-filter:blur(4px); z-index:1;">${c.code}</span>
+                        <h3 style="font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#ffffff; line-height:1.3; margin-bottom:4px; position:relative; z-index:1;">${c.name}</h3>
+                        <span style="font-family:Inter,sans-serif; font-size:9px; color:rgba(203,213,225,0.8); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; position:relative; z-index:1;">Gurgaon Corridor</span>
                     </div>
 
                     <!-- Card body -->

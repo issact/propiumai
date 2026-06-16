@@ -374,26 +374,11 @@ function InventoryPieChart() {
   return (
     <div
       style={{
-        borderTop: "1px solid #f1f5f9",
-        paddingTop: 16,
-        marginTop: 16,
         display: "flex",
         flexDirection: "column",
         gap: 12,
       }}
     >
-      <span
-        style={{
-          fontFamily: "Inter, sans-serif",
-          fontSize: 9,
-          color: "#94a3b8",
-          fontWeight: 700,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-        }}
-      >
-        Inventory Class Split
-      </span>
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         <div style={{ width: 120, height: 120, flexShrink: 0 }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -543,7 +528,7 @@ function ExpertAnalysisCard() {
         </p>
       </div>
 
-      <ScrollArea style={{ flex: 1, height: 320 }}>
+      <ScrollArea style={{ maxHeight: 320, overflowY: "auto" }}>
         <div
           style={{ display: "flex", flexDirection: "column", gap: 14, paddingRight: 8 }}
         >
@@ -569,10 +554,19 @@ function ExpertAnalysisCard() {
 
 type FilterStatus = "all" | "Ready to Move In" | "Under Construction";
 type SortKey = "score" | "priceAsc" | "priceDesc" | "units";
+type ActiveView = "cards" | "list" | "map";
+
+function scoreColor(score: number) {
+  if (score >= 75) return "#059669";
+  if (score >= 50) return "#F59E0B";
+  if (score >= 25) return "#006AFF";
+  return "#94a3b8";
+}
 
 function ProjectsSection() {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [sortKey, setSortKey] = useState<SortKey>("score");
+  const [activeView, setActiveView] = useState<ActiveView>("cards");
 
   const filtered = PROJECTS.filter(
     (p) => filterStatus === "all" || p.status === filterStatus
@@ -583,10 +577,16 @@ function ProjectsSection() {
     return b.units - a.units;
   });
 
-  const tabs: { label: string; value: FilterStatus }[] = [
+  const statusTabs: { label: string; value: FilterStatus }[] = [
     { label: "All", value: "all" },
     { label: "Ready", value: "Ready to Move In" },
     { label: "UC", value: "Under Construction" },
+  ];
+
+  const viewTabs: { icon: string; value: ActiveView }[] = [
+    { icon: "grid_view", value: "cards" },
+    { icon: "table_rows", value: "list" },
+    { icon: "map", value: "map" },
   ];
 
   return (
@@ -599,6 +599,7 @@ function ProjectsSection() {
         boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
       }}
     >
+      {/* Header row */}
       <div
         style={{
           display: "flex",
@@ -644,6 +645,7 @@ function ProjectsSection() {
             gap: 8,
           }}
         >
+          {/* Status filter tabs */}
           <div
             style={{
               display: "flex",
@@ -654,7 +656,7 @@ function ProjectsSection() {
               gap: 2,
             }}
           >
-            {tabs.map((tab) => (
+            {statusTabs.map((tab) => (
               <button
                 key={tab.value}
                 onClick={() => setFilterStatus(tab.value)}
@@ -669,14 +671,9 @@ function ProjectsSection() {
                   textTransform: "uppercase",
                   letterSpacing: "0.05em",
                   transition: "all 0.15s",
-                  background:
-                    filterStatus === tab.value ? "#ffffff" : "transparent",
-                  color:
-                    filterStatus === tab.value ? "#0F172A" : "#64748b",
-                  boxShadow:
-                    filterStatus === tab.value
-                      ? "0 1px 3px rgba(0,0,0,0.08)"
-                      : "none",
+                  background: filterStatus === tab.value ? "#ffffff" : "transparent",
+                  color: filterStatus === tab.value ? "#0F172A" : "#64748b",
+                  boxShadow: filterStatus === tab.value ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
                 }}
               >
                 {tab.label}
@@ -684,6 +681,7 @@ function ProjectsSection() {
             ))}
           </div>
 
+          {/* Sort select */}
           <div style={{ position: "relative" }}>
             <select
               value={sortKey}
@@ -722,9 +720,48 @@ function ProjectsSection() {
               keyboard_arrow_down
             </span>
           </div>
+
+          {/* View toggle */}
+          <div
+            style={{
+              display: "flex",
+              background: "#f1f5f9",
+              border: "1px solid rgba(226,232,240,0.6)",
+              borderRadius: 10,
+              padding: 4,
+              gap: 2,
+            }}
+          >
+            {viewTabs.map((vt) => (
+              <button
+                key={vt.value}
+                onClick={() => setActiveView(vt.value)}
+                title={vt.value.charAt(0).toUpperCase() + vt.value.slice(1) + " View"}
+                style={{
+                  width: 30,
+                  height: 30,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 7,
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  background: activeView === vt.value ? "#ffffff" : "transparent",
+                  color: activeView === vt.value ? "#0F172A" : "#64748b",
+                  boxShadow: activeView === vt.value ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  {vt.icon}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
+      {/* Content area */}
       {filtered.length === 0 ? (
         <div
           style={{
@@ -736,31 +773,192 @@ function ProjectsSection() {
             gap: 8,
           }}
         >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: 48, color: "#cbd5e1" }}
-          >
+          <span className="material-symbols-outlined" style={{ fontSize: 48, color: "#cbd5e1" }}>
             inventory_2
           </span>
-          <span
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#475569",
-            }}
-          >
+          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 700, color: "#475569" }}>
             No projects match this filter
           </span>
         </div>
-      ) : (
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-          style={{ gap: 16 }}
-        >
+      ) : activeView === "cards" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
           {filtered.map((p) => (
             <ProjectCard key={p.id} project={p} />
           ))}
+        </div>
+      ) : activeView === "list" ? (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+            <thead>
+              <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+                {["Project Name", "Locality & Corridor", "BHK Configs", "Carpet / Built-up Eff.", "prOPIUM Score", "Actions"].map((col, i) => (
+                  <th
+                    key={col}
+                    style={{
+                      padding: "12px 16px",
+                      fontFamily: "Inter, sans-serif",
+                      fontSize: 9,
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                      color: "#94a3b8",
+                      textAlign: i >= 3 ? "right" : "left",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((p, idx) => {
+                const isReady = p.status === "Ready to Move In";
+                return (
+                  <tr
+                    key={p.id}
+                    style={{
+                      borderBottom: idx < filtered.length - 1 ? "1px solid #f1f5f9" : "none",
+                    }}
+                  >
+                    {/* Project Name */}
+                    <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span
+                          style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            background: isReady ? "#059669" : "#F59E0B",
+                            flexShrink: 0,
+                          }}
+                        />
+                        <div>
+                          <div style={{ fontFamily: "Outfit, sans-serif", fontSize: 13, fontWeight: 700, color: "#0F172A" }}>
+                            {p.name}
+                          </div>
+                          <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#94a3b8", marginTop: 1 }}>
+                            {p.developer}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    {/* Locality */}
+                    <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "#334155", fontWeight: 600 }}>
+                        {p.sector}
+                      </div>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#94a3b8", marginTop: 1 }}>
+                        Golf Course Extension
+                      </div>
+                    </td>
+                    {/* BHK */}
+                    <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                        {p.bhk.map((b) => (
+                          <span
+                            key={b}
+                            style={{
+                              background: "#f1f5f9",
+                              color: "#334155",
+                              fontSize: 10,
+                              fontWeight: 600,
+                              fontFamily: "Inter, sans-serif",
+                              padding: "3px 7px",
+                              borderRadius: 4,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {b}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    {/* Efficiency */}
+                    <td style={{ padding: "14px 16px", textAlign: "right", verticalAlign: "middle" }}>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: "#0F172A" }}>
+                        {p.carpetEff}% / {p.builtupEff}%
+                      </div>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#94a3b8", marginTop: 1 }}>
+                        Carpet / Built-up
+                      </div>
+                    </td>
+                    {/* Score */}
+                    <td style={{ padding: "14px 16px", textAlign: "right", verticalAlign: "middle" }}>
+                      <span
+                        style={{
+                          fontFamily: "Outfit, sans-serif",
+                          fontSize: 15,
+                          fontWeight: 800,
+                          color: scoreColor(p.score),
+                        }}
+                      >
+                        {p.score}
+                      </span>
+                      <span style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#94a3b8", marginLeft: 2 }}>
+                        /100
+                      </span>
+                    </td>
+                    {/* Actions */}
+                    <td style={{ padding: "14px 16px", textAlign: "right", verticalAlign: "middle", whiteSpace: "nowrap" }}>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 700, color: "#0F172A", marginBottom: 2 }}>
+                        ₹{p.priceMin} – {p.priceMax} Cr
+                      </div>
+                      <button
+                        style={{
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          fontFamily: "Inter, sans-serif",
+                          fontSize: 10,
+                          fontWeight: 800,
+                          color: "#F59E0B",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.08em",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 2,
+                          padding: 0,
+                        }}
+                      >
+                        Dossier
+                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                          arrow_forward
+                        </span>
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        /* Map View */
+        <div
+          style={{
+            height: 420,
+            background: "#f1f5f9",
+            borderRadius: 10,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 12,
+            border: "1px dashed #cbd5e1",
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 40, color: "#94a3b8" }}>
+            map
+          </span>
+          <div style={{ textAlign: "center" }}>
+            <p style={{ fontFamily: "Outfit, sans-serif", fontSize: 13, fontWeight: 700, color: "#475569", margin: 0 }}>
+              Interactive Map Coming Soon
+            </p>
+            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "#94a3b8", marginTop: 4 }}>
+              Leaflet-powered corridor map with project pins — in development
+            </p>
+          </div>
         </div>
       )}
     </section>
@@ -1276,11 +1474,49 @@ function GCEXPage() {
               Trailing 90-day base residential pricing index
             </p>
             <PriceChart />
-            <InventoryPieChart />
           </div>
 
-          <div className="lg:col-span-5" style={{ minHeight: 400 }}>
+          <div className="lg:col-span-5" style={{ minHeight: 0 }}>
             <ExpertAnalysisCard />
+          </div>
+        </div>
+
+        {/* Inventory Class Split — standalone row */}
+        <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 20 }}>
+          <div
+            className="lg:col-span-7"
+            style={{
+              background: "#ffffff",
+              border: "1px solid rgba(226,232,240,0.8)",
+              borderRadius: 16,
+              padding: 20,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "Outfit, sans-serif",
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#0F172A",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                marginBottom: 2,
+              }}
+            >
+              Inventory Class Split
+            </h3>
+            <p
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 10,
+                color: "#94a3b8",
+                marginBottom: 16,
+              }}
+            >
+              Residential segment distribution across active GCEX projects
+            </p>
+            <InventoryPieChart />
           </div>
         </div>
 
