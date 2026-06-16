@@ -10,42 +10,42 @@ const faqItems = [
   {
     question: "What is prOPIUM?",
     answer:
-      "prOPIUM is an independent real estate intelligence platform that aggregates and verifies project-level data across RERA filings, builder credibility, pricing history, and delivery signals — giving buyers, investors, and advisors a single source of audited truth.",
+      "prOPIUM is a property intelligence platform for Gurugram. It consolidates project specs, builder credibility, live pricing, RERA status, and risk signals across micro-markets — so you can search, compare, and decide on proof, not persuasion.",
   },
   {
     question: "How is the data sourced and updated?",
     answer:
-      "We pull directly from state RERA portals, developer disclosures, and verified on-ground sources. Data is refreshed continuously — most projects update within 24–72 hours of a regulatory filing or price change.",
+      "Data is drawn from RERA filings, registry records, admin-verified project inputs, and live catalog updates. Project counts, pricing, delivery status, and intelligence scores refresh as the underlying data changes.",
   },
   {
     question: "Is prOPIUM free to use?",
     answer:
-      "Core market intelligence — micro-market snapshots, project listings, and RERA status — is available without a subscription. Advanced analytics, risk scoring, and portfolio tools are part of premium plans.",
+      "Yes. You can search projects, explore micro-markets, compare listings, and review intelligence scores at no cost. Some flows may ask you to sign in to save preferences or access personalized recommendations.",
   },
   {
     question: "What is a micro-market?",
     answer:
-      "A micro-market is a hyper-local corridor within a city that shares common infrastructure, pricing dynamics, and buyer profiles. For example, Golf Course Road and Dwarka Expressway are distinct micro-markets within Gurgaon, each with its own supply-demand balance and investment thesis.",
+      "A micro-market is one of Gurugram’s major corridors — such as Golf Course Road or Dwarka Expressway — mapped with live project inventory, average pricing, unit counts, and delivery-stage breakdowns for that corridor.",
   },
   {
     question: "How does project scoring work?",
     answer:
-      "Each project receives a composite score based on RERA compliance history, builder delivery track record, construction progress velocity, pricing transparency, and litigation status. Scores are recalculated as new data arrives.",
+      "Each project is evaluated across eight intelligence dimensions — including builder track record, pricing, location, legal status, construction progress, and risk signals — using a structured scoring model so you see strengths and gaps at a glance.",
   },
   {
     question: "Can I compare multiple projects side by side?",
     answer:
-      "Yes. The comparison tool lets you place up to four projects side by side across price, area efficiency, builder score, RERA status, and delivery timeline — so you can make a data-driven shortlist before visiting a site.",
+      "Yes. Open any project and use Compare, or browse the project explorer to evaluate pricing, specifications, and intelligence scores across multiple projects in one view.",
   },
   {
     question: "Who is prOPIUM for?",
     answer:
-      "prOPIUM is built for end-buyers who want to verify before they commit, investors tracking micro-market appreciation cycles, channel partners who need audited data to pitch with authority, and developers who want market intelligence at speed.",
+      "Home buyers, investors, channel partners, wealth managers, developers, and institutional teams who need verified, structured data — not broker pitches or brochure marketing.",
   },
   {
     question: "How is this different from typical property portals?",
     answer:
-      "Typical portals are listing marketplaces — their incentive is to drive leads. prOPIUM is a data platform with no developer sponsorship; our incentive is accuracy. We surface risk signals and verified data, not just listings.",
+      "Most portals list inventory. We layer structured intelligence on top — actual prices, RERA compliance, litigation and delay signals, micro-market dynamics, and builder credibility — so you understand what you are buying before you commit.",
   },
 ];
 
