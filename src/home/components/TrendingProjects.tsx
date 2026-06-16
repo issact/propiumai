@@ -148,7 +148,7 @@ export function TrendingProjects() {
           className="md:hidden flex items-center gap-1 flex-shrink-0"
           style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 800, color: '#F59E0B', textDecoration: 'none' }}
         >
-          See all
+          View All
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_forward</span>
         </a>
         <button
@@ -170,7 +170,7 @@ export function TrendingProjects() {
           onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#0F172A'; (e.currentTarget as HTMLElement).style.color = '#ffffff'; }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#0F172A'; }}
         >
-          View All Projects
+          View All
         </button>
       </div>
 

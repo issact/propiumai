@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 const developers = [
   {
@@ -7,6 +8,7 @@ const developers = [
     name: 'DLF Limited',
     founded: 'Est. 1946',
     projectCount: '60 Projects',
+    profileHref: '/developer-scorecards' as const,
     ready: { count: 37, pct: 62 },
     construction: { count: 7, pct: 12 },
     newLaunch: { count: 0, pct: 0 },
@@ -17,6 +19,7 @@ const developers = [
     name: 'M3M India Pvt Ltd',
     founded: 'Est. 2010',
     projectCount: '24 Projects',
+    profileHref: '/m3m-developer' as const,
     ready: { count: 14, pct: 58 },
     construction: { count: 10, pct: 42 },
     newLaunch: { count: 0, pct: 0 },
@@ -27,6 +30,7 @@ const developers = [
     name: 'Emaar India',
     founded: 'Est. 2005',
     projectCount: '22 Projects',
+    profileHref: '/developer-scorecards' as const,
     ready: { count: 16, pct: 73 },
     construction: { count: 5, pct: 23 },
     newLaunch: { count: 1, pct: 4 },
@@ -37,6 +41,7 @@ const developers = [
     name: 'Conscient Infrastructure',
     founded: 'Est. 1990',
     projectCount: '6 Projects',
+    profileHref: '/developer-scorecards' as const,
     ready: { count: 3, pct: 50 },
     construction: { count: 3, pct: 50 },
     newLaunch: { count: 0, pct: 0 },
@@ -95,6 +100,28 @@ function DeveloperCard({ dev }: { dev: typeof developers[0] }) {
             </div>
           </div>
         ))}
+        <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 12, marginTop: 0 }}>
+          <Link
+            to={dev.profileHref}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              color: hovered ? '#d97706' : '#F59E0B',
+              fontSize: 10,
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              fontFamily: 'Inter, sans-serif',
+              transition: 'color 0.2s',
+              textDecoration: 'none',
+            }}
+          >
+            Explore
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>arrow_forward</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -108,14 +135,35 @@ export function TopDevelopers() {
           <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(22px, 4.5vw, 30px)', fontWeight: 700, color: '#0F172A', lineHeight: 1.3, marginBottom: 4 }}>Top Developers</h2>
           <p className="hidden md:block" style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#64748b' }}>Builders we surface for depth of delivery data and verified project intelligence — open their project set in one click.</p>
         </div>
-        <a
-          href="#"
+        <Link
+          to="/developer-scorecards"
           className="md:hidden flex items-center gap-1 flex-shrink-0"
           style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 800, color: '#F59E0B', textDecoration: 'none' }}
         >
-          See all
+          View All
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_forward</span>
-        </a>
+        </Link>
+        <Link
+          to="/developer-scorecards"
+          className="hidden md:inline-block transition-all"
+          style={{
+            border: '1px solid #cbd5e1',
+            color: '#0F172A',
+            padding: '10px 24px',
+            borderRadius: 2,
+            fontFamily: 'Inter, sans-serif',
+            fontSize: 14,
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            background: 'transparent',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            textDecoration: 'none',
+          }}
+        >
+          View All
+        </Link>
       </div>
       <div
         style={{

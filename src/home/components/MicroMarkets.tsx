@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 const markets = [
   {
@@ -145,27 +146,6 @@ function MarketCard({ market }: { market: typeof markets[0] }) {
             <span className="material-symbols-outlined" style={{ fontSize: 14, color: '#F59E0B' }}>location_on</span>
             {market.subLocation}
           </p>
-          <div style={{ marginTop: 12, background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: 8, padding: '10px 12px' }}>
-            <div className="flex items-center justify-between" style={{ marginBottom: 4 }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: '#92400e', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>12-mo Trend</span>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, fontWeight: 800, color: '#34D399', display: 'flex', alignItems: 'center', gap: 2 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 13 }}>arrow_upward</span>
-                {market.trend}
-              </span>
-            </div>
-            <div style={{ height: 28, width: '100%', filter: 'drop-shadow(0 2px 6px rgba(245,158,11,0.45))' }}>
-              <svg style={{ width: '100%', height: '100%' }} viewBox="0 0 100 20" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id={`spark-${market.id}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d={`${market.sparkline} L100,20 L0,20 Z`} fill={`url(#spark-${market.id})`} />
-                <path d={market.sparkline} fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-          </div>
           <div className="grid grid-cols-3 gap-1.5" style={{ marginTop: 12 }}>
             {[
               { label: 'Ready', color: '#10b981', value: market.ready },
@@ -249,15 +229,16 @@ export function MicroMarkets() {
             <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(22px, 4.5vw, 30px)', fontWeight: 700, color: '#F1F5F9', lineHeight: 1.3, marginBottom: 4 }}>Top Micro-Markets</h2>
             <p className="hidden md:block" style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#64748b' }}>Explore best micro-markets for live inventory, pricing, and delivery signals.</p>
           </div>
-          <a
-            href="#"
+          <Link
+            to="/micro-market"
             className="md:hidden flex items-center gap-1 flex-shrink-0"
             style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 800, color: '#F59E0B', textDecoration: 'none' }}
           >
-            See all
+            View All
             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_forward</span>
-          </a>
-          <button
+          </Link>
+          <Link
+            to="/micro-market"
             className="hidden md:inline-block transition-all"
             style={{
               border: '1px solid rgba(245,158,11,0.4)',
@@ -272,12 +253,11 @@ export function MicroMarkets() {
               background: 'transparent',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
+              textDecoration: 'none',
             }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#F59E0B'; (e.currentTarget as HTMLElement).style.color = '#0D0F14'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#F59E0B'; }}
           >
-            Explore Map View
-          </button>
+            View All
+          </Link>
         </div>
 
         {/* Cards scroll/grid — IDENTICAL classes to original light version */}

@@ -7,6 +7,7 @@ import { TopDevelopers } from "@/home/components/TopDevelopers";
 import { DimensionsCarousel } from "@/home/components/DimensionsCarousel";
 import { EcosystemSection } from "@/home/components/EcosystemSection";
 import { VerifiedStandard } from "@/home/components/VerifiedStandard";
+import { FAQSection } from "@/home/components/FAQSection";
 import { Footer } from "@/home/components/Footer";
 import { MobileBottomNav } from "@/home/components/MobileBottomNav";
 
@@ -47,6 +48,7 @@ function Home() {
         <DimensionsCarousel />
         <EcosystemSection />
         <VerifiedStandard />
+        <FAQSection />
       </main>
       <Footer />
       <MobileBottomNav />
