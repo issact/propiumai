@@ -17,7 +17,11 @@ export default defineConfig({
   nitro: {
     preset: "cloudflare-module",
     output: { dir: "dist", serverDir: "dist/server", publicDir: "dist/client" },
-    cloudflare: { nodeCompat: true, deployConfig: true },
+    // deployConfig generates .wrangler/deploy/config.json at project root, which Bolt's
+    // deployment pipeline reads to locate dist/server/wrangler.json. Wrangler must be
+    // invoked from dist/ (not dist/server/) to avoid a "different base path" conflict —
+    // dist/nitro.json's deploy command ("npx wrangler --cwd ./ deploy") does exactly this.
+    cloudflare: { nodeCompat: true },
   },
   vite: {
     server: {
