@@ -395,19 +395,6 @@
             </div>
         </section>
 
-        <!-- "WHERE THEY BUILD" SEGMENTED CORRIDOR BAR -->
-        <section class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-3">
-            <div class="flex justify-between items-start gap-3">
-                <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 shrink-0">Where They Build</h3>
-                <span id="corridorBarLegend" class="text-[10px] text-slate-500 font-semibold text-right min-w-0 break-words">0 projects across corridors · tap to filter</span>
-            </div>
-            
-            <!-- Segmented Bar Container -->
-            <div class="w-full h-8 bg-slate-100 rounded-xl overflow-hidden flex" id="corridorSegmentBar">
-                <!-- Javascript will render colored blocks based on corridor distribution -->
-            </div>
-        </section>
-
         <!-- METRICS & scorecard GRID -->
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
             
@@ -1141,7 +1128,6 @@
 
             // Render details
             renderHeader();
-            renderCorridorBar();
             renderMetrics();
             renderScorecard();
             populateFilterDropdowns();
@@ -1334,55 +1320,6 @@
             } else {
                 scoreVal.classList.add('text-rose-500');
             }
-        }
-
-        function renderCorridorBar() {
-            const bar = document.getElementById('corridorSegmentBar');
-            const legend = document.getElementById('corridorBarLegend');
-            
-            const distribution = currentDev.corridors;
-            const totalProjects = Object.values(distribution).reduce((a, b) => a + b, 0);
-            
-            legend.textContent = `${totalProjects} tracked projects across ${Object.keys(distribution).length} corridors · tap to filter`;
-            
-            // Color mapping for corridors
-            const colors = {
-                "Golf Course Road": "bg-teal-600 hover:bg-teal-700",
-                "Golf Course Extension Road": "bg-emerald-600 hover:bg-emerald-700",
-                "Dwarka Expressway": "bg-violet-600 hover:bg-violet-700",
-                "Southern Peripheral Road": "bg-blue-600 hover:bg-blue-700",
-                "Sohna Road": "bg-indigo-600 hover:bg-indigo-700",
-                "Other": "bg-slate-500 hover:bg-slate-600"
-            };
-
-            const defaultColor = "bg-amber-600 hover:bg-amber-700";
-
-            let barHtml = "";
-            for (const [name, count] of Object.entries(distribution)) {
-                if (count === 0) continue;
-                const pct = (count / totalProjects) * 100;
-                const color = colors[name] || defaultColor;
-                
-                // Friendly short name
-                let shortName = name;
-                if (name === "Golf Course Extension Road") shortName = "GCEX";
-                else if (name === "Southern Peripheral Road") shortName = "SPR";
-                else if (name === "Dwarka Expressway") shortName = "Dwarka Expy";
-                else if (name === "Golf Course Road") shortName = "GCR";
-
-                const isActive = activeCorridorFilter === name;
-
-                barHtml += `
-                    <div onclick="setCorridorFilter('${name}')" 
-                          style="width: ${pct}%" 
-                          class="${color} h-full min-w-0 overflow-hidden flex items-center justify-center text-white text-[10px] font-bold tracking-wider cursor-pointer border-r border-white/10 select-none transition-all ${isActive ? 'ring-2 ring-inset ring-amber-400 opacity-100 scale-y-105' : 'opacity-85 hover:opacity-100'}"
-                          title="${name}: ${count} projects">
-                        <span class="truncate px-1">${shortName} <span class="font-normal opacity-90 ml-1">${count}</span></span>
-                    </div>
-                `;
-            }
-            
-            bar.innerHTML = barHtml;
         }
 
         function renderMetrics() {
@@ -1904,9 +1841,6 @@
             });
             updateFilterLabels();
 
-            // Re-render corridor bar to show active border
-            renderCorridorBar();
-            
             renderViews();
         }
 
@@ -1920,7 +1854,6 @@
             activeStatusFilter = 'all';
             activeCorridorFilter = 'all';
             updateFilterLabels();
-            renderCorridorBar();
 
             // Highlight Tab
             const tabs = {
