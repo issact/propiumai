@@ -12,4 +12,18 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Explicitly enable nitro so the cloudflare-module deploy build runs even when
+  // LOVABLE_SANDBOX / DEV_SERVER__PROJECT_PATH env vars are not set.
+  nitro: {
+    preset: "cloudflare-module",
+    output: { dir: "dist", serverDir: "dist/server", publicDir: "dist/client" },
+    cloudflare: { nodeCompat: true, deployConfig: true },
+  },
+  vite: {
+    server: {
+      // Fail loudly if port 8080 is taken instead of silently moving to 8081,
+      // which would break the Bolt preview iframe.
+      strictPort: true,
+    },
+  },
 });
