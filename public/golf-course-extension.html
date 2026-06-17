@@ -341,19 +341,19 @@
             </div>
 
             <!-- VIEW 1: List View (Table) -->
-            <div id="viewList" class="overflow-x-auto w-full rounded-xl" style="background:#0F172A;">
+            <div id="viewList" class="overflow-x-auto w-full rounded-xl border border-slate-200" style="background:#ffffff;">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
-                            <th class="py-3.5 px-5 font-sans text-[9px] font-bold uppercase tracking-widest" style="color:#475569;">Project Name</th>
-                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Developer</th>
-                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Sector</th>
-                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">BHK Configurations</th>
-                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-right" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Price Range</th>
-                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-center" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Carpet Eff.</th>
-                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-center" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Built-up Eff.</th>
-                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-center" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">prOPIUM Score</th>
-                            <th class="py-3.5 px-5 font-sans text-[9px] font-bold uppercase tracking-widest text-right" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Action</th>
+                        <tr style="background:#F1F5F9; border-bottom:2px solid #E2E8F0;">
+                            <th class="py-3 px-5 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500">Project Name</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500">Developer</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500">Sector</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500">BHK Configurations</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-right">Price Range</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Carpet Eff.</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Built-up Eff.</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">prOPIUM Score</th>
+                            <th class="py-3 px-5 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="projectListBody">
@@ -1539,24 +1539,25 @@
             }
 
             // 1. Render List Table
-            listContainer.innerHTML = data.map(p => {
+            listContainer.innerHTML = data.map((p, idx) => {
                 const targetLink = p.id === 'm3m-altitude' ? 'project_detail.html' : 'project_detail_locked.html';
                 const score = p.score;
-                const scoreColor = score >= 75 ? '#10b981' : score >= 50 ? '#F59E0B' : score >= 25 ? '#006AFF' : '#64748b';
+                const scoreColor = score >= 75 ? '#16a34a' : score >= 50 ? '#d97706' : score >= 25 ? '#dc2626' : '#64748b';
+                const rowBg = idx % 2 === 0 ? '#ffffff' : '#F9FAFB';
                 return `
-                <tr class="project-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <td class="py-4 px-5 font-sans" style="color:#94a3b8; font-size:11px; font-weight:500;">${p.name}</td>
-                    <td class="py-4 px-4 font-sans font-bold" style="color:#F1F5F9; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.developer}</td>
-                    <td class="py-4 px-4 font-sans" style="color:#94a3b8; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.sector}</td>
-                    <td class="py-4 px-4 font-sans" style="color:#cbd5e1; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.bhk.join(', ')}</td>
-                    <td class="py-4 px-4 text-right font-display font-extrabold" style="color:#F59E0B; font-size:12px; border-left:1px solid rgba(255,255,255,0.05);">₹${p.priceMin} – ${p.priceMax} Cr</td>
-                    <td class="py-4 px-4 text-center font-sans font-bold" style="color:#94a3b8; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.carpetEff}%</td>
-                    <td class="py-4 px-4 text-center font-sans font-bold" style="color:#94a3b8; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.builtupEff}%</td>
-                    <td class="py-4 px-4 text-center font-display font-extrabold" style="color:${scoreColor}; font-size:14px; border-left:1px solid rgba(255,255,255,0.05);">${p.score}</td>
-                    <td class="py-4 px-5 text-right" style="border-left:1px solid rgba(255,255,255,0.05);">
-                        <a href="${targetLink}" class="font-sans font-bold text-[11px] flex items-center gap-0.5 justify-end hover:opacity-70 transition-opacity" style="color:#006AFF; text-decoration:none;">
-                            View Audit
-                            <span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span>
+                <tr class="project-row" style="background:${rowBg}; border-bottom:1px solid #E2E8F0;">
+                    <td class="py-3.5 px-5 font-sans font-semibold" style="color:#0F172A; font-size:12px;">${p.name}</td>
+                    <td class="py-3.5 px-4 font-sans font-bold" style="color:#0F172A; font-size:12px;">${p.developer}</td>
+                    <td class="py-3.5 px-4 font-sans" style="color:#475569; font-size:12px;">${p.sector}</td>
+                    <td class="py-3.5 px-4 font-sans" style="color:#475569; font-size:12px;">${p.bhk.join(', ')}</td>
+                    <td class="py-3.5 px-4 text-right font-display font-extrabold" style="color:#0F172A; font-size:12px;">₹${p.priceMin} – ${p.priceMax} Cr</td>
+                    <td class="py-3.5 px-4 text-center font-sans font-semibold" style="color:#475569; font-size:12px;">${p.carpetEff}%</td>
+                    <td class="py-3.5 px-4 text-center font-sans font-semibold" style="color:#475569; font-size:12px;">${p.builtupEff}%</td>
+                    <td class="py-3.5 px-4 text-center font-display font-extrabold" style="color:${scoreColor}; font-size:14px;">${p.score}<span style="font-size:9px; color:#94a3b8; font-weight:400; margin-left:1px;">/100</span></td>
+                    <td class="py-3.5 px-5 text-right">
+                        <a href="${targetLink}" class="inline-flex items-center gap-1 font-sans font-bold text-[11px] rounded-md px-3 py-1.5 hover:opacity-90 transition-opacity" style="background:#0F172A; color:#ffffff; text-decoration:none; letter-spacing:0.04em; white-space:nowrap;">
+                            DOSSIER
+                            <span class="material-symbols-outlined" style="font-size:11px;">arrow_forward</span>
                         </a>
                     </td>
                 </tr>`;
