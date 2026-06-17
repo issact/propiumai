@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -77,14 +76,13 @@
         }
         .corridor-card:hover {
             border-color: rgba(245, 158, 11, 0.5) !important;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
             transform: translateY(-4px);
         }
     </style>
 </head>
 <body class="bg-background text-[#0F172A] font-sans antialiased min-h-screen flex flex-col pt-16 relative blueprint-grid">
 
-    <!-- Top Navigation Bar -->
     <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0F172A]/85 border-b border-white/10 shadow-sm text-white">
         <div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto w-full">
             <div class="flex items-center gap-stack-md">
@@ -107,17 +105,14 @@
         </div>
     </header>
 
-    <!-- Main Container -->
     <main class="max-w-container-max mx-auto px-6 lg:px-margin-desktop py-8 w-full flex-grow flex flex-col gap-6">
         
-        <!-- Breadcrumb Navigation -->
         <nav class="text-xs text-slate-500 flex items-center gap-2">
             <a href="index.html" class="hover:text-primary transition-colors">Home</a>
             <span class="text-slate-300">/</span>
             <span class="text-slate-700 font-medium">Micro Markets Directory</span>
         </nav>
 
-        <!-- Page Header & Toggle View -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div class="space-y-1">
                 <span class="text-[9px] uppercase tracking-widest font-extrabold text-secondary-container block">Micro-Market Intelligence</span>
@@ -127,7 +122,6 @@
                 </p>
             </div>
 
-            <!-- View Toggle -->
             <div class="flex bg-slate-100 border border-slate-200/40 p-1 rounded-xl gap-0.5 shrink-0 self-start md:self-end shadow-sm" id="viewToggleContainer">
                 <button onclick="switchView('cards')" id="btnViewCards" class="px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white text-primary shadow-sm">
                     <span class="material-symbols-outlined text-sm">grid_view</span> Cards
@@ -138,7 +132,6 @@
             </div>
         </div>
 
-        <!-- Telemetry Summary Row -->
         <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-primary border border-white/10 rounded-2xl p-5 shadow-sm text-white">
             <div class="space-y-1 pl-4 border-l-2 border-white/10">
                 <span class="text-[9px] text-white/50 font-bold uppercase tracking-wider">Corridors Profiled</span>
@@ -158,17 +151,13 @@
             </div>
         </section>
 
-        <!-- VIEW 1: Cards View Grid -->
         <section id="viewCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Dynamic JavaScript Rendering -->
-        </section>
+            </section>
 
-        <!-- VIEW 2: Map View Container (Hidden) -->
         <section id="viewMap" class="hidden min-h-[560px] relative rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-slate-100 flex flex-col">
             <div id="map" class="w-full h-[560px] flex-grow"></div>
         </section>
 
-        <!-- Source / Disclaimer Footnote -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] text-slate-400 font-semibold border-t border-slate-200 pt-4 mt-2">
             <span>Source: <b class="text-slate-600">prOPIUM database</b> · 612 projects verified against RERA & registry records</span>
             <span class="mt-1 sm:mt-0">Prices reflect trailing 90-day listing medians · Updated 04 Jun 2026</span>
@@ -176,7 +165,6 @@
 
     </main>
 
-    <!-- Footer -->
     <footer class="bg-surface-container-low pt-stack-lg pb-stack-md border-t border-outline-variant/30 mt-12 w-full">
         <div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-6 gap-gutter">
             <div class="md:col-span-2">
@@ -257,7 +245,6 @@
         </div>
     </footer>
 
-    <!-- JS Controllers -->
     <script>
         const CORRIDORS = [
             {
@@ -464,7 +451,6 @@
                 [28.4881, 77.0572], [28.4836, 77.0630], [28.4774, 77.0665], [28.4706, 77.0671],
                 [28.4640, 77.0648], [28.4587, 77.0599], [28.4499, 77.0464]
             ],
-            // Custom simplified shapes for remaining 3 to display seamlessly
             "ng": [
                 [28.3800, 76.9200], [28.4100, 76.9300], [28.4300, 76.9400], [28.4200, 76.9600],
                 [28.3900, 76.9500], [28.3750, 76.9350], [28.3800, 76.9200]
@@ -500,251 +486,102 @@
             const container = document.getElementById('viewCards');
             container.innerHTML = CORRIDORS.map(c => {
                 const total = c.ready + c.uc + c.newLaunch;
-                const readyPct = (c.ready / total) * 100;
-                const ucPct = (c.uc / total) * 100;
-                const newPct = (c.newLaunch / total) * 100;
+                const readyPct = total > 0 ? (c.ready / total) * 100 : 0;
+                const ucPct = total > 0 ? (c.uc / total) * 100 : 0;
+                const newPct = total > 0 ? (c.newLaunch / total) * 100 : 0;
 
                 return `
-                <div id="card-${c.code}" class="corridor-card" style="background:#1E2130; border:1px solid rgba(255,255,255,0.08); border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.3); display:flex; flex-direction:column; cursor:pointer;">
-                    <!-- Image header -->
+                <div id="card-${c.code}" class="corridor-card" style="background:#ffffff; border:1px solid #E2E8F0; border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05); display:flex; flex-direction:column; cursor:pointer;">
                     <div class="text-white relative overflow-hidden flex flex-col justify-end" style="height:112px; padding:16px; background-image:url('${c.image}'); background-size:cover; background-position:center;">
-                        <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(15,23,42,0.35) 0%, rgba(15,23,42,0.72) 60%, rgba(15,23,42,0.88) 100%);"></div>
-                        <span style="position:absolute; top:12px; right:12px; font-family:Inter,sans-serif; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:2px; backdrop-filter:blur(4px); z-index:1;">${c.code}</span>
+                        <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(15,23,42,0.2) 0%, rgba(15,23,42,0.6) 60%, rgba(15,23,42,0.85) 100%);"></div>
+                        <span style="position:absolute; top:12px; right:12px; font-family:Inter,sans-serif; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; background:rgba(255,255,255,0.25); color:#ffffff; padding:4px 10px; border-radius:2px; backdrop-filter:blur(4px); z-index:1;">${c.code}</span>
                         <h3 style="font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#ffffff; line-height:1.3; margin-bottom:4px; position:relative; z-index:1;">${c.name}</h3>
-                        <span style="font-family:Inter,sans-serif; font-size:9px; color:rgba(203,213,225,0.8); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; position:relative; z-index:1;">Gurgaon Corridor</span>
+                        <span style="font-family:Inter,sans-serif; font-size:9px; color:rgba(255,255,255,0.7); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; position:relative; z-index:1;">Gurgaon Corridor</span>
                     </div>
 
-                    <!-- Card body -->
-                    <div style="padding:20px; display:flex; flex-direction:column; flex-grow:1; background:#263044;">
-                        <!-- Description -->
-                        <p style="font-family:Inter,sans-serif; font-size:12px; color:#94a3b8; line-height:1.6; margin-bottom:16px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${c.desc}</p>
+                    <div style="padding:20px; display:flex; flex-direction:column; flex-grow:1; background:#ffffff;">
+                        <p style="font-family:Inter,sans-serif; font-size:12px; color:#64748B; line-height:1.6; margin-bottom:16px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${c.desc}</p>
 
-                        <!-- Stats grid -->
                         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:16px;">
-                            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:6px; padding:8px 6px; text-align:center;">
-                                <span style="display:block; font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#F1F5F9;">${c.projects}</span>
-                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Projects</span>
+                            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:8px 6px; text-align:center;">
+                                <span style="display:block; font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#0F172A;">${c.projects}</span>
+                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748B; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Projects</span>
                             </div>
-                            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:6px; padding:8px 6px; text-align:center;">
-                                <span style="display:block; font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#F1F5F9;">${c.units.toLocaleString('en-IN')}</span>
-                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Units Mapped</span>
+                            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:8px 6px; text-align:center;">
+                                <span style="display:block; font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#0F172A;">${c.units.toLocaleString('en-IN')}</span>
+                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748B; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Units Mapped</span>
                             </div>
-                            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:6px; padding:8px 6px; text-align:center;">
+                            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:8px 6px; text-align:center;">
                                 <span style="display:block; font-family:Outfit,sans-serif; font-size:15px; font-weight:800; color:#F59E0B;">₹${(c.price / 1000).toFixed(1)}k</span>
-                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Avg PSFT</span>
+                                <span style="font-family:Inter,sans-serif; font-size:8px; color:#64748B; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Avg Psft</span>
                             </div>
                         </div>
 
-                        <!-- Progress bar -->
-                        <div style="margin-bottom:8px;">
-                            <div style="width:100%; background:rgba(255,255,255,0.08); height:6px; border-radius:99px; overflow:hidden; display:flex;">
-                                <div style="width:${readyPct}%; background:#10b981; height:100%;"></div>
-                                <div style="width:${ucPct}%; background:#F59E0B; height:100%;"></div>
-                                <div style="width:${newPct}%; background:#3b82f6; height:100%;"></div>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                                <span style="font-family:Inter,sans-serif; font-size:9px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block;"></span>${c.ready} Ready</span>
-                                <span style="font-family:Inter,sans-serif; font-size:9px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:#F59E0B;display:inline-block;"></span>${c.uc} Const.</span>
-                                <span style="font-family:Inter,sans-serif; font-size:9px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:#3b82f6;display:inline-block;"></span>${c.newLaunch} New</span>
+                        <div style="display:flex; height:6px; border-radius:3px; overflow:hidden; background:#E2E8F0; margin-bottom:12px;">
+                            <div style="width:${readyPct}%; background:#10B981;"></div>
+                            <div style="width:${ucPct}%; background:#F59E0B;"></div>
+                            <div style="width:${newPct}%; background:#3B82F6;"></div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-family:Inter,sans-serif; font-size:9px; font-weight:600; color:#64748B; margin-bottom:20px;">
+                            <div style="display:flex; gap:8px;">
+                                <span><span style="color:#10B981; margin-right:3px;">●</span>${c.ready} Ready</span>
+                                <span><span style="color:#F59E0B; margin-right:3px;">●</span>${c.uc} Const.</span>
+                                <span><span style="color:#3B82F6; margin-right:3px;">●</span>${c.newLaunch} New</span>
                             </div>
                         </div>
 
-                        <!-- Footer CTA -->
-                        <div style="border-top:1px solid rgba(255,255,255,0.07); margin-top:16px; padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-family:Inter,sans-serif; font-size:10px; color:#475569; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">${c.qoq}</span>
-                            <a href="${c.id === 'gcex' ? '/golf-course-extension' : '#'}" target="_top" style="color:#F59E0B; font-family:Inter,sans-serif; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; text-decoration:none; display:flex; align-items:center; gap:2px;">
-                                Explore
-                                <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
-                            </a>
+                        <div style="border-top:1px solid #F1F5F9; padding-top:12px; margin-top:auto; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-family:Inter,sans-serif; font-size:10px; font-weight:700; color:#94A3B8; text-transform:uppercase;">${c.qoq}</span>
+                            <div style="display:flex; align-items:center; gap:2px; font-family:Inter,sans-serif; font-size:10px; font-weight:800; color:#F59E0B; text-transform:uppercase; letter-spacing:0.05em;">
+                                Explore <span class="material-symbols-outlined" style="font-size:12px; font-weight:800; margin-left:2px; color:#F59E0B; vertical-align:middle;">arrow_forward</span>
+                            </div>
                         </div>
                     </div>
-                </div>`;
+                </div>
+                `;
             }).join('');
         }
 
         function switchView(view) {
             activeView = view;
-            
-            document.getElementById('viewCards').classList.toggle('hidden', view !== 'cards');
-            document.getElementById('viewMap').classList.toggle('hidden', view !== 'map');
-            
             const btnCards = document.getElementById('btnViewCards');
             const btnMap = document.getElementById('btnViewMap');
-            
+            const viewCards = document.getElementById('viewCards');
+            const viewMap = document.getElementById('viewMap');
+
             if (view === 'cards') {
                 btnCards.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white text-primary shadow-sm";
                 btnMap.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-slate-500 hover:text-primary";
+                viewCards.classList.remove('hidden');
+                viewMap.classList.add('hidden');
             } else {
-                btnCards.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-slate-500 hover:text-primary";
                 btnMap.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-white text-primary shadow-sm";
-                
-                setTimeout(() => {
-                    initMap();
-                }, 100);
+                btnCards.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 text-slate-500 hover:text-primary";
+                viewCards.classList.add('hidden');
+                viewMap.classList.remove('hidden');
+                initMap();
             }
         }
 
         function initMap() {
-            if (mapInstance) {
-                mapInstance.invalidateSize();
-                return;
-            }
-
-            mapInstance = L.map('map', {
-                zoomControl: false,
-                attributionControl: false
-            }).setView([28.4250, 77.0200], 12);
-
+            if (mapInstance) return;
+            mapInstance = L.map('map').setView([28.4595, 77.0266], 12);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                maxZoom: 19
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
             }).addTo(mapInstance);
 
-            L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
-
-            // Draw Polygons
-            for (const [key, coords] of Object.entries(CORRIDOR_POLYGONS)) {
-                const info = CORRIDORS.find(c => c.id === key) || CORRIDORS.find(c => c.id === 'nh48');
-                const style = CORRIDOR_STYLES[key] || { color: "#94A3B8", fillColor: "#94A3B8", fillOpacity: 0.1, weight: 1.5 };
-
-                const polygon = L.polygon(coords, {
-                    ...style
-                }).addTo(mapInstance);
-
-                polygon.bindTooltip(`
-                    <div class="px-2.5 py-1.5 font-sans text-xs">
-                        <b class="text-slate-900 block text-xs font-display font-extrabold">${info.name}</b>
-                        <span class="text-slate-500 font-semibold block mt-0.5">${info.projects} audited projects</span>
-                        <span class="text-secondary-container font-extrabold">₹${info.price.toLocaleString('en-IN')}/sqft</span>
-                    </div>
-                `, { sticky: true });
-
-                polygon.on('mouseover', function() {
-                    polygon.setStyle({
-                        fillOpacity: 0.25,
-                        weight: 3
-                    });
-                });
-
-                polygon.on('mouseout', function() {
-                    polygon.setStyle({
-                        fillOpacity: style.fillOpacity,
-                        weight: style.weight
-                    });
-                });
-
-                polygon.on('click', function() {
-                    window.location.href = `micro_market_detail.html?id=${info.id}`;
-                });
-
-                mapPolygonLayers.push({ key, layer: polygon });
-            }
+            Object.keys(CORRIDOR_POLYGONS).forEach(key => {
+                if (CORRIDOR_STYLES[key]) {
+                    const poly = L.polygon(CORRIDOR_POLYGONS[key], CORRIDOR_STYLES[key]).addTo(mapInstance);
+                    mapPolygonLayers.push(poly);
+                }
+            });
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             renderCorridors();
         });
     </script>
-
-<!-- LOVABLE_MOBILE_NAV_INJECT -->
-<style>
-@media (max-width: 767px) {
-  header .flex.items-center.gap-stack-sm { display: none !important; }
-  #lov-mobile-hamburger { display: flex !important; }
-  footer { padding-bottom: 8rem !important; }
-}
-#lov-mobile-hamburger { display: none; }
-#lov-mobile-menu-backdrop, #lov-mobile-menu-panel { transition: opacity .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1); }
-</style>
-
-<!-- Mobile hamburger button (positioned over header right side) -->
-<button id="lov-mobile-hamburger" aria-label="Open menu"
-  onclick="document.getElementById('lov-mobile-menu').dataset.open='1'"
-  style="position:fixed;top:12px;right:16px;width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#fff;align-items:center;justify-content:center;z-index:60;cursor:pointer;">
-  <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
-</button>
-
-<!-- Mobile menu -->
-<div id="lov-mobile-menu" data-open="0" class="md:hidden">
-  <div id="lov-mobile-menu-backdrop"
-    onclick="document.getElementById('lov-mobile-menu').dataset.open='0'"
-    style="position:fixed;inset:0;background:rgba(2,6,23,0.6);backdrop-filter:blur(4px);z-index:70;opacity:0;pointer-events:none;"></div>
-  <aside id="lov-mobile-menu-panel"
-    style="position:fixed;top:0;right:0;bottom:0;width:min(82vw,320px);background:#0F172A;border-left:1px solid rgba(255,255,255,0.08);z-index:71;transform:translateX(100%);box-shadow:-20px 0 50px rgba(0,0,0,0.5);display:flex;flex-direction:column;font-family:Inter,sans-serif;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);">
-      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#fff;text-decoration:none;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
-      <button onclick="document.getElementById('lov-mobile-menu').dataset.open='0'" aria-label="Close menu"
-        style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;">
-        <span class="material-symbols-outlined" style="font-size:22px;">close</span>
-      </button>
-    </div>
-    <nav style="padding:16px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;">
-      <div style="flex:1;">
-        <a href="/" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">home</span>Home</a>
-        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">auto_awesome</span>AI Search</a>
-        <a href="/search" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">search</span>Search</a>
-        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">compare_arrows</span>Compare</a>
-      </div>
-      <div style="padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:10px;padding-bottom:8px;">
-        <button style="background:#F59E0B;color:#0F172A;border:none;border-radius:10px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
-          <span class="material-symbols-outlined" style="font-size:20px;">mail</span>Enquiry</button>
-        <button style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
-          <span class="material-symbols-outlined" style="font-size:20px;">call</span>Call Us</button>
-      </div>
-    </nav>
-  </aside>
-</div>
-<script>
-(function(){
-  var m = document.getElementById('lov-mobile-menu');
-  var b = document.getElementById('lov-mobile-menu-backdrop');
-  var p = document.getElementById('lov-mobile-menu-panel');
-  new MutationObserver(function(){
-    var open = m.dataset.open === '1';
-    b.style.opacity = open ? '1' : '0';
-    b.style.pointerEvents = open ? 'auto' : 'none';
-    p.style.transform = open ? 'translateX(0)' : 'translateX(100%)';
-    document.body.style.overflow = open ? 'hidden' : '';
-  }).observe(m, {attributes:true, attributeFilter:['data-open']});
-})();
-</script>
-<!-- /LOVABLE_MOBILE_NAV_INJECT -->
-
-
-<!-- LOVABLE_MOBILE_FOOTER -->
-<style>
-@media (max-width: 767px) {
-  body > footer, footer.bg-surface-container-low { display: none !important; }
-  #lov-mobile-footer { display: block !important; }
-}
-#lov-mobile-footer { display: none; }
-</style>
-<footer id="lov-mobile-footer" style="background:#f1f5f9;padding:48px 0 8rem;border-top:1px solid rgba(226,232,240,0.3);font-family:Inter,sans-serif;">
-  <div style="max-width:1280px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:repeat(2,1fr);gap:32px 24px;">
-    <div style="grid-column:span 2;">
-      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#0F172A;text-decoration:none;display:inline-flex;margin-bottom:16px;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
-      <p style="font-size:12px;color:#64748b;line-height:1.6;margin-bottom:24px;">Intelligence for every Real Estate decision.</p>
-      <div style="display:flex;gap:16px;color:#94a3b8;">
-        <a href="#" style="color:#94a3b8;"><svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
-        <a href="#" style="color:#94a3b8;"><svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.7 0-1.37-.2-1.95-.54v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.31 1.83c-.34 0-.68-.02-1.02-.06C3.3 20.42 5.66 21 8.2 21c8.26 0 12.78-6.86 12.78-12.78 0-.19 0-.39-.01-.58.88-.64 1.64-1.44 2.24-2.35l-.01-.01z"/></svg></a>
-      </div>
-    </div>
-    <div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">About prOPIUM</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">About prOPIUM</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">How we Verify</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Why prOPIUM</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">The Team</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">Intelligence Hub</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Builder Evaluation</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Location Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Product Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Payment Plan Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Investment Intelligence</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">For developers</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Visibility & data</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Raise an issue</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Platform overview</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Contact & support</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">Support & legal</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Raise an issue</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Privacy policy</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Terms of use</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Cookie policy</a></li></ul></div>
-  </div>
-  <div style="max-width:1280px;margin:48px auto 0;padding:0 16px;">
-    <div style="border-top:1px solid rgba(226,232,240,0.6);padding-top:32px;display:flex;flex-direction:column;gap:24px;">
-      <p style="font-size:12px;color:#64748b;line-height:1.7;"><span style="font-weight:600;color:#0F172A;margin-right:4px;">Disclaimer ·</span>prOPIUM is an independent property intelligence and analytics platform. All data, scores, and analysis are for informational purposes only and do not constitute investment or legal advice. Prices, RERA status, and project details should be independently verified before any purchase or investment decision. prOPIUM does not act as a real estate agent, broker, or developer and does not receive commissions from builders or developers.</p>
-      <div style="border-top:1px solid rgba(226,232,240,0.6);padding-top:20px;display:flex;flex-direction:column;gap:12px;font-size:12px;color:#64748b;font-weight:500;">
-        <span>© 2026 prOPIUM · All rights reserved · Built for the Indian property ecosystem</span>
-        <div style="display:flex;gap:24px;"><a href="#" style="color:#64748b;text-decoration:none;">Privacy Shield</a><a href="#" style="color:#64748b;text-decoration:none;">Disclosure Policy</a></div>
-      </div>
-    </div>
-  </div>
-</footer>
-<!-- /LOVABLE_MOBILE_FOOTER -->
-
 </body>
 </html>
