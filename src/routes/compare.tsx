@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { TopNav } from "@/home/components/TopNav";
 import { Footer } from "@/home/components/Footer";
@@ -21,30 +21,42 @@ export const Route = createFileRoute("/compare")({
 function ComparePage() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const handleLoad = () => {
+  const injectChrome = () => {
     const doc = iframeRef.current?.contentDocument;
-    if (!doc) return;
-    if (doc.getElementById("__propium_hide_chrome")) return;
-    const style = doc.createElement("style");
-    style.id = "__propium_hide_chrome";
-    style.textContent = `
-      @media (min-width: 768px) { header.fixed.top-0 { display: none !important; } }
-      footer { display: none !important; }
-    `;
-    doc.head.appendChild(style);
-
-    const resize = () => {
-      const body = doc.body;
-      const html = doc.documentElement;
-      if (!body || !html || !iframeRef.current) return;
+    if (!doc || !doc.head) return false;
+    if (!doc.getElementById("__propium_hide_chrome")) {
+      const style = doc.createElement("style");
+      style.id = "__propium_hide_chrome";
+      style.textContent = `
+        @media (min-width: 768px) { header.fixed.top-0 { display: none !important; } }
+        footer { display: none !important; }
+      `;
+      doc.head.appendChild(style);
+    }
+    const body = doc.body;
+    const html = doc.documentElement;
+    if (body && html && iframeRef.current) {
       const h = Math.max(body.scrollHeight, html.scrollHeight, html.offsetHeight);
       iframeRef.current.style.height = h + "px";
-    };
-    resize();
-    const ro = new ResizeObserver(resize);
-    if (doc.body) ro.observe(doc.body);
-    window.addEventListener("resize", resize);
+    }
+    return true;
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    const tick = () => {
+      if (cancelled) return;
+      injectChrome();
+    };
+    const id = window.setInterval(tick, 400);
+    tick();
+    window.addEventListener("resize", tick);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+      window.removeEventListener("resize", tick);
+    };
+  }, []);
 
   return (
     <div style={{ background: "#F8FAFC", minHeight: "100vh" }}>
@@ -52,7 +64,7 @@ function ComparePage() {
       <iframe
         ref={iframeRef}
         src="/compare.html"
-        onLoad={handleLoad}
+        onLoad={injectChrome}
         title="Compare Projects"
         style={{
           display: "block",
