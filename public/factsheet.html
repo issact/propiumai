@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Property FactSheet | prOPIUM.ai</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0F172A",
+                        brandGold: "#F59E0B",
+                        brandBlue: "#006AFF",
+                        background: "#F1F5F9",
+                        surface: "#ffffff"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Outfit", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .material-symbols-outlined {
+            vertical-align: middle;
+        }
+
+        @media screen {
+            body {
+                background-color: #F1F5F9;
+            }
+            .preview-mode .factsheet-page {
+                width: 297mm;
+                height: 210mm;
+                margin: 2rem auto;
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                border: 1px solid #E2E8F0;
+                background-color: #ffffff;
+                position: relative;
+                box-sizing: border-box;
+                padding: 12mm 15mm;
+                overflow: hidden;
+            }
+
+            .dashboard-mode .factsheet-page {
+                width: 100% !important;
+                height: auto !important;
+                margin-bottom: 2rem !important;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+                border: 1px solid #E2E8F0 !important;
+                background-color: #ffffff !important;
+                padding: 2rem !important;
+                border-radius: 1rem !important;
+                box-sizing: border-box !important;
+            }
+        }
+
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+            body {
+                background-color: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .factsheet-page {
+                margin: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                padding: 12mm 15mm !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-slate-800 bg-[#F1F5F9] min-h-screen pb-12">
+
+    <!-- Screen-Only Utility Header -->
+    <div class="no-print bg-[#0F172A] border-b border-white/10 text-white sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="/" class="flex items-center gap-1 font-bold text-lg tracking-tight text-white hover:opacity-90">
+                    prOPIUM<span class="text-brandGold">.ai</span>
+                </a>
+                <span class="text-xs text-slate-400 border-l border-slate-700 pl-4 py-1">FactSheet Hub</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- Mode View Switcher -->
+                <div class="bg-slate-900 border border-slate-700 p-1 rounded-xl flex gap-1">
+                    <button id="btn-view-dash" onclick="setViewMode('dashboard')" class="px-3 py-1 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm">dashboard</span> Web View
+                    </button>
+                    <button id="btn-view-prev" onclick="setViewMode('preview')" class="px-3 py-1 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm">picture_as_pdf</span> PDF View
+                    </button>
+                </div>
+
+                <div class="h-6 w-px bg-slate-700"></div>
+
+                <label for="project-select" class="text-xs font-semibold text-slate-400">Select Project:</label>
+                <select id="project-select" onchange="changeProject(this.value)" class="bg-slate-800 border border-slate-700 text-white text-xs rounded-xl px-3 py-1.5 focus:ring-1 focus:ring-brandGold focus:border-brandGold outline-none">
+                </select>
+
+                <button onclick="window.print()" class="px-4 py-2 bg-brandGold hover:bg-amber-500 text-[#0F172A] text-xs font-extrabold uppercase tracking-wider transition-all rounded-xl shadow-md flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">download</span> PDF / Print
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- factsheet.html Pages Wrapper -->
+    <div id="factsheet-wrapper" class="max-w-6xl mx-auto px-6 py-8 dashboard-mode">
+        <div id="factsheet-container" class="space-y-0">
+        </div>
+    </div>
+
+    <script>
+        const PROJECTS_DATA = {
+            "trump-tower-gurgaon": {
+                "id": "trump-tower-gurgaon",
+                "name": "Trump Tower (Gurgaon)",
+                "bhk": "2 BHK / 3 BHK / 4 BHK",
+                "status": "Ready to Move In",
+                "developer": "M3M India Pvt Ltd",
+                "sector": "Sector 65",
+                "corridor": "Golf Course Extension Road",
+                "score": 72,
+                "reportDate": "17 June 2026",
+                "rera": "GGM/734/466/2023/78",
+                "classification": "Ultra Luxury",
+                "snapshot": {
+                    "developer": "M3M India Pvt Ltd",
+                    "location": "Sector 65, Golf Course Extension Road",
+                    "landParcel": "2.83 of 60.02 acres (M3M Golfestate)",
+                    "towersFloors": "2 Towers · 43 Floors",
+                    "totalUnits": "~252 Units",
+                    "density": "27 units/acre (M3M Golfestate)",
+                    "densityRating": "Excellent",
+                    "unitSizes": "3150 – 6050 sqft",
+                    "priceRange": "₹33,000 – ₹40,000/sqft",
+                    "completion": "Dec 2025"
+                },
+                "investmentView": {
+                    "overview": "Trump Tower in Gurgaon represents a flagship luxury development situated in the prestigious Golf Course Extension Road corridor. Its status as a ready-to-move-in asset with global brand backing makes it a highly liquid option for elite investors and expats. The project benefits from exceptional connectivity and social infrastructure, ensuring strong long-term capital appreciation and premium rental demand.",
+                    "strengths": [
+                        "Elite Market Demand and Liquidity: The project is backed by significant end-user interest and global brand appeal, making it a highly desirable asset with strong resale potential among the expat community."
+                    ],
+                    "risks": [
+                        "Limited Local Execution Transparency: A lack of available data regarding the local developer's previous delivery performance and historical track record suggests a need for careful assessment."
+                    ]
+                },
+                "unitAnalysis": {
+                    "superArea": "3150–6050",
+                    "carpetArea": "2070–3775",
+                    "balconyArea": "559–1314",
+                    "carpetEff": 64,
+                    "builtupEff": 85,
+                    "carpetEffRating": "Excellent",
+                    "builtupEffRating": "Excellent",
+                    "aptsFloor": "3",
+                    "liftRatio": "1:21",
+                    "bullets": [
+                        "Strategic Connectivity to Essential Hubs: Located in a prestigious corridor, the development offers seamless access to major commercial centers and top-tier social infrastructure including hospitals and schools.",
+                        "Exclusive Low Density Living Standards: The residence offers an expansive layout with limited units per acre, ensuring privacy and a premium lifestyle in a high-demand urban area.",
+                        "Optimized Usable Internal Space Efficiency: The proportion of actual usable floor area is relatively conservative compared to the overall structural size of the residence."
+                    ]
+                },
+                "locationEcosystem": {
+                    "cbd": [
+                        { "name": "WorldMark 2", "dist": "1 km" },
+                        { "name": "Cyber Hub / Cyber City", "dist": "14 km" }
+                    ],
+                    "connectivity": [
+                        { "name": "Rapid Metro Sector 55-56", "dist": "5 km" },
+                        { "name": "Huda City Centre Metro", "dist": "9 km" },
+                        { "name": "Indira Gandhi International Airport (IGI)", "dist": "22 km" }
+                    ],
+                    "education": [
+                        { "name": "Shriram Millennium School", "dist": "2 km" },
+                        { "name": "St. Xavier's High School", "dist": "2 km" },
+                        { "name": "Heritage Xperiential", "dist": "3 km" }
+                    ],
+                    "healthcare": [
+                        { "name": "CK Birla Hospital", "dist": "5 km" },
+                        { "name": "Marengo Asia Hospital", "dist": "5 km" },
+                        { "name": "Fortis Hospital", "dist": "9 km" }
+                    ],
+                    "lifestyle": [
+                        { "name": "Hotel Grand Hyatt", "dist": "5 km" }
+                    ]
+                },
+                "radarScores": {
+                    "builder": 17,
+                    "investment": 12,
+                    "location": 24,
+                    "product": 19
+                },
+                "pricingMetrics": {
+                    "price": "₹36,500/sqft",
+                    "microMarketAvg": "₹27,500/sqft",
+                    "premium": "+28%",
+                    "premiumStatus": "At Premium",
+                    "historicalCagr": "9.90%",
+                    "absoluteReturns": "121%",
+                    "absoluteReturnsStatus": "Positive",
+                    "scarcityPremium": "19.90%",
+                    "projectedCagrUplift": "10.00%",
+                    "scarcityStatus": "STABLE",
+                    "rentalStrength": "Premium yield potential",
+                    "rentalSub": "High expat demand",
+                    "occupancy": "85%",
+                    "leaseTenure": "24 mo",
+                    "tenantProfile": "CXOs and Diplomats",
+                    "rentalStatus": "STRONG",
+                    "riskTitle": "Low profile status",
+                    "riskSub": "Advanced construction stage",
+                    "executionRisk": "Minimal delivery risk",
+                    "supplyRisk": "Limited boutique inventory",
+                    "developerRisk": "Solid brand partnership",
+                    "riskStatus": "LOW"
+                },
+                "priceHistory": {
+                    "launchYear": "2018",
+                    "launchPrice": "₹16,500",
+                    "currentPrice": "₹36,500",
+                    "years": [2018, 2019, 2020, 2021, 2022, 2023],
+                    "projectPrices": [16500, 17200, 17800, 19100, 21500, 25000],
+                    "corridorPrices": [7500, 9000, 8800, 10500, 14200, 19200]
+                },
+                "verdict": {
+                    "bestFor": "Affluent buyers focused on ultra luxury brands",
+                    "notIdealFor": "Budget conscious investors seeking high rental yields",
+                    "idealHolding": "Extended duration for sustained wealth generation growth",
+                    "entryStrategy": "Direct purchase of ready to move units"
+                }
+            },
+            "m3m-altitude": {
+                "id": "m3m-altitude",
+                "name": "M3M Altitude",
+                "bhk": "3 BHK / 4 BHK / Penthouse",
+                "status": "Under Construction",
+                "developer": "M3M India Pvt Ltd",
+                "sector": "Sector 65",
+                "corridor": "Golf Course Extension Road",
+                "score": 27,
+                "reportDate": "17 June 2026",
+                "rera": "RC/REP/HARERA/GGM/792/524/2024/27",
+                "classification": "Ultra Luxury",
+                "snapshot": {
+                    "developer": "M3M India Pvt Ltd",
+                    "location": "Sector 65, Golf Course Extension Road",
+                    "landParcel": "2.79 of 10.5 acres",
+                    "towersFloors": "3 Towers · 38 Floors",
+                    "totalUnits": "~342 Units",
+                    "density": "32 units/acre",
+                    "densityRating": "Average",
+                    "unitSizes": "3500 – 6200 sqft",
+                    "priceRange": "₹28,000 – ₹34,000/sqft",
+                    "completion": "Dec 2029"
+                },
+                "investmentView": {
+                    "overview": "M3M Altitude is an upcoming ultra-luxury sky residence corridor in Sector 65, designed as an architectural landmark with premium sky-bridge clubhouse facilities. However, implementation delays and high micro-market density require critical monitoring.",
+                    "strengths": [
+                        "Exceptional Product Specifications: High-end materials, VRV cooling, structural balconies, and dynamic sky bridges."
+                    ],
+                    "risks": [
+                        "Legal/Delivery Pipeline Backlog: Local builder group exposure is under critical monitoring for execution limits."
+                    ]
+                },
+                "unitAnalysis": {
+                    "superArea": "3500–6200",
+                    "carpetArea": "2000–3530",
+                    "balconyArea": "600–1200",
+                    "carpetEff": 57,
+                    "builtupEff": 73,
+                    "carpetEffRating": "Average",
+                    "builtupEffRating": "Good",
+                    "aptsFloor": "4",
+                    "liftRatio": "1:28",
+                    "bullets": [
+                        "Premium Clubhouse Telemetry: Complete integrated wellness hub including virtual golf and standard lap pools.",
+                        "Average Carpet Area Efficiency: Total structural slab has high circulation loss offset by double-height lobby voids."
+                    ]
+                },
+                "locationEcosystem": {
+                    "cbd": [
+                        { "name": "WorldMark 2", "dist": "1.2 km" },
+                        { "name": "Cyber Hub / Cyber City", "dist": "14.5 km" }
+                    ],
+                    "connectivity": [
+                        { "name": "Rapid Metro Sector 55-56", "dist": "5.2 km" },
+                        { "name": "Huda City Centre Metro", "dist": "9.2 km" }
+                    ],
+                    "education": [
+                        { "name": "Shriram Millennium School", "dist": "2.2 km" },
+                        { "name": "Heritage Xperiential", "dist": "3.2 km" }
+                    ],
+                    "healthcare": [
+                        { "name": "CK Birla Hospital", "dist": "5.1 km" },
+                        { "name": "Marengo Asia Hospital", "dist": "5.1 km" }
+                    ],
+                    "lifestyle": [
+                        { "name": "Hotel Grand Hyatt", "dist": "5.2 km" }
+                    ]
+                },
+                "radarScores": {
+                    "builder": 15,
+                    "investment": 8,
+                    "location": 24,
+                    "product": 10
+                },
+                "pricingMetrics": {
+                    "price": "₹31,000/sqft",
+                    "microMarketAvg": "₹27,500/sqft",
+                    "premium": "+12%",
+                    "premiumStatus": "At Premium",
+                    "historicalCagr": "12.40%",
+                    "absoluteReturns": "89%",
+                    "absoluteReturnsStatus": "Positive",
+                    "scarcityPremium": "15.00%",
+                    "projectedCagrUplift": "7.50%",
+                    "scarcityStatus": "STABLE",
+                    "rentalStrength": "High yield potential",
+                    "rentalSub": "Luxury corporate expats",
+                    "occupancy": "80%",
+                    "leaseTenure": "18 mo",
+                    "tenantProfile": "Tech Executives",
+                    "rentalStatus": "GOOD",
+                    "riskTitle": "Medium profile status",
+                    "riskSub": "Early construction stage",
+                    "executionRisk": "Elevated delivery timeline risk",
+                    "supplyRisk": "High upcoming corridor supply",
+                    "developerRisk": "Significant debt leveraging",
+                    "riskStatus": "MEDIUM"
+                },
+                "priceHistory": {
+                    "launchYear": "2020",
+                    "launchPrice": "₹14,500",
+                    "currentPrice": "₹31,000",
+                    "years": [2018, 2019, 2020, 2021, 2022, 2023],
+                    "projectPrices": [14000, 14200, 14500, 17000, 22000, 28000],
+                    "corridorPrices": [7500, 9000, 8800, 10500, 14200, 19200]
+                },
+                "verdict": {
+                    "bestFor": "Speculative luxury investors seeking prime corridor assets",
+                    "notIdealFor": "Risk-averse buyers demanding immediate possession",
+                    "idealHolding": "5-7 years timeline through project stabilization",
+                    "entryStrategy": "Phased payment schedule options"
+                }
+            },
+            "tarc-ishva": {
+                "id": "tarc-ishva",
+                "name": "Tarc Ishva",
+                "bhk": "3 BHK / 4 BHK / Penthouse",
+                "status": "Under Construction",
+                "developer": "TARC Limited",
+                "sector": "Sector 63A",
+                "corridor": "Golf Course Extension Road",
+                "score": 84,
+                "reportDate": "17 June 2026",
+                "rera": "RC/REP/HARERA/GGM/761/493/2023/105",
+                "classification": "Luxury",
+                "snapshot": {
+                    "developer": "TARC Limited",
+                    "location": "Sector 63A, Golf Course Extension Road",
+                    "landParcel": "9.15 Acres",
+                    "towersFloors": "5 Towers · 34 Floors",
+                    "totalUnits": "518 Units",
+                    "density": "56 units/acre",
+                    "densityRating": "Excellent",
+                    "unitSizes": "2900 – 4500 sqft",
+                    "priceRange": "₹18,000 – ₹24,000/sqft",
+                    "completion": "Dec 2028"
+                },
+                "investmentView": {
+                    "overview": "Tarc Ishva represents a highly rated luxury enclave in Sector 63A. Backed by solid builder credibility and a clean legal track record, it is a highly viable premium investment.",
+                    "strengths": [
+                        "Clean Legal & Debt Profile: Zero registered customer litigations and high compliance score.",
+                        "Excellent Spatial Layouts: Spaciously structured layouts with low floor density."
+                    ],
+                    "risks": [
+                        "Under-construction premium: Demands waiting 3 years for complete capitalization."
+                    ]
+                },
+                "unitAnalysis": {
+                    "superArea": "2900–4500",
+                    "carpetArea": "1450–2250",
+                    "balconyArea": "400–800",
+                    "carpetEff": 50,
+                    "builtupEff": 67,
+                    "carpetEffRating": "Average",
+                    "builtupEffRating": "Good",
+                    "aptsFloor": "2",
+                    "liftRatio": "1:17",
+                    "bullets": [
+                        "Ultra-Private elevator lobbies with dual lift speed access.",
+                        "Strong layout configuration with minimal shared structural partitions."
+                    ]
+                },
+                "locationEcosystem": {
+                    "cbd": [
+                        { "name": "WorldMark 2", "dist": "2 km" },
+                        { "name": "Cyber Hub", "dist": "15 km" }
+                    ],
+                    "connectivity": [
+                        { "name": "Rapid Metro Sector 55-56", "dist": "6 km" }
+                    ],
+                    "education": [
+                        { "name": "St. Xavier's High School", "dist": "1.5 km" }
+                    ],
+                    "healthcare": [
+                        { "name": "CK Birla Hospital", "dist": "6 km" }
+                    ],
+                    "lifestyle": [
+                        { "name": "Grand Hyatt", "dist": "6 km" }
+                    ]
+                },
+                "radarScores": {
+                    "builder": 22,
+                    "investment": 20,
+                    "location": 21,
+                    "product": 21
+                },
+                "pricingMetrics": {
+                    "price": "₹21,000/sqft",
+                    "microMarketAvg": "₹27,500/sqft",
+                    "premium": "-24%",
+                    "premiumStatus": "Below Market Average",
+                    "historicalCagr": "15.20%",
+                    "absoluteReturns": "68%",
+                    "absoluteReturnsStatus": "Positive",
+                    "scarcityPremium": "12.00%",
+                    "projectedCagrUplift": "12.00%",
+                    "scarcityStatus": "STABLE",
+                    "rentalStrength": "Moderate yield potential",
+                    "rentalSub": "Standard luxury sector demands",
+                    "occupancy": "82%",
+                    "leaseTenure": "24 mo",
+                    "tenantProfile": "Corporate Managers",
+                    "rentalStatus": "GOOD",
+                    "riskTitle": "Minimal profile risk",
+                    "riskSub": "Early structure completion stage",
+                    "executionRisk": "Low execution schedule risk",
+                    "supplyRisk": "Competitive sector density",
+                    "developerRisk": "Strong institutional funding",
+                    "riskStatus": "LOW"
+                },
+                "priceHistory": {
+                    "launchYear": "2021",
+                    "launchPrice": "₹12,500",
+                    "currentPrice": "₹21,000",
+                    "years": [2018, 2019, 2020, 2021, 2022, 2023],
+                    "projectPrices": [0, 0, 0, 12500, 16000, 19000],
+                    "corridorPrices": [7500, 9000, 8800, 10500, 14200, 19200]
+                },
+                "verdict": {
+                    "bestFor": "Value-focused luxury end-users wanting premium space.",
+                    "notIdealFor": "Buyers needing immediate rental income stream.",
+                    "idealHolding": "4-6 years through construction hand-over.",
+                    "entryStrategy": "Direct booking or builder allocation structures."
+                }
+            }
+        };
+
+        const BASE_PROJECTS_LIST = [
+            { "id": "dlf-the-arbour", "name": "DLF The Arbour", "developer": "DLF Limited", "sector": "Sector 63", "score": 72, "rera": "RC/REP/HARERA/GGM/688/420/2023/32" },
+            { "id": "mahindra-luminare", "name": "Mahindra Luminare", "developer": "Mahindra Lifespaces", "sector": "Sector 59", "score": 68, "rera": "RC/REP/HARERA/GGM/2018/09" },
+            { "id": "sobha-city", "name": "Sobha City", "developer": "Sobha Limited", "sector": "Sector 108", "score": 24, "rera": "RC/REP/HARERA/GGM/2016/01" },
+            { "id": "tata-la-vida", "name": "Tata La Vida", "developer": "Tata Housing", "sector": "Sector 113", "score": 23, "rera": "RC/REP/HARERA/GGM/2016/18" },
+            { "id": "dlf-privana-south", "name": "DLF Privana South", "developer": "DLF Limited", "sector": "Sector 77", "score": 59, "rera": "RC/REP/HARERA/GGM/773/505/2023/117" },
+            { "id": "parq-by-conscient", "name": "Conscient ParQ", "developer": "Conscient Infrastructure", "sector": "Sector 80", "score": 50, "rera": "RC/REP/HARERA/GGM/724/456/2023/68" },
+            { "id": "dlf-carlton-estate", "name": "DLF Carlton Estate", "developer": "DLF Limited", "sector": "Sector 54", "score": 22, "rera": "RC/REP/HARERA/GGM/2005/01" },
+            { "id": "central-park-ii-bellevue", "name": "Central Park II Bellevue", "developer": "Central Park", "sector": "Sector 48", "score": 20, "rera": "RC/REP/HARERA/GGM/2012/05" }
+        ];
+
+        BASE_PROJECTS_LIST.forEach(p => {
+            PROJECTS_DATA[p.id] = {
+                "id": p.id,
+                "name": p.name,
+                "bhk": "3 BHK / 4 BHK",
+                "status": p.id.includes("dlf") ? "Under Construction" : "Ready to Move In",
+                "developer": p.developer,
+                "sector": p.sector,
+                "corridor": "Gurgaon High Growth Sector",
+                "score": p.score,
+                "reportDate": "17 June 2026",
+                "rera": p.rera,
+                "classification": "Luxury",
+                "snapshot": {
+                    "developer": p.developer,
+                    "location": `${p.sector}, Gurgaon`,
+                    "landParcel": "10.5 Acres",
+                    "towersFloors": "4 Towers · 32 Floors",
+                    "totalUnits": "~400 Units",
+                    "density": "38 units/acre",
+                    "densityRating": "Good",
+                    "unitSizes": "2200 – 4200 sqft",
+                    "priceRange": "₹15,000 – ₹22,000/sqft",
+                    "completion": "Dec 2027"
+                },
+                "investmentView": {
+                    "overview": `${p.name} is an established residential asset in ${p.sector}, offering balanced connectivity options and solid layout efficiency metrics.`,
+                    "strengths": [
+                        `Strong Brand Leverage: Developed by ${p.developer}, ensuring robust compliance and delivery credentials.`
+                    ],
+                    "risks": [
+                        "Density and circulation: Moderate high density levels in local cluster layout."
+                    ]
+                },
+                "unitAnalysis": {
+                    "superArea": "2200–4200",
+                    "carpetArea": "1320–2520",
+                    "balconyArea": "350–700",
+                    "carpetEff": 60,
+                    "builtupEff": 75,
+                    "carpetEffRating": "Good",
+                    "builtupEffRating": "Good",
+                    "aptsFloor": "4",
+                    "liftRatio": "1:24",
+                    "bullets": [
+                        "Seamless location accessibility to major peripheral roads.",
+                        "Optimized structural loading designs with standard balcony offsets."
+                    ]
+                },
+                "locationEcosystem": {
+                    "cbd": [
+                        { "name": "Cyber Hub", "dist": "12 km" }
+                    ],
+                    "connectivity": [
+                        { "name": "Rapid Metro Station", "dist": "4 km" }
+                    ],
+                    "education": [
+                        { "name": "Pathways World School", "dist": "3 km" }
+                    ],
+                    "healthcare": [
+                        { "name": "Fortis Hospital", "dist": "7 km" }
+                    ],
+                    "lifestyle": [
+                        { "name": "Golf Club Resort", "dist": "4 km" }
+                    ]
+                },
+                "radarScores": {
+                    "builder": Math.round(p.score * 0.25),
+                    "investment": Math.round(p.score * 0.2),
+                    "location": Math.round(p.score * 0.3),
+                    "product": Math.round(p.score * 0.25)
+                },
+                "pricingMetrics": {
+                    "price": "₹18,500/sqft",
+                    "microMarketAvg": "₹16,200/sqft",
+                    "premium": "+14%",
+                    "premiumStatus": "At Premium",
+                    "historicalCagr": "8.80%",
+                    "absoluteReturns": "65%",
+                    "absoluteReturnsStatus": "Positive",
+                    "scarcityPremium": "10.00%",
+                    "projectedCagrUplift": "5.00%",
+                    "scarcityStatus": "STABLE",
+                    "rentalStrength": "Stable yield potential",
+                    "rentalSub": "Standard corporate tenant demands",
+                    "occupancy": "80%",
+                    "leaseTenure": "24 mo",
+                    "tenantProfile": "Corporate Employees",
+                    "rentalStatus": "STABLE",
+                    "riskTitle": "Low risk profile",
+                    "riskSub": "Stable completion stages",
+                    "executionRisk": "Minimal delivery risks",
+                    "supplyRisk": "Moderate sector availability",
+                    "developerRisk": "Solid institutional backing",
+                    "riskStatus": "LOW"
+                },
+                "priceHistory": {
+                    "launchYear": "2019",
+                    "launchPrice": "₹11,000",
+                    "currentPrice": "₹18,500",
+                    "years": [2018, 2019, 2020, 2021, 2022, 2023],
+                    "projectPrices": [10500, 11000, 11500, 13000, 15500, 18500],
+                    "corridorPrices": [7500, 9000, 8800, 10500, 14200, 19200]
+                },
+                "verdict": {
+                    "bestFor": "Moderate risk luxury buyers desiring stable long-term yields",
+                    "notIdealFor": "Speculative short-term day traders",
+                    "idealHolding": "3-5 years timeline",
+                    "entryStrategy": "Standard booking or market allocation"
+                }
+            };
+        });
+
+        function initPage() {
+            const selectEl = document.getElementById('project-select');
+            Object.keys(PROJECTS_DATA).forEach(key => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = PROJECTS_DATA[key].name;
+                selectEl.appendChild(opt);
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('id') || 'trump-tower-gurgaon';
+            const viewMode = urlParams.get('view') || 'dashboard';
+
+            if (PROJECTS_DATA[projectId]) {
+                selectEl.value = projectId;
+                renderFactsheet(projectId);
+            } else {
+                renderFactsheet('trump-tower-gurgaon');
+            }
+
+            setViewMode(viewMode);
+        }
+
+        function changeProject(id) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewMode = urlParams.get('view') || 'dashboard';
+            const newUrl = `${window.location.pathname}?id=${id}&view=${viewMode}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            renderFactsheet(id);
+        }
+
+        function setViewMode(mode) {
+            const wrapper = document.getElementById('factsheet-wrapper');
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('id') || 'trump-tower-gurgaon';
+
+            const newUrl = `${window.location.pathname}?id=${projectId}&view=${mode}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+
+            if (mode === 'dashboard') {
+                wrapper.className = "max-w-6xl mx-auto px-6 py-8 dashboard-mode";
+                document.getElementById('btn-view-dash').className = "px-3 py-1 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-brandGold text-[#0F172A]";
+                document.getElementById('btn-view-prev').className = "px-3 py-1 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-slate-800 text-slate-300";
+            } else {
+                wrapper.className = "space-y-0 preview-mode flex flex-col items-center";
+                document.getElementById('btn-view-prev').className = "px-3 py-1 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-brandGold text-[#0F172A]";
+                document.getElementById('btn-view-dash').className = "px-3 py-1 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-1.5 bg-slate-800 text-slate-300";
+            }
+        }
+
+        function drawRadarSVG(scores) {
+            const width = 240;
+            const height = 240;
+            const cx = 120;
+            const cy = 120;
+            const maxR = 80;
+
+            const getCoords = (val, axis) => {
+                const r = (val / 25) * maxR;
+                switch(axis) {
+                    case 0: return { x: cx, y: cy - r };
+                    case 1: return { x: cx + r, y: cy };
+                    case 2: return { x: cx, y: cy + r };
+                    case 3: return { x: cx - r, y: cy };
+                }
+            };
+
+            const p0 = getCoords(scores.builder, 0);
+            const p1 = getCoords(scores.investment, 1);
+            const p2 = getCoords(scores.location, 2);
+            const p3 = getCoords(scores.product, 3);
+
+            return `
+                <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
+                    <polygon points="120,40 200,120 120,200 40,120" fill="none" stroke="#E2E8F0" stroke-width="1.5" />
+                    <polygon points="120,60 180,120 120,180 60,120" fill="none" stroke="#E2E8F0" stroke-width="1.5" />
+                    <polygon points="120,80 160,120 120,160 80,120" fill="none" stroke="#E2E8F0" stroke-width="1.5" />
+                    <polygon points="120,100 140,120 120,140 100,120" fill="none" stroke="#E2E8F0" stroke-width="1.5" />
+                    <line x1="120" y1="40" x2="120" y2="200" stroke="#E2E8F0" stroke-width="1.5" />
+                    <line x1="40" y1="120" x2="200" y2="120" stroke="#E2E8F0" stroke-width="1.5" />
+                    <text x="120" y="30" fill="#0F172A" font-size="9" font-weight="700" text-anchor="middle" font-family="Outfit">Builder</text>
+                    <text x="120" y="215" fill="#0F172A" font-size="9" font-weight="700" text-anchor="middle" font-family="Outfit">Location</text>
+                    <text x="210" y="123" fill="#0F172A" font-size="9" font-weight="700" text-anchor="start" font-family="Outfit">Investment</text>
+                    <text x="30" y="123" fill="#0F172A" font-size="9" font-weight="700" text-anchor="end" font-family="Outfit">Product</text>
+                    <text x="120" y="49" fill="#94A3B8" font-size="7" text-anchor="middle">25</text>
+                    <polygon points="${p0.x},${p0.y} ${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}" fill="rgba(245, 158, 11, 0.15)" stroke="#F59E0B" stroke-width="2.5" />
+                    <circle cx="${p0.x}" cy="${p0.y}" r="3.5" fill="#F59E0B" stroke="#fff" stroke-width="1.5" />
+                    <circle cx="${p1.x}" cy="${p1.y}" r="3.5" fill="#F59E0B" stroke="#fff" stroke-width="1.5" />
+                    <circle cx="${p2.x}" cy="${p2.y}" r="3.5" fill="#F59E0B" stroke="#fff" stroke-width="1.5" />
+                    <circle cx="${p3.x}" cy="${p3.y}" r="3.5" fill="#F59E0B" stroke="#fff" stroke-width="1.5" />
+                </svg>
+            `;
+        }
+
+        function drawTrendSVG(history) {
+            const years = history.years;
+            const projectPrices = history.projectPrices;
+            const corridorPrices = history.corridorPrices;
+
+            const width = 680;
+            const height = 220;
+            const paddingLeft = 55;
+            const paddingRight = 30;
+            const paddingTop = 25;
+            const paddingBottom = 35;
+
+            const chartWidth = width - paddingLeft - paddingRight;
+            const chartHeight = height - paddingTop - paddingBottom;
+
+            const maxVal = 45000;
+            const minVal = 0;
+
+            const getX = (idx) => paddingLeft + (idx / (years.length - 1)) * chartWidth;
+            const getY = (val) => paddingTop + chartHeight - ((val - minVal) / (maxVal - minVal)) * chartHeight;
+
+            let elements = '';
+
+            const yTicks = [0, 15000, 30000, 45000];
+            yTicks.forEach(tick => {
+                const y = getY(tick);
+                elements += `<line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" stroke="#E2E8F0" stroke-width="1.5" stroke-dasharray="3 3" />`;
+                elements += `<text x="${paddingLeft - 10}" y="${y + 3.5}" fill="#64748B" font-size="10" font-weight="600" text-anchor="end">₹${tick.toLocaleString()}</text>`;
+            });
+
+            years.forEach((year, idx) => {
+                const x = getX(idx);
+                elements += `<text x="${x}" y="${height - 12}" fill="#64748B" font-size="10" font-weight="600" text-anchor="middle">${year}</text>`;
+            });
+
+            let corridorPoints = corridorPrices.map((val, idx) => `${getX(idx)},${getY(val)}`).join(' ');
+            elements += `<polyline points="${corridorPoints}" fill="none" stroke="#0F172A" stroke-width="2.5" stroke-dasharray="5 5" />`;
+
+            let activeProjectPoints = [];
+            projectPrices.forEach((val, idx) => {
+                if (val > 0) {
+                    activeProjectPoints.push(`${getX(idx)},${getY(val)}`);
+                }
+            });
+            if (activeProjectPoints.length > 0) {
+                elements += `<polyline points="${activeProjectPoints.join(' ')}" fill="none" stroke="#F59E0B" stroke-width="3" />`;
+            }
+
+            corridorPrices.forEach((val, idx) => {
+                elements += `<circle cx="${getX(idx)}" cy="${getY(val)}" r="4" fill="#0F172A" stroke="#ffffff" stroke-width="2" />`;
+            });
+            projectPrices.forEach((val, idx) => {
+                if (val > 0) {
+                    elements += `<circle cx="${getX(idx)}" cy="${getY(val)}" r="4.5" fill="#F59E0B" stroke="#ffffff" stroke-width="2" />`;
+                }
+            });
+
+            return `
+                <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
+                    ${elements}
+                </svg>
+            `;
+        }
+
+        function renderFactsheet(projectId) {
+            const data = PROJECTS_DATA[projectId];
+            const container = document.getElementById('factsheet-container');
+
+            const page1HTML = `
+                <div class="factsheet-page flex flex-col justify-between">
+                    <div>
+                        <div class="bg-primary text-white p-6 rounded-lg flex justify-between items-center relative overflow-hidden">
+                            <div class="space-y-1.5 z-10">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-sans text-[11px] bg-white/10 text-white font-extrabold px-2 py-0.5 rounded uppercase tracking-wider block w-max border border-white/10">
+                                        prOPIUM INTELLIGENCE REPORT™
+                                    </span>
+                                </div>
+                                <h1 class="text-3xl font-extrabold tracking-tight font-display text-white">${data.name}</h1>
+                                <p class="text-xs text-slate-200 font-medium">${data.bhk} · ${data.status} · ${data.developer}</p>
+                                <p class="text-xs text-slate-300 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-xs">location_on</span>
+                                    ${data.sector}, ${data.corridor}
+                                </p>
+                            </div>
+                            <div class="text-right z-10 flex flex-col items-end gap-1">
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-300">prOPIUM SCORE™</span>
+                                <div class="w-16 h-16 rounded-full bg-[#10B981] border border-white/20 flex flex-col items-center justify-center text-white">
+                                    <span class="text-2xl font-black font-display leading-none">${data.score}</span>
+                                    <span class="text-[7px] font-bold text-slate-100 uppercase leading-none mt-0.5">out of 100</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-4 py-3.5 px-6 border-b border-slate-200 bg-slate-50 text-[10px] uppercase font-extrabold tracking-wider text-slate-500 mt-4 rounded-lg">
+                            <div>Report Date: <span class="text-slate-800 ml-1 font-bold">${data.reportDate}</span></div>
+                            <div>Analyst: <span class="text-slate-800 ml-1 font-bold">prOPIUM Research</span></div>
+                            <div class="truncate">RERA: <span class="text-slate-800 ml-1 font-bold">${data.rera}</span></div>
+                            <div class="text-right">Classification: <span class="text-slate-800 ml-1 font-bold text-brandGold">${data.classification}</span></div>
+                        </div>
+
+                        <div class="bg-primary text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded mt-6 font-display">
+                            Section 1 — Project Overview
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mt-6">
+                            <div class="md:col-span-5 space-y-4">
+                                <h3 class="text-sm font-extrabold font-display text-primary border-b border-slate-200 pb-1.5">Project Snapshot</h3>
+                                <div class="border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100 text-xs bg-white shadow-sm">
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Developer</span>
+                                        <span class="col-span-2 font-bold text-slate-900">${data.snapshot.developer}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Location</span>
+                                        <span class="col-span-2 font-bold text-slate-900">${data.snapshot.location}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Land Parcel</span>
+                                        <span class="col-span-2 font-bold text-slate-900">${data.snapshot.landParcel}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Towers / Floors</span>
+                                        <span class="col-span-2 font-bold text-slate-900">${data.snapshot.towersFloors}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Total Units</span>
+                                        <span class="col-span-2 font-bold text-slate-900">${data.snapshot.totalUnits}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Density</span>
+                                        <span class="col-span-2 font-bold text-slate-900">
+                                            ${data.snapshot.density}
+                                            <span class="text-emerald-600 font-bold block text-[10px] mt-0.5">${data.snapshot.densityRating}</span>
+                                        </span>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Unit Sizes</span>
+                                        <span class="col-span-2 font-bold text-slate-900">${data.snapshot.unitSizes}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-7 space-y-6">
+                                <h3 class="text-sm font-extrabold font-display text-primary border-b border-slate-200 pb-1.5">prOPIUM Investment View™</h3>
+                                <p class="text-[11px] text-slate-600 leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100 font-medium">
+                                    ${data.investmentView.overview}
+                                </p>
+
+                                <div class="space-y-4 pt-2">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="bg-emerald-50/30 border border-emerald-100/50 rounded-xl p-4">
+                                            <h4 class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1 mb-2 font-display">
+                                                ▲ Strengths
+                                            </h4>
+                                            <ul class="text-[10px] text-slate-600 space-y-2 list-disc pl-3 leading-normal">
+                                                ${data.investmentView.strengths.map(s => `<li>${s}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                        <div class="bg-rose-50/30 border border-rose-100/50 rounded-xl p-4">
+                                            <h4 class="text-[11px] font-bold text-rose-800 uppercase tracking-wider flex items-center gap-1 mb-2 font-display">
+                                                ▼ Risks
+                                            </h4>
+                                            <ul class="text-[10px] text-slate-600 space-y-2 list-disc pl-3 leading-normal">
+                                                ${data.investmentView.risks.map(r => `<li>${r}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const page2HTML = `
+                <div class="factsheet-page flex flex-col justify-between">
+                    <div>
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mt-4">
+                            <div class="md:col-span-5 space-y-4">
+                                <div class="border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100 text-xs bg-white shadow-sm">
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Price Range</span>
+                                        <span class="col-span-2 font-bold text-slate-900">${data.snapshot.priceRange}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">Completion</span>
+                                        <span class="col-span-2 font-bold text-slate-900">${data.snapshot.completion}</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <span class="text-slate-500 font-semibold">RERA No.</span>
+                                        <span class="col-span-2 font-bold text-slate-900 truncate">${data.rera}</span>
+                                    </div>
+                                </div>
+
+                                <h3 class="text-sm font-extrabold font-display text-primary border-b border-slate-200 pb-1.5 mt-6">Unit Analysis</h3>
+                                <div class="border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100 text-xs bg-white shadow-sm">
+                                    <div class="grid grid-cols-3 p-3">
+                                        <div>
+                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Super Area</span>
+                                            <span class="font-extrabold text-slate-950 text-xs">${data.unitAnalysis.superArea}</span>
+                                            <span class="text-[8px] text-slate-400 block">sqft</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Carpet Area</span>
+                                            <span class="font-extrabold text-slate-950 text-xs">${data.unitAnalysis.carpetArea}</span>
+                                            <span class="text-[8px] text-slate-400 block">sqft</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Balcony Area</span>
+                                            <span class="font-extrabold text-slate-950 text-xs">${data.unitAnalysis.balconyArea}</span>
+                                            <span class="text-[8px] text-slate-400 block">sqft</span>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-3 p-3">
+                                        <div class="col-span-1">
+                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Efficiency</span>
+                                            <span class="font-extrabold text-slate-950 text-xs">${data.unitAnalysis.carpetEff}% | ${data.unitAnalysis.builtupEff}%</span>
+                                            <span class="text-[8px] text-emerald-600 font-bold block">Carpet: ${data.unitAnalysis.carpetEffRating}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Apts / Floor</span>
+                                            <span class="font-extrabold text-slate-950 text-xs">${data.unitAnalysis.aptsFloor}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Lift Ratio</span>
+                                            <span class="font-extrabold text-slate-950 text-xs">${data.unitAnalysis.liftRatio}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-7 space-y-4 pt-2">
+                                <ul class="space-y-4 text-[11px] text-slate-600 leading-relaxed font-medium">
+                                    ${data.unitAnalysis.bullets.map(b => `
+                                        <li class="flex gap-2 bg-slate-50/50 p-4 rounded-xl border border-slate-100/70">
+                                            <span class="text-primary font-bold">•</span>
+                                            <div>${b}</div>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="bg-primary text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded mt-8 font-display">
+                            Section 2 — Location & Intelligence
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mt-6">
+                            <div class="md:col-span-6 space-y-4">
+                                <h3 class="text-sm font-extrabold font-display text-primary border-b border-slate-200 pb-1.5">Location Ecosystem</h3>
+                                <div class="space-y-4 text-xs">
+                                    <div>
+                                        <h4 class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider border-b border-slate-100 pb-1 mb-2 font-display">Central Business District</h4>
+                                        <div class="space-y-2">
+                                            ${data.locationEcosystem.cbd.map(item => `
+                                                <div class="flex justify-between items-center bg-slate-50/50 px-3 py-2 border border-slate-100 rounded-lg">
+                                                    <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+                                                        <span class="material-symbols-outlined text-slate-400 text-sm">business_center</span>
+                                                        ${item.name}
+                                                    </span>
+                                                    <span class="font-extrabold text-slate-900">${item.dist}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider border-b border-slate-100 pb-1 mb-2 font-display">Connectivity</h4>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between items-center bg-slate-50/50 px-3 py-2 border border-slate-100 rounded-lg">
+                                                <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+                                                    <span class="material-symbols-outlined text-slate-400 text-sm">train</span>
+                                                    ${data.locationEcosystem.connectivity[0].name}
+                                                </span>
+                                                <span class="font-extrabold text-slate-900">${data.locationEcosystem.connectivity[0].dist}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-6 space-y-4">
+                                <h3 class="text-sm font-extrabold font-display text-primary border-b border-slate-200 pb-1.5">prOPIUM Intelligence Radar™</h3>
+                                <div class="bg-slate-50/50 border border-slate-100 rounded-xl p-4 h-40 flex items-center justify-center text-slate-400 font-semibold text-xs italic uppercase tracking-wider">
+                                    Radar plot data continued on page 3
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const page3HTML = `
+                <div class="factsheet-page flex flex-col justify-between">
+                    <div>
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mt-4">
+                            <div class="md:col-span-6 space-y-4">
+                                <div class="space-y-4 text-xs">
+                                    <div>
+                                        <h4 class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider border-b border-slate-100 pb-1 mb-2 font-display">Connectivity (Cont.)</h4>
+                                        <div class="space-y-2">
+                                            ${data.locationEcosystem.connectivity.slice(1).map(item => `
+                                                <div class="flex justify-between items-center bg-slate-50/50 px-3 py-2 border border-slate-100 rounded-lg">
+                                                    <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+                                                        <span class="material-symbols-outlined text-slate-400 text-sm">train</span>
+                                                        ${item.name}
+                                                    </span>
+                                                    <span class="font-extrabold text-slate-900">${item.dist}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider border-b border-slate-100 pb-1 mb-2 font-display">Education</h4>
+                                        <div class="space-y-2">
+                                            ${data.locationEcosystem.education.map(item => `
+                                                <div class="flex justify-between items-center bg-slate-50/50 px-3 py-2 border border-slate-100 rounded-lg">
+                                                    <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+                                                        <span class="material-symbols-outlined text-slate-400 text-sm">school</span>
+                                                        ${item.name}
+                                                    </span>
+                                                    <span class="font-extrabold text-slate-900">${item.dist}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider border-b border-slate-100 pb-1 mb-2 font-display">Healthcare</h4>
+                                        <div class="space-y-2">
+                                            ${data.locationEcosystem.healthcare.map(item => `
+                                                <div class="flex justify-between items-center bg-slate-50/50 px-3 py-2 border border-slate-100 rounded-lg">
+                                                    <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+                                                        <span class="material-symbols-outlined text-slate-400 text-sm">medical_services</span>
+                                                        ${item.name}
+                                                    </span>
+                                                    <span class="font-extrabold text-slate-900">${item.dist}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider border-b border-slate-100 pb-1 mb-2 font-display">Lifestyle & Leisure</h4>
+                                        <div class="space-y-2">
+                                            ${data.locationEcosystem.lifestyle.map(item => `
+                                                <div class="flex justify-between items-center bg-slate-50/50 px-3 py-2 border border-slate-100 rounded-lg">
+                                                    <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+                                                        <span class="material-symbols-outlined text-slate-400 text-sm">local_bar</span>
+                                                        ${item.name}
+                                                    </span>
+                                                    <span class="font-extrabold text-slate-900">${item.dist}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-6 space-y-4 flex flex-col justify-between">
+                                <div class="w-full flex justify-center py-2 h-64 bg-slate-50/20 border border-slate-100 rounded-xl">
+                                    ${drawRadarSVG(data.radarScores)}
+                                </div>
+
+                                <div class="space-y-2.5 pt-4">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <div class="flex items-center gap-2 w-full">
+                                            <span class="text-slate-500 font-bold w-28 uppercase text-[9px] font-display">Builder Credibility</span>
+                                            <div class="w-1/2 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                                <div class="bg-primary h-full" style="width: ${(data.radarScores.builder / 25) * 100}%"></div>
+                                            </div>
+                                        </div>
+                                        <span class="font-black text-slate-900">${data.radarScores.builder} <span class="text-[8px] text-slate-400">/25</span></span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <div class="flex items-center gap-2 w-full">
+                                            <span class="text-slate-500 font-bold w-28 uppercase text-[9px] font-display">Investment Potential</span>
+                                            <div class="w-1/2 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                                <div class="bg-primary h-full" style="width: ${(data.radarScores.investment / 25) * 100}%"></div>
+                                            </div>
+                                        </div>
+                                        <span class="font-black text-slate-900">${data.radarScores.investment} <span class="text-[8px] text-slate-400">/25</span></span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <div class="flex items-center gap-2 w-full">
+                                            <span class="text-slate-500 font-bold w-28 uppercase text-[9px] font-display">Location</span>
+                                            <div class="w-1/2 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                                <div class="bg-primary h-full" style="width: ${(data.radarScores.location / 25) * 100}%"></div>
+                                            </div>
+                                        </div>
+                                        <span class="font-black text-slate-900">${data.radarScores.location} <span class="text-[8px] text-slate-400">/25</span></span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <div class="flex items-center gap-2 w-full">
+                                            <span class="text-slate-500 font-bold w-28 uppercase text-[9px] font-display">Product Quality</span>
+                                            <div class="w-1/2 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                                <div class="bg-primary h-full" style="width: ${(data.radarScores.product / 25) * 100}%"></div>
+                                            </div>
+                                        </div>
+                                        <span class="font-black text-slate-900">${data.radarScores.product} <span class="text-[8px] text-slate-400">/25</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-primary text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded mt-8 font-display">
+                            prOPIUM Investment Metrics™ — Real-Time Intelligence Grid
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-6 mt-4 text-[10px] uppercase font-extrabold tracking-wider text-slate-500 border-t border-slate-100 pt-3">
+                            <div>Price Positioning</div>
+                            <div>Historical Returns</div>
+                            <div>Project CAGR</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const page4HTML = `
+                <div class="factsheet-page flex flex-col justify-between">
+                    <div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                            <div class="border border-slate-200/80 p-5 rounded-2xl bg-[#F8FAFC] flex flex-col justify-between h-40">
+                                <div>
+                                    <span class="text-[9px] uppercase font-extrabold tracking-wider text-slate-400 block mb-1 font-display">Pricing Vector</span>
+                                    <h4 class="text-2xl font-black text-slate-900">${data.pricingMetrics.price}</h4>
+                                    <div class="text-[10px] text-slate-500 mt-2 space-y-1 pt-1.5 border-t border-slate-200/40">
+                                        <div class="flex justify-between"><span>Micro-market avg</span><span class="font-bold text-slate-700">${data.pricingMetrics.microMarketAvg}</span></div>
+                                        <div class="flex justify-between"><span>Premium over avg</span><span class="font-bold text-slate-700">${data.pricingMetrics.premium}</span></div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 bg-emerald-50 text-emerald-800 text-[8px] font-extrabold uppercase tracking-widest rounded w-max block border border-emerald-100">
+                                    ${data.pricingMetrics.premiumStatus}
+                                </span>
+                            </div>
+
+                            <div class="border border-slate-200/80 p-5 rounded-2xl bg-[#F8FAFC] flex flex-col justify-between h-40">
+                                <div>
+                                    <span class="text-[9px] uppercase font-extrabold tracking-wider text-slate-400 block mb-1 font-display">Returns Record</span>
+                                    <h4 class="text-2xl font-black text-[#C47D15]">${data.pricingMetrics.historicalCagr}</h4>
+                                    <span class="text-[8px] text-slate-400 font-bold block mt-0.5">From ${data.priceHistory.launchYear} to today</span>
+                                    <div class="text-[10px] text-slate-500 mt-1.5 space-y-1 pt-1.5 border-t border-slate-200/40">
+                                        <div class="flex justify-between"><span>Historical CAGR</span><span class="font-bold text-slate-700">${data.pricingMetrics.historicalCagr}</span></div>
+                                        <div class="flex justify-between"><span>Absolute Returns</span><span class="font-bold text-slate-700">${data.pricingMetrics.absoluteReturns}</span></div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 bg-amber-50 text-[#C47D15] text-[8px] font-extrabold uppercase tracking-widest rounded w-max block border border-amber-100">
+                                    ${data.pricingMetrics.absoluteReturnsStatus}
+                                </span>
+                            </div>
+
+                            <div class="border border-slate-200/80 p-5 rounded-2xl bg-[#F8FAFC] flex flex-col justify-between h-40">
+                                <div>
+                                    <span class="text-[9px] uppercase font-extrabold tracking-wider text-slate-400 block mb-1 font-display">Growth Forecast</span>
+                                    <h4 class="text-2xl font-black text-slate-900">${data.pricingMetrics.scarcityPremium}</h4>
+                                    <span class="text-[8px] text-slate-400 font-bold block mt-0.5">Supply scarcity premium</span>
+                                    <div class="text-[10px] text-slate-500 mt-2.5 space-y-1 pt-1.5 border-t border-slate-200/40">
+                                        <div class="flex justify-between"><span>Projected CAGR uplift</span><span class="font-bold text-slate-700">${data.pricingMetrics.projectedCagrUplift}</span></div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 bg-blue-50 text-blue-800 text-[8px] font-extrabold uppercase tracking-widest rounded w-max block border border-blue-100">
+                                    ${data.pricingMetrics.scarcityStatus}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                            <div class="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-sm">
+                                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200/50 flex justify-between items-center">
+                                    <span class="text-[10px] uppercase font-extrabold tracking-wider text-primary font-display">Rental Strength</span>
+                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-extrabold rounded text-[8px] uppercase tracking-wider">${data.pricingMetrics.rentalStatus}</span>
+                                </div>
+                                <div class="p-5 space-y-4 text-xs">
+                                    <div>
+                                        <h4 class="font-extrabold text-slate-900 text-sm font-display">${data.pricingMetrics.rentalStrength}</h4>
+                                        <p class="text-[10px] text-slate-400 font-semibold mt-0.5">${data.pricingMetrics.rentalSub}</p>
+                                    </div>
+                                    <div class="divide-y divide-slate-100 pt-2">
+                                        <div class="flex justify-between py-2.5">
+                                            <span class="text-slate-500 font-semibold">Occupancy Rate</span>
+                                            <span class="font-extrabold text-slate-900">${data.pricingMetrics.occupancy}</span>
+                                        </div>
+                                        <div class="flex justify-between py-2.5">
+                                            <span class="text-slate-500 font-semibold">Avg Lease Tenure</span>
+                                            <span class="font-extrabold text-slate-900">${data.pricingMetrics.leaseTenure}</span>
+                                        </div>
+                                        <div class="flex justify-between py-2.5">
+                                            <span class="text-slate-500 font-semibold">Tenant Profile</span>
+                                            <span class="font-extrabold text-slate-900">${data.pricingMetrics.tenantProfile}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-sm">
+                                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200/50 flex justify-between items-center">
+                                    <span class="text-[10px] uppercase font-extrabold tracking-wider text-primary font-display">Risk Meter</span>
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-extrabold rounded text-[8px] uppercase tracking-wider">${data.pricingMetrics.riskStatus}</span>
+                                </div>
+                                <div class="p-5 space-y-4 text-xs">
+                                    <div>
+                                        <h4 class="font-extrabold text-slate-900 text-sm font-display">${data.pricingMetrics.riskTitle}</h4>
+                                        <p class="text-[10px] text-slate-400 font-semibold mt-0.5">${data.pricingMetrics.riskSub}</p>
+                                    </div>
+                                    <div class="divide-y divide-slate-100 pt-2">
+                                        <div class="flex justify-between py-2.5">
+                                            <span class="text-slate-500 font-semibold">Execution Risk</span>
+                                            <span class="font-extrabold text-slate-900">${data.pricingMetrics.executionRisk}</span>
+                                        </div>
+                                        <div class="flex justify-between py-2.5">
+                                            <span class="text-slate-500 font-semibold">Supply Risk</span>
+                                            <span class="font-extrabold text-slate-900">${data.pricingMetrics.supplyRisk}</span>
+                                        </div>
+                                        <div class="flex justify-between py-2.5">
+                                            <span class="text-slate-500 font-semibold">Developer Risk</span>
+                                            <span class="font-extrabold text-slate-900">${data.pricingMetrics.developerRisk}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-primary text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded mt-8 font-display">
+                            Section 4 — Price Intelligence™
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-sm mt-4">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2 font-display">
+                                Price Intelligence™ — Historical & Projected
+                            </h3>
+                            <div class="grid grid-cols-3 gap-6 pt-3 text-xs">
+                                <div>
+                                    <span class="text-[9px] text-slate-400 font-bold uppercase block">Launch Year</span>
+                                    <span class="font-extrabold text-slate-950">${data.priceHistory.launchYear}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] text-slate-400 font-bold uppercase block">Launch Sqft</span>
+                                    <span class="font-extrabold text-slate-950">${data.priceHistory.launchPrice}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] text-slate-400 font-bold uppercase block">Current Sqft</span>
+                                    <span class="font-extrabold text-slate-950">${data.priceHistory.currentPrice}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const page5HTML = `
+                <div class="factsheet-page flex flex-col justify-between">
+                    <div>
+                        <div class="border border-slate-200 rounded-2xl bg-white p-5 shadow-sm">
+                            <div class="w-full h-64">
+                                ${drawTrendSVG(data.priceHistory)}
+                            </div>
+
+                            <div class="flex justify-center gap-6 text-[10px] font-extrabold uppercase tracking-wider text-slate-500 pt-4 border-t border-slate-100 mt-2">
+                                <span class="flex items-center gap-1.5 font-display">
+                                    <span class="w-3.5 h-0.5 border-t-2 border-dashed border-[#0F172A]"></span>
+                                    Golf Course Extension Road (avg ₹/sqft)
+                                </span>
+                                <span class="flex items-center gap-1.5 font-display">
+                                    <span class="w-3.5 h-0.5 bg-[#F59E0B]"></span>
+                                    Project (avg ₹/sqft)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#0F172A] border border-white/5 text-white p-6 rounded-2xl space-y-6 mt-8">
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                            <div class="md:col-span-5 space-y-4">
+                                <h4 class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 border-b border-slate-800 pb-1.5 font-display">prOPIUM SCORES</h4>
+
+                                <div class="space-y-3.5 text-[11px]">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-400 font-bold uppercase tracking-wider text-[9px] w-24 font-display">Builder Credibility</span>
+                                        <div class="w-24 bg-slate-800 h-1 rounded-full overflow-hidden">
+                                            <div class="bg-brandGold h-full" style="width: ${(data.radarScores.builder / 25) * 100}%"></div>
+                                        </div>
+                                        <span class="font-extrabold text-white text-right w-8">${data.radarScores.builder} <span class="text-[7px] text-slate-500">/25</span></span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-400 font-bold uppercase tracking-wider text-[9px] w-24 font-display">Investment Potential</span>
+                                        <div class="w-24 bg-slate-800 h-1 rounded-full overflow-hidden">
+                                            <div class="bg-brandGold h-full" style="width: ${(data.radarScores.investment / 25) * 100}%"></div>
+                                        </div>
+                                        <span class="font-extrabold text-white text-right w-8">${data.radarScores.investment} <span class="text-[7px] text-slate-500">/25</span></span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-400 font-bold uppercase tracking-wider text-[9px] w-24 font-display">Location</span>
+                                        <div class="w-24 bg-slate-800 h-1 rounded-full overflow-hidden">
+                                            <div class="bg-brandGold h-full" style="width: ${(data.radarScores.location / 25) * 100}%"></div>
+                                        </div>
+                                        <span class="font-extrabold text-white text-right w-8">${data.radarScores.location} <span class="text-[7px] text-slate-500">/25</span></span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-400 font-bold uppercase tracking-wider text-[9px] w-24 font-display">Product Quality</span>
+                                        <div class="w-24 bg-slate-800 h-1 rounded-full overflow-hidden">
+                                            <div class="bg-brandGold h-full" style="width: ${(data.radarScores.product / 25) * 100}%"></div>
+                                        </div>
+                                        <span class="font-extrabold text-white text-right w-8">${data.radarScores.product} <span class="text-[7px] text-slate-500">/25</span></span>
+                                    </div>
+
+                                    <div class="flex justify-between items-center bg-white/5 border border-white/5 p-2.5 rounded-lg mt-4">
+                                        <span class="text-[9px] uppercase font-black text-slate-400 tracking-wider font-display">prOPIUM SCORE™</span>
+                                        <span class="text-lg font-black text-brandGold font-display leading-none">${data.score} <span class="text-[9px] text-slate-500 font-bold">/100</span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-4 space-y-4 border-l border-slate-800 pl-6">
+                                <h4 class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 border-b border-slate-800 pb-1.5 font-display">prOPIUM VERDICT™</h4>
+
+                                <div class="space-y-3.5 text-[10px] leading-relaxed">
+                                    <div>
+                                        <span class="text-brandGold font-extrabold uppercase tracking-wider block text-[8px] mb-0.5 font-display">Best For</span>
+                                        <span class="text-slate-200 font-semibold">${data.verdict.bestFor}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-rose-400 font-extrabold uppercase tracking-wider block text-[8px] mb-0.5 font-display">Not Ideal For</span>
+                                        <span class="text-slate-200 font-semibold">${data.verdict.notIdealFor}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-blue-400 font-extrabold uppercase tracking-wider block text-[8px] mb-0.5 font-display">Ideal Holding</span>
+                                        <span class="text-slate-200 font-semibold">${data.verdict.idealHolding}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-emerald-400 font-extrabold uppercase tracking-wider block text-[8px] mb-0.5 font-display">Entry Strategy</span>
+                                        <span class="text-slate-200 font-semibold">${data.verdict.entryStrategy}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-3 space-y-4 border-l border-slate-800 pl-6 flex flex-col justify-between">
+                                <div class="space-y-2">
+                                    <div class="text-xl font-bold tracking-tight text-white">
+                                        prOPIUM<span class="text-brandGold">.ai</span>
+                                    </div>
+                                    <p class="text-[9px] text-slate-400 font-semibold leading-relaxed">
+                                        India's Institutional Property Intelligence Platform
+                                    </p>
+                                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider font-display">
+                                        Research · Intelligence · Advisory
+                                    </p>
+                                </div>
+                                <div class="text-[8px] text-slate-500 leading-normal border-t border-slate-800 pt-4">
+                                    prOPIUM Report is produced by prOPIUM Research. Based on public and proprietary analytical sources. All rights reserved.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = page1HTML + page2HTML + page3HTML + page4HTML + page5HTML;
+        }
+
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
