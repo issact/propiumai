@@ -341,22 +341,22 @@
             </div>
 
             <!-- VIEW 1: List View (Table) -->
-            <div id="viewList" class="overflow-x-auto w-full">
+            <div id="viewList" class="overflow-x-auto w-full rounded-xl" style="background:#0F172A;">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                        <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider">
-                            <th class="py-3 pr-4 font-sans text-[10px]">Project Name</th>
-                            <th class="py-3 px-4 font-sans text-[10px]">Developer</th>
-                            <th class="py-3 px-4 font-sans text-[10px]">Sector</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-center">BHK Configurations</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-right">Price Range</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-center">Carpet Eff.</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-center">Built-up Eff.</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-center">prOPIUM Score</th>
-                            <th class="py-3 pl-4 font-sans text-[10px] text-right">Action</th>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                            <th class="py-3.5 px-5 font-sans text-[9px] font-bold uppercase tracking-widest" style="color:#475569;">Project Name</th>
+                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Developer</th>
+                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Sector</th>
+                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">BHK Configurations</th>
+                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-right" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Price Range</th>
+                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-center" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Carpet Eff.</th>
+                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-center" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Built-up Eff.</th>
+                            <th class="py-3.5 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-center" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">prOPIUM Score</th>
+                            <th class="py-3.5 px-5 font-sans text-[9px] font-bold uppercase tracking-widest text-right" style="color:#475569; border-left:1px solid rgba(255,255,255,0.06);">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="projectListBody" class="divide-y divide-slate-100">
+                    <tbody id="projectListBody">
                         <!-- Dynamically filled in JS -->
                     </tbody>
                 </table>
@@ -1541,21 +1541,22 @@
             // 1. Render List Table
             listContainer.innerHTML = data.map(p => {
                 const targetLink = p.id === 'm3m-altitude' ? 'project_detail.html' : 'project_detail_locked.html';
-                const statusColor = p.status === 'Ready to Move In' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50';
+                const score = p.score;
+                const scoreColor = score >= 75 ? '#10b981' : score >= 50 ? '#F59E0B' : score >= 25 ? '#006AFF' : '#64748b';
                 return `
-                <tr class="project-row border-b border-slate-100">
-                    <td class="py-3.5 pr-4 font-bold text-slate-900">${p.name}</td>
-                    <td class="py-3.5 px-4 font-semibold text-slate-500">${p.developer}</td>
-                    <td class="py-3.5 px-4 text-slate-500">${p.sector}</td>
-                    <td class="py-3.5 px-4 text-slate-500 text-center font-medium">${p.bhk.join(', ')}</td>
-                    <td class="py-3.5 px-4 text-right font-display font-extrabold text-secondary-container">₹${p.priceMin} - ${p.priceMax} Cr</td>
-                    <td class="py-3.5 px-4 text-center text-slate-600 font-bold">${p.carpetEff}%</td>
-                    <td class="py-3.5 px-4 text-center text-slate-600 font-bold">${p.builtupEff}%</td>
-                    <td class="py-3.5 px-4 text-center font-display font-extrabold text-sm text-primary">${p.score}</td>
-                    <td class="py-3.5 pl-4 text-right">
-                        <a href="${targetLink}" class="text-brandBlue hover:underline font-bold text-xs flex items-center gap-0.5 justify-end">
+                <tr class="project-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <td class="py-4 px-5 font-sans" style="color:#94a3b8; font-size:11px; font-weight:500;">${p.name}</td>
+                    <td class="py-4 px-4 font-sans font-bold" style="color:#F1F5F9; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.developer}</td>
+                    <td class="py-4 px-4 font-sans" style="color:#94a3b8; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.sector}</td>
+                    <td class="py-4 px-4 font-sans" style="color:#cbd5e1; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.bhk.join(', ')}</td>
+                    <td class="py-4 px-4 text-right font-display font-extrabold" style="color:#F59E0B; font-size:12px; border-left:1px solid rgba(255,255,255,0.05);">₹${p.priceMin} – ${p.priceMax} Cr</td>
+                    <td class="py-4 px-4 text-center font-sans font-bold" style="color:#94a3b8; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.carpetEff}%</td>
+                    <td class="py-4 px-4 text-center font-sans font-bold" style="color:#94a3b8; font-size:11px; border-left:1px solid rgba(255,255,255,0.05);">${p.builtupEff}%</td>
+                    <td class="py-4 px-4 text-center font-display font-extrabold" style="color:${scoreColor}; font-size:14px; border-left:1px solid rgba(255,255,255,0.05);">${p.score}</td>
+                    <td class="py-4 px-5 text-right" style="border-left:1px solid rgba(255,255,255,0.05);">
+                        <a href="${targetLink}" class="font-sans font-bold text-[11px] flex items-center gap-0.5 justify-end hover:opacity-70 transition-opacity" style="color:#006AFF; text-decoration:none;">
                             View Audit
-                            <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
+                            <span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span>
                         </a>
                     </td>
                 </tr>`;
