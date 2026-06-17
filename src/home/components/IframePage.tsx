@@ -8,6 +8,7 @@ interface IframePageProps {
   bottomNavActive?: string | null;
   activeTab?: string;
   injectCss?: string;
+  showTopNav?: boolean;
 }
 
 export function IframePage({
@@ -16,6 +17,7 @@ export function IframePage({
   bottomNavActive = null,
   activeTab = "Search",
   injectCss,
+  showTopNav = true,
 }: IframePageProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -26,7 +28,7 @@ export function IframePage({
       const style = doc.createElement("style");
       style.id = "__propium_iframe_styles";
       style.textContent = `
-        @media (min-width: 768px) { header.fixed.top-0 { display: none !important; } }
+        ${showTopNav ? "@media (min-width: 768px) { header.fixed.top-0 { display: none !important; } }" : ""}
         ${injectCss || ""}
       `;
       doc.head.appendChild(style);
@@ -50,9 +52,11 @@ export function IframePage({
 
   return (
     <>
-      <div className="hidden md:block">
-        <TopNav activeTab={activeTab} />
-      </div>
+      {showTopNav && (
+        <div className="hidden md:block">
+          <TopNav activeTab={activeTab} />
+        </div>
+      )}
       <iframe
         ref={iframeRef}
         src={src}
