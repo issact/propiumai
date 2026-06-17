@@ -32,7 +32,7 @@ function Directories() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#0F172A" }}>
-      <TopNav activeTab="Search" />
+      <TopNav />
       <iframe
         ref={iframeRef}
         src="/design.html"
