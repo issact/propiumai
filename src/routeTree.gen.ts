@@ -13,6 +13,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as MicroMarketRouteImport } from './routes/micro-market'
 import { Route as M3mDeveloperRouteImport } from './routes/m3m-developer'
 import { Route as GolfCourseExtensionRouteImport } from './routes/golf-course-extension'
+import { Route as FactsheetRouteImport } from './routes/factsheet'
 import { Route as DirectoriesRouteImport } from './routes/directories'
 import { Route as DeveloperScorecardsRouteImport } from './routes/developer-scorecards'
 import { Route as CompareRouteImport } from './routes/compare'
@@ -37,6 +38,11 @@ const M3mDeveloperRoute = M3mDeveloperRouteImport.update({
 const GolfCourseExtensionRoute = GolfCourseExtensionRouteImport.update({
   id: '/golf-course-extension',
   path: '/golf-course-extension',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactsheetRoute = FactsheetRouteImport.update({
+  id: '/factsheet',
+  path: '/factsheet',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DirectoriesRoute = DirectoriesRouteImport.update({
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/developer-scorecards': typeof DeveloperScorecardsRoute
   '/directories': typeof DirectoriesRoute
+  '/factsheet': typeof FactsheetRoute
   '/golf-course-extension': typeof GolfCourseExtensionRoute
   '/m3m-developer': typeof M3mDeveloperRoute
   '/micro-market': typeof MicroMarketRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/compare': typeof CompareRoute
   '/developer-scorecards': typeof DeveloperScorecardsRoute
   '/directories': typeof DirectoriesRoute
+  '/factsheet': typeof FactsheetRoute
   '/golf-course-extension': typeof GolfCourseExtensionRoute
   '/m3m-developer': typeof M3mDeveloperRoute
   '/micro-market': typeof MicroMarketRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/compare': typeof CompareRoute
   '/developer-scorecards': typeof DeveloperScorecardsRoute
   '/directories': typeof DirectoriesRoute
+  '/factsheet': typeof FactsheetRoute
   '/golf-course-extension': typeof GolfCourseExtensionRoute
   '/m3m-developer': typeof M3mDeveloperRoute
   '/micro-market': typeof MicroMarketRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/developer-scorecards'
     | '/directories'
+    | '/factsheet'
     | '/golf-course-extension'
     | '/m3m-developer'
     | '/micro-market'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/developer-scorecards'
     | '/directories'
+    | '/factsheet'
     | '/golf-course-extension'
     | '/m3m-developer'
     | '/micro-market'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/developer-scorecards'
     | '/directories'
+    | '/factsheet'
     | '/golf-course-extension'
     | '/m3m-developer'
     | '/micro-market'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   CompareRoute: typeof CompareRoute
   DeveloperScorecardsRoute: typeof DeveloperScorecardsRoute
   DirectoriesRoute: typeof DirectoriesRoute
+  FactsheetRoute: typeof FactsheetRoute
   GolfCourseExtensionRoute: typeof GolfCourseExtensionRoute
   M3mDeveloperRoute: typeof M3mDeveloperRoute
   MicroMarketRoute: typeof MicroMarketRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/golf-course-extension'
       fullPath: '/golf-course-extension'
       preLoaderRoute: typeof GolfCourseExtensionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factsheet': {
+      id: '/factsheet'
+      path: '/factsheet'
+      fullPath: '/factsheet'
+      preLoaderRoute: typeof FactsheetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/directories': {
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompareRoute: CompareRoute,
   DeveloperScorecardsRoute: DeveloperScorecardsRoute,
   DirectoriesRoute: DirectoriesRoute,
+  FactsheetRoute: FactsheetRoute,
   GolfCourseExtensionRoute: GolfCourseExtensionRoute,
   M3mDeveloperRoute: M3mDeveloperRoute,
   MicroMarketRoute: MicroMarketRoute,
