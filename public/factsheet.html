@@ -98,12 +98,12 @@
     <div class="no-print bg-[#0F172A] border-b border-white/10 text-white sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-6">
-                <a href="/" class="flex items-center gap-1 font-bold text-lg tracking-tight text-white hover:opacity-90">
+                <a href="index.html" class="flex items-center gap-1 font-bold text-lg tracking-tight text-white hover:opacity-90">
                     prOPIUM<span class="text-brandGold">.ai</span>
                 </a>
                 <span class="text-xs text-slate-400 border-l border-slate-700 pl-4 py-1">FactSheet Hub</span>
             </div>
-
+            
             <div class="flex items-center gap-4">
                 <!-- Mode View Switcher -->
                 <div class="bg-slate-900 border border-slate-700 p-1 rounded-xl flex gap-1">
@@ -119,8 +119,9 @@
 
                 <label for="project-select" class="text-xs font-semibold text-slate-400">Select Project:</label>
                 <select id="project-select" onchange="changeProject(this.value)" class="bg-slate-800 border border-slate-700 text-white text-xs rounded-xl px-3 py-1.5 focus:ring-1 focus:ring-brandGold focus:border-brandGold outline-none">
+                    <!-- Javascript will populate projects -->
                 </select>
-
+                
                 <button onclick="window.print()" class="px-4 py-2 bg-brandGold hover:bg-amber-500 text-[#0F172A] text-xs font-extrabold uppercase tracking-wider transition-all rounded-xl shadow-md flex items-center gap-2">
                     <span class="material-symbols-outlined text-sm">download</span> PDF / Print
                 </button>
@@ -131,6 +132,7 @@
     <!-- factsheet.html Pages Wrapper -->
     <div id="factsheet-wrapper" class="max-w-6xl mx-auto px-6 py-8 dashboard-mode">
         <div id="factsheet-container" class="space-y-0">
+            <!-- Dynamically loaded content will render here -->
         </div>
     </div>
 
