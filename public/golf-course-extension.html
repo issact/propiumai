@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
-    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -72,7 +71,6 @@
             font-family: 'Inter', sans-serif;
             background: #f1f5f9;
         }
-        /* Leaflet popup customization */
         .leaflet-popup-content-wrapper {
             background: #0F172A !important;
             color: #FFFFFF !important;
@@ -102,7 +100,6 @@
 </head>
 <body class="bg-background text-[#0F172A] font-sans antialiased min-h-screen flex flex-col pt-16 relative blueprint-grid">
 
-    <!-- Top Navigation Bar -->
     <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0F172A]/85 border-b border-white/10 shadow-sm text-white">
         <div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto w-full">
             <div class="flex items-center gap-stack-md">
@@ -125,10 +122,8 @@
         </div>
     </header>
 
-    <!-- Main Container -->
     <main class="max-w-container-max mx-auto px-6 lg:px-margin-desktop py-8 w-full flex-grow flex flex-col gap-6">
         
-        <!-- Breadcrumb Navigation -->
         <nav class="text-xs text-slate-500 flex items-center gap-2">
             <a href="index.html" class="hover:text-primary transition-colors">Home</a>
             <span class="text-slate-300">/</span>
@@ -137,7 +132,6 @@
             <span id="breadcrumbCorridor" class="text-slate-700 font-medium">Loading...</span>
         </nav>
 
-        <!-- Corridor Detail Header -->
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4 border-b border-slate-200/60 pb-6">
             <div class="space-y-1">
                 <span class="text-[9px] uppercase tracking-widest font-extrabold text-secondary-container bg-slate-900 text-white px-2.5 py-1 rounded w-max block mb-2">Corridor Dossier</span>
@@ -151,11 +145,9 @@
             </div>
         </div>
 
-        <!-- Telemetry & Scorecard Row -->
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
-            <!-- Left Side: Corridor Telemetry Grid -->
-            <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+            <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
                     <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Average PSFT Rate</span>
                     <div>
@@ -186,7 +178,6 @@
                 </div>
             </div>
 
-            <!-- Right Side: 8-Dimension Location Scorecard -->
             <div class="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
                 <div>
                     <h3 class="font-display font-bold text-xs uppercase tracking-wider text-primary mb-1">8-Dimension Location Scorecard</h3>
@@ -194,36 +185,22 @@
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3" id="scorecardContainer">
-                    <!-- Dynamic rendering in JS -->
-                </div>
+                    </div>
             </div>
         </section>
 
-        <!-- Price Growth & Sub-Market Matrix Row -->
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
-            <!-- Price Appreciation Timeline Chart -->
-            <div class="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[350px]">
+            <div class="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[360px]">
                 <div>
-                    <h3 class="font-display font-bold text-xs uppercase tracking-wider text-primary mb-1">Price Growth Trend (2015 - 2026)</h3>
-                    <p class="text-[10px] text-slate-400 mb-4">Trailing 90-day base residential pricing index</p>
+                    <h3 class="font-display font-bold text-xs uppercase tracking-wider text-primary mb-1">Pricing Segment Distribution</h3>
+                    <p class="text-[10px] text-slate-400 mb-4">Current market inventory split across pricing tiers</p>
                 </div>
 
-                <!-- Dynamic SVG Chart Container -->
-                <div class="w-full flex-grow flex items-center justify-center relative py-2" id="svgChartContainer">
-                    <!-- SVG gets inserted here by script -->
-                </div>
-
-                <!-- Product Segment Mix Split -->
-                <div class="border-t border-slate-100 pt-4 mt-4 space-y-2">
-                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Inventory Class Split</span>
-                    <div class="flex justify-between items-center text-[9px] text-slate-500 font-semibold" id="segmentLegend">
-                        <!-- Dynamic legend -->
+                <div class="w-full flex-grow flex flex-col items-center justify-center relative py-4" id="pieChartContainer">
                     </div>
-                </div>
             </div>
 
-            <!-- Sector Matrix Breakdown Table -->
             <div class="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
                 <div>
                     <h3 class="font-display font-bold text-xs uppercase tracking-wider text-primary mb-1">Sub-Market Sector Matrix</h3>
@@ -240,8 +217,7 @@
                             </tr>
                         </thead>
                         <tbody id="sectorMatrixBody" class="divide-y divide-slate-100">
-                            <!-- Dynamic rows in JS -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
 
@@ -251,7 +227,6 @@
             </div>
         </section>
 
-        <!-- Key Infrastructure Catalog -->
         <section class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
             <div>
                 <h3 class="font-display font-bold text-xs uppercase tracking-wider text-primary">Key Infrastructure Catalog</h3>
@@ -259,7 +234,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-5 gap-6 pt-2" id="infraGrid">
-                <!-- Transit & Connectivity -->
                 <div class="space-y-3">
                     <div class="flex items-center gap-1.5 text-slate-900 border-b border-slate-100 pb-2">
                         <span class="material-symbols-outlined text-sm text-secondary-container">directions_subway</span>
@@ -267,7 +241,6 @@
                     </div>
                     <ul class="space-y-1.5 text-xs text-slate-500" id="infraTransit"></ul>
                 </div>
-                <!-- Commercial Hubs -->
                 <div class="space-y-3">
                     <div class="flex items-center gap-1.5 text-slate-900 border-b border-slate-100 pb-2">
                         <span class="material-symbols-outlined text-sm text-secondary-container">corporate_fare</span>
@@ -275,7 +248,6 @@
                     </div>
                     <ul class="space-y-1.5 text-xs text-slate-500" id="infraCommercial"></ul>
                 </div>
-                <!-- Education -->
                 <div class="space-y-3">
                     <div class="flex items-center gap-1.5 text-slate-900 border-b border-slate-100 pb-2">
                         <span class="material-symbols-outlined text-sm text-secondary-container">school</span>
@@ -283,7 +255,6 @@
                     </div>
                     <ul class="space-y-1.5 text-xs text-slate-500" id="infraEducation"></ul>
                 </div>
-                <!-- Healthcare -->
                 <div class="space-y-3">
                     <div class="flex items-center gap-1.5 text-slate-900 border-b border-slate-100 pb-2">
                         <span class="material-symbols-outlined text-sm text-secondary-container">local_hospital</span>
@@ -291,7 +262,6 @@
                     </div>
                     <ul class="space-y-1.5 text-xs text-slate-500" id="infraHealthcare"></ul>
                 </div>
-                <!-- Leisure & Retail -->
                 <div class="space-y-3">
                     <div class="flex items-center gap-1.5 text-slate-900 border-b border-slate-100 pb-2">
                         <span class="material-symbols-outlined text-sm text-secondary-container">shopping_bag</span>
@@ -302,10 +272,8 @@
             </div>
         </section>
 
-        <!-- Projects Stack View Switcher Section -->
         <section class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-6">
             
-            <!-- Controls Bar -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
                 <div>
                     <h3 class="font-display font-bold text-xs uppercase tracking-wider text-primary">Corridor Projects Stack</h3>
@@ -313,14 +281,12 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
-                    <!-- Status Filter Tabs -->
                     <div class="flex bg-slate-100 border border-slate-200/40 p-1 rounded-xl gap-0.5 shadow-sm text-xs font-semibold">
                         <button onclick="setFilterStatus('all')" id="tabAll" class="px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider bg-white text-primary shadow-sm">All</button>
                         <button onclick="setFilterStatus('Ready to Move In')" id="tabReady" class="px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider text-slate-500 hover:text-primary">Ready</button>
                         <button onclick="setFilterStatus('Under Construction')" id="tabUC" class="px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider text-slate-500 hover:text-primary">UC</button>
                     </div>
 
-                    <!-- Sort Dropdown -->
                     <div class="relative shrink-0">
                         <select onchange="setSort(this.value)" class="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition-all rounded-xl pl-3 pr-8 py-2.5 appearance-none focus:ring-0 cursor-pointer">
                             <option value="score">Sort by: prOPIUM Score</option>
@@ -333,7 +299,6 @@
                         </div>
                     </div>
 
-                    <!-- View Switcher -->
                     <div class="flex bg-slate-100 border border-slate-200/40 p-1 rounded-xl gap-0.5 shadow-sm">
                         <button onclick="setView('list')" id="btnViewList" class="p-2 rounded-lg text-slate-500 hover:text-primary transition-all flex items-center justify-center bg-white text-primary shadow-sm" title="List View">
                             <span class="material-symbols-outlined text-sm">list</span>
@@ -348,7 +313,6 @@
                 </div>
             </div>
 
-            <!-- VIEW 1: List View (Table) -->
             <div id="viewList" class="overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
@@ -365,17 +329,13 @@
                         </tr>
                     </thead>
                     <tbody id="projectListBody" class="divide-y divide-slate-100">
-                        <!-- Dynamically filled in JS -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
 
-            <!-- VIEW 2: Cards Grid -->
             <div id="viewCards" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Dynamically filled in JS -->
-            </div>
+                </div>
 
-            <!-- VIEW 3: Map Container -->
             <div id="viewMap" class="hidden min-h-[480px] relative rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden bg-slate-100 flex flex-col">
                 <div id="map" class="w-full h-[480px] flex-grow"></div>
             </div>
@@ -389,7 +349,6 @@
 
     </main>
 
-    <!-- Footer -->
     <footer class="bg-surface-container-low pt-stack-lg pb-stack-md border-t border-outline-variant/30 mt-12 w-full">
         <div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-6 gap-gutter">
             <div class="md:col-span-2">
@@ -427,947 +386,245 @@
                 <h5 class="font-sans font-bold text-xs text-primary mb-4">Intelligence Hub</h5>
                 <ul class="space-y-2 text-xs text-on-surface-variant">
                     <li><a class="hover:text-primary transition-colors" href="#">Builder Evaluation</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Location Intelligence</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Product Intelligence</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Payment Plan Intelligence</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Investment Intelligence</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Micro-Market Index</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Registry Analytics</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Tax & Legal Audits</a></li>
                 </ul>
             </div>
-            
+
             <div>
-                <h5 class="font-sans font-bold text-xs text-primary mb-4">For developers</h5>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">Solutions</h5>
                 <ul class="space-y-2 text-xs text-on-surface-variant">
-                    <li><a class="hover:text-primary transition-colors" href="#">Visibility & data</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Raise an issue</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Platform overview</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Contact & support</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">For Institutional Funds</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">For Wealth Managers</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Enterprise Telemetry API</a></li>
                 </ul>
             </div>
-            
+
             <div>
-                <h5 class="font-sans font-bold text-xs text-primary mb-4">Support & legal</h5>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">Legal</h5>
                 <ul class="space-y-2 text-xs text-on-surface-variant">
-                    <li><a class="hover:text-primary transition-colors" href="#">Raise an issue</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Privacy policy</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Terms of use</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Terms of Platform Use</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">RERA Disclaimers</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Cookie policy</a></li>
                 </ul>
             </div>
         </div>
-        
-        <div class="max-w-container-max mx-auto px-margin-desktop mt-12 pt-8 border-t border-outline-variant/20 flex flex-col gap-6">
-            <p class="text-[10px] text-on-surface-variant/70 leading-relaxed normal-case">
-                <span class="font-bold text-primary mr-1">Disclaimer ·</span>
-                prOPIUM is an independent property intelligence and analytics platform. All data, scores, and analysis are for informational purposes only and do not constitute investment or legal advice. Prices, RERA status, and project details should be independently verified before any purchase or investment decision. prOPIUM does not act as a real estate agent, broker, or developer and does not receive commissions from builders or developers.
-            </p>
-            <div class="flex justify-between items-center text-[10px] text-on-surface-variant uppercase font-bold tracking-widest pt-2 border-t border-outline-variant/10">
-                <span>© 2026 prOPIUM · All rights reserved · Built for the Indian property ecosystem</span>
-                <div class="flex gap-6">
-                    <a class="hover:text-primary" href="#">Privacy Shield</a>
-                    <a class="hover:text-primary" href="#">Disclosure Policy</a>
+        <div class="max-w-container-max mx-auto px-4">
+            <div class="border-t border-slate-200/60 pt-8 flex flex-col gap-6 mt-12">
+                <p class="text-xs text-slate-500 line-height:1.7;"><span class="font-semibold text-[#0F172A] mr-1">Disclaimer ·</span>prOPIUM is an independent property intelligence and analytics platform. All data, scores, and analysis are for informational purposes only and do not constitute investment or legal advice. Prices, RERA status, and project details should be independently verified before any purchase or investment decision.</p>
+                <div class="border-t border-slate-200/60 pt-5 flex flex-col gap-3 font-size:12px; text-slate-500 font-weight:500;">
+                    <span>© 2026 prOPIUM.ai. All rights reserved. Mapped with active telemetry data pipelines.</span>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- JS Controllers -->
     <script>
-        const CORRIDORS = {
-            "gcr": {
-                id: "gcr",
-                code: "GCR",
-                name: "Golf Course Road",
-                desc: "Gurgaon's flagship luxury corridor. Host to ultra-luxury condominiums, corporate headquarters, and high-end retail, representing the highest capital values.",
-                priceRange: "₹32,000 - ₹48,000 / sqft",
-                avgPsft: 37500,
-                avgTicket: "₹14.5 Cr",
-                activeProjects: 57,
-                units: 21489,
+        const corridors = {
+            "golf-course-road": {
+                title: "Golf Course Road",
+                desc: "The absolute pinnacle of commercial and ultra-luxury residential micro-markets in Northern India. Characterized by wide multilane cyber corridors, premium high-rise condominiums, and seamless rapid transit connectivity linking global corporate headquarters.",
+                avgPrice: "₹42,500/sqft",
+                priceRange: "₹31,000 - ₹55,000",
+                avgTicket: "₹14.2 Cr",
+                projectsCount: 14,
+                unitsTracked: "5,840",
                 scorecard: [
-                    { label: "Connectivity", score: 9.8 },
-                    { label: "Social Infrastructure", score: 9.6 },
-                    { label: "Commercial Proximity", score: 9.9 },
-                    { label: "Price-to-Value", score: 6.2 },
-                    { label: "Infrastructure Growth", score: 7.0 },
-                    { label: "Livability", score: 9.5 },
-                    { label: "Historical Appreciation", score: 8.8 },
-                    { label: "Inventory Clearance Speed", score: 8.0 }
-                ],
-                priceTrend: [
-                    { year: 2015, price: 18000 },
-                    { year: 2018, price: 21000 },
-                    { year: 2020, price: 23000 },
-                    { year: 2022, price: 26000 },
-                    { year: 2024, price: 34000 },
-                    { year: 2026, price: 37500 }
-                ],
-                segments: { luxury: 10, ultraLuxury: 85, premium: 5 },
-                sectors: [
-                    { sector: "Sector 54", projects: 18, price: "₹38,000" },
-                    { sector: "Sector 42", projects: 12, price: "₹42,000" },
-                    { sector: "Sector 53", projects: 14, price: "₹35,000" }
-                ],
-                infrastructure: {
-                    transit: ["Sector 53-54 Rapid Metro (Walking)", "Golf Course Road Underpasses (Immediate)", "NH-48 Connection (10 mins)"],
-                    commercial: ["One Horizon Center", "DLF CyberCity (8 mins)", "American Express Campus"],
-                    education: ["The Shri Ram School", "Shiv Nadar School"],
-                    healthcare: ["Fortis Memorial Research Institute (8 mins)", "Max Hospital (10 mins)"],
-                    leisure: ["DLF Golf & Country Club", "South Point Mall", "Horizon Plaza"]
-                }
-            },
-            "gcex": {
-                id: "gcex",
-                code: "GCEX",
-                name: "Golf Course Extension Road",
-                desc: "Premium, cosmopolitan growth corridor attracting luxury developers. Combines upscale high-rises with robust office clusters and top-tier educational hubs.",
-                priceRange: "₹22,000 - ₹35,000 / sqft",
-                avgPsft: 27500,
-                avgTicket: "₹6.8 Cr",
-                activeProjects: 97,
-                units: 37826,
-                scorecard: [
-                    { label: "Connectivity", score: 9.2 },
-                    { label: "Social Infrastructure", score: 8.8 },
-                    { label: "Commercial Proximity", score: 8.5 },
-                    { label: "Price-to-Value", score: 7.9 },
-                    { label: "Infrastructure Growth", score: 9.0 },
-                    { label: "Livability", score: 8.6 },
-                    { label: "Historical Appreciation", score: 9.4 },
-                    { label: "Inventory Clearance Speed", score: 8.7 }
-                ],
-                priceTrend: [
-                    { year: 2015, price: 9500 },
-                    { year: 2018, price: 12000 },
-                    { year: 2020, price: 13500 },
-                    { year: 2022, price: 16000 },
-                    { year: 2024, price: 23000 },
-                    { year: 2026, price: 27500 }
-                ],
-                segments: { luxury: 45, ultraLuxury: 35, premium: 20 },
-                sectors: [
-                    { sector: "Sector 65", projects: 15, price: "₹28,500" },
-                    { sector: "Sector 63A", projects: 12, price: "₹26,000" },
-                    { sector: "Sector 62", projects: 10, price: "₹24,000" },
-                    { sector: "Sector 59", projects: 8, price: "₹27,000" }
-                ],
-                infrastructure: {
-                    transit: ["Sector 55-56 Rapid Metro (8 mins)", "SPR Linkage (Immediate)", "NH-48 via Sohna Road (12 mins)"],
-                    commercial: ["AIPL Business Club", "M3M Urbana", "Emaar Digital Greens"],
-                    education: ["St. Xavier's High School", "DPS International", "Heritage Experiential"],
-                    healthcare: ["Marengo Asia Hospital (10 mins)", "Medanta The Medicity (15 mins)"],
-                    leisure: ["WorldMark Gurgaon", "Good Earth City Centre", "M3M 65th Avenue"]
-                }
-            },
-            "dwe": {
-                id: "dwe",
-                code: "DWE",
-                name: "Dwarka Expressway",
-                desc: "One of Gurgaon's largest growth corridors. Dwarka Expressway offers massive inventory scalability, high-rise luxury towers, and rapid connectivity to the IGI Airport.",
-                priceRange: "₹14,000 - ₹24,000 / sqft",
-                avgPsft: 18500,
-                avgTicket: "₹4.2 Cr",
-                activeProjects: 145,
-                units: 84228,
-                scorecard: [
-                    { label: "Connectivity", score: 8.9 },
-                    { label: "Social Infrastructure", score: 6.8 },
-                    { label: "Commercial Proximity", score: 7.2 },
-                    { label: "Price-to-Value", score: 8.5 },
-                    { label: "Infrastructure Growth", score: 9.8 },
-                    { label: "Livability", score: 7.5 },
-                    { label: "Historical Appreciation", score: 9.6 },
-                    { label: "Inventory Clearance Speed", score: 9.2 }
-                ],
-                priceTrend: [
-                    { year: 2015, price: 6200 },
-                    { year: 2018, price: 7800 },
-                    { year: 2020, price: 8500 },
-                    { year: 2022, price: 10500 },
-                    { year: 2024, price: 15500 },
-                    { year: 2026, price: 18500 }
-                ],
-                segments: { luxury: 30, ultraLuxury: 15, premium: 55 },
-                sectors: [
-                    { sector: "Sector 108", projects: 22, price: "₹17,500" },
-                    { sector: "Sector 113", projects: 18, price: "₹20,000" },
-                    { sector: "Sector 102", projects: 25, price: "₹16,500" },
-                    { sector: "Sector 106", projects: 16, price: "₹18,000" }
-                ],
-                infrastructure: {
-                    transit: ["IGI Airport T3 (15 mins)", "Delhi-Gurgaon Border (5 mins)", "Sector 21 Metro Station (12 mins)"],
-                    commercial: ["India International Convention Centre", "Diplomatic Enclave II"],
-                    education: ["Delhi Public School", "New Era School"],
-                    healthcare: ["Manipal Hospital Dwarka (15 mins)", "Aakash Hospital (18 mins)"],
-                    leisure: ["Proposed Heliport", "Urban Extension Road II"]
-                }
-            },
-            "cg": {
-                id: "cg",
-                code: "CG",
-                name: "Central Gurgaon",
-                desc: "Established residential node featuring mature social infrastructure and seamless access to NH-48 and Galleria, appealing equally to families and luxury investors.",
-                priceRange: "₹25,000 - ₹35,000 / sqft",
-                avgPsft: 30000,
-                avgTicket: "₹7.5 Cr",
-                activeProjects: 37,
-                units: 10837,
-                scorecard: [
-                    { label: "Connectivity", score: 9.7 },
-                    { label: "Social Infrastructure", score: 9.8 },
-                    { label: "Commercial Proximity", score: 9.5 },
-                    { label: "Price-to-Value", score: 6.8 },
-                    { label: "Infrastructure Growth", score: 5.5 },
-                    { label: "Livability", score: 9.2 },
-                    { label: "Historical Appreciation", score: 7.5 },
-                    { label: "Inventory Clearance Speed", score: 7.2 }
-                ],
-                priceTrend: [
-                    { year: 2015, price: 14500 },
-                    { year: 2018, price: 17000 },
-                    { year: 2020, price: 18200 },
-                    { year: 2022, price: 21000 },
-                    { year: 2024, price: 26500 },
-                    { year: 2026, price: 30000 }
-                ],
-                segments: { luxury: 50, ultraLuxury: 20, premium: 30 },
-                sectors: [
-                    { sector: "Sector 30", projects: 8, price: "₹28,000" },
-                    { sector: "Sector 45", projects: 12, price: "₹31,000" },
-                    { sector: "Sector 28", projects: 7, price: "₹33,000" }
-                ],
-                infrastructure: {
-                    transit: ["HUDA City Centre Metro (5 mins)", "NH-48 Highway (Immediate)", "Signature Towers Junction (3 mins)"],
-                    commercial: ["Unitech Signature Towers", "DLF CyberCity (7 mins)", "IFFCO Chowk Hub"],
-                    education: ["Shalom Hills International", "DPS Sushant Lok"],
-                    healthcare: ["Fortis Hospital", "Max Super Speciality Hospital"],
-                    leisure: ["Galleria Market", "DLF Star Mall", "Kingdom of Dreams"]
-                }
-            },
-            "mgr": {
-                id: "mgr",
-                code: "MGR",
-                name: "M.G. Road",
-                desc: "High-density retail and residential stretch. Offers outstanding immediate metro access and established commercial retail buildings.",
-                priceRange: "₹24,000 - ₹36,000 / sqft",
-                avgPsft: 30000,
-                avgTicket: "₹8.2 Cr",
-                activeProjects: 10,
-                units: 2269,
-                scorecard: [
-                    { label: "Connectivity", score: 9.9 },
+                    { label: "Commercial Density", score: 9.8 },
+                    { label: "Transit Connectivity", score: 9.5 },
                     { label: "Social Infrastructure", score: 9.2 },
-                    { label: "Commercial Proximity", score: 9.3 },
-                    { label: "Price-to-Value", score: 6.5 },
-                    { label: "Infrastructure Growth", score: 5.0 },
-                    { label: "Livability", score: 8.8 },
-                    { label: "Historical Appreciation", score: 7.0 },
-                    { label: "Inventory Clearance Speed", score: 6.8 }
+                    { label: "Livability Index", score: 8.6 },
+                    { label: "Price Resilience", score: 9.6 },
+                    { label: "Builder Credentials", score: 9.0 },
+                    { label: "Regulatory Compliance", score: 9.4 },
+                    { label: "Future Potential", score: 8.9 }
                 ],
-                priceTrend: [
-                    { year: 2015, price: 15000 },
-                    { year: 2018, price: 17500 },
-                    { year: 2020, price: 18500 },
-                    { year: 2022, price: 21500 },
-                    { year: 2024, price: 27000 },
-                    { year: 2026, price: 30000 }
-                ],
-                segments: { luxury: 40, ultraLuxury: 10, premium: 50 },
                 sectors: [
-                    { sector: "Sector 25", projects: 5, price: "₹31,000" },
-                    { sector: "Sector 24", projects: 3, price: "₹28,500" }
+                    { sector: "Sector 54", projects: 4, price: "₹44,000" },
+                    { sector: "Sector 43", projects: 3, price: "₹38,500" },
+                    { sector: "Sector 53", projects: 3, price: "₹41,000" },
+                    { sector: "Sector 56", projects: 4, price: "₹32,000" }
                 ],
                 infrastructure: {
-                    transit: ["MG Road Metro Station (Walking)", "Sikanderpur Metro Interchange (2 mins)", "NH-48 (5 mins)"],
-                    commercial: ["JMD Regent Square", "CyberCity Office Cluster (5 mins)"],
-                    education: ["The Heritage School (12 mins)", "DLF Public School"],
-                    healthcare: ["Max Hospital (7 mins)", "Uma Sanjeevani Hospital"],
-                    leisure: ["MGF Metropolitan Mall", "DT City Centre Mall", "Sikanderpur Market"]
-                }
-            },
-            "ng": {
-                id: "ng",
-                code: "NG",
-                name: "New Gurgaon",
-                desc: "Sub-market positioned near Manesar. Serves as a highly popular emerging residential corridor with attractive entry tickets for first-time buyers.",
-                priceRange: "₹12,000 - ₹22,000 / sqft",
-                avgPsft: 17500,
-                avgTicket: "₹2.8 Cr",
-                activeProjects: 108,
-                units: 66426,
-                scorecard: [
-                    { label: "Connectivity", score: 8.0 },
-                    { label: "Social Infrastructure", score: 7.0 },
-                    { label: "Commercial Proximity", score: 6.5 },
-                    { label: "Price-to-Value", score: 9.0 },
-                    { label: "Infrastructure Growth", score: 9.2 },
-                    { label: "Livability", score: 7.8 },
-                    { label: "Historical Appreciation", score: 8.9 },
-                    { label: "Inventory Clearance Speed", score: 8.5 }
-                ],
-                priceTrend: [
-                    { year: 2015, price: 5500 },
-                    { year: 2018, price: 6800 },
-                    { year: 2020, price: 7400 },
-                    { year: 2022, price: 9200 },
-                    { year: 2024, price: 14000 },
-                    { year: 2026, price: 17500 }
-                ],
-                segments: { luxury: 15, ultraLuxury: 5, premium: 80 },
-                sectors: [
-                    { sector: "Sector 82", projects: 20, price: "₹16,500" },
-                    { sector: "Sector 83", projects: 18, price: "₹17,000" },
-                    { sector: "Sector 90", projects: 22, price: "₹15,000" },
-                    { sector: "Sector 86", projects: 15, price: "₹16,000" }
-                ],
-                infrastructure: {
-                    transit: ["NH-48 Tolled Plaza (8 mins)", "KMP Expressway (15 mins)", "Proposed Metro Line"],
-                    commercial: ["IMT Manesar industrial area (10 mins)", "Sapphire Eighty Three"],
-                    education: ["St. Xavier's High School (Sector 81)", "Matrikiran School"],
-                    healthcare: ["Aarvy Healthcare", "Miracles Apollo Cradle"],
-                    leisure: ["Holiday Inn Sector 90", "Vatika Town Square"]
-                }
-            },
-            "nh48": {
-                id: "nh48",
-                code: "NH-48",
-                name: "Old Gurgaon",
-                desc: "Established legacy zones with highly active local markets and excellent connectivity along the central expressway node.",
-                priceRange: "₹10,000 - ₹18,000 / sqft",
-                avgPsft: 14000,
-                avgTicket: "₹2.4 Cr",
-                activeProjects: 21,
-                units: 3234,
-                scorecard: [
-                    { label: "Connectivity", score: 8.8 },
-                    { label: "Social Infrastructure", score: 8.5 },
-                    { label: "Commercial Proximity", score: 8.0 },
-                    { label: "Price-to-Value", score: 8.2 },
-                    { label: "Infrastructure Growth", score: 6.0 },
-                    { label: "Livability", score: 8.0 },
-                    { label: "Historical Appreciation", score: 6.8 },
-                    { label: "Inventory Clearance Speed", score: 6.5 }
-                ],
-                priceTrend: [
-                    { year: 2015, price: 6500 },
-                    { year: 2018, price: 7800 },
-                    { year: 2020, price: 8200 },
-                    { year: 2022, price: 9500 },
-                    { year: 2024, price: 12500 },
-                    { year: 2026, price: 14000 }
-                ],
-                segments: { luxury: 5, ultraLuxury: 2, premium: 93 },
-                sectors: [
-                    { sector: "Sector 15", projects: 6, price: "₹15,000" },
-                    { sector: "Sector 31", projects: 8, price: "₹13,500" }
-                ],
-                infrastructure: {
-                    transit: ["Gurgaon Railway Station (10 mins)", "NH-48 Highway Access (Immediate)"],
-                    commercial: ["Udyog Vihar Industrial Phase I-V (12 mins)", "Sector 14 Retail Complex"],
-                    education: ["Blue Bells Model School", "Drona Public School"],
-                    healthcare: ["Kalyan Hospital", "Civil Hospital Gurgaon"],
-                    leisure: ["Sadar Bazar Gurgaon", "Leisure Valley Park (10 mins)"]
-                }
-            },
-            "sohna": {
-                id: "sohna",
-                code: "SOHNA",
-                name: "Sohna Road",
-                desc: "Rapidly developing south-bound corridor. Features scenic view vectors and substantial budget options in integrated townships.",
-                priceRange: "₹12,000 - ₹22,000 / sqft",
-                avgPsft: 17500,
-                avgTicket: "₹3.1 Cr",
-                activeProjects: 48,
-                units: 34605,
-                scorecard: [
-                    { label: "Connectivity", score: 8.2 },
-                    { label: "Social Infrastructure", score: 8.0 },
-                    { label: "Commercial Proximity", score: 7.8 },
-                    { label: "Price-to-Value", score: 8.8 },
-                    { label: "Infrastructure Growth", score: 8.5 },
-                    { label: "Livability", score: 8.3 },
-                    { label: "Historical Appreciation", score: 8.2 },
-                    { label: "Inventory Clearance Speed", score: 8.0 }
-                ],
-                priceTrend: [
-                    { year: 2015, price: 6000 },
-                    { year: 2018, price: 7500 },
-                    { year: 2020, price: 8200 },
-                    { year: 2022, price: 9800 },
-                    { year: 2024, price: 14200 },
-                    { year: 2026, price: 17500 }
-                ],
-                segments: { luxury: 20, ultraLuxury: 5, premium: 75 },
-                sectors: [
-                    { sector: "Sector 48", projects: 15, price: "₹18,500" },
-                    { sector: "Sector 47", projects: 12, price: "₹19,000" },
-                    { sector: "Sector 49", projects: 14, price: "₹16,500" }
-                ],
-                infrastructure: {
-                    transit: ["Sohna Elevated Road (Immediate)", "NH-48 Access (8 mins)", "SPR Crossing (5 mins)"],
-                    commercial: ["Vatika Business Park", "Spaze I-Tech Park", "Bestech Business Tower"],
-                    education: ["GD Goenka Signature School", "Ryan International School"],
-                    healthcare: ["Park Hospital", "Medanta The Medicity (10 mins)"],
-                    leisure: ["Omaxe City Centre", "Sohna Hot Springs (20 mins)"]
-                }
-            },
-            "spr": {
-                id: "spr",
-                code: "SPR",
-                name: "Southern Peripheral Road",
-                desc: "Key infrastructure link connecting Sohna Road, Golf Course Ext, and NH-48. Emerges as a commercial-residential hotspot.",
-                priceRange: "₹14,000 - ₹24,000 / sqft",
-                avgPsft: 18500,
-                avgTicket: "₹4.6 Cr",
-                activeProjects: 90,
-                units: 36481,
-                scorecard: [
-                    { label: "Connectivity", score: 9.0 },
-                    { label: "Social Infrastructure", score: 7.9 },
-                    { label: "Commercial Proximity", score: 8.2 },
-                    { label: "Price-to-Value", score: 8.2 },
-                    { label: "Infrastructure Growth", score: 9.5 },
-                    { label: "Livability", score: 8.0 },
-                    { label: "Historical Appreciation", score: 9.1 },
-                    { label: "Inventory Clearance Speed", score: 8.9 }
-                ],
-                priceTrend: [
-                    { year: 2015, price: 6500 },
-                    { year: 2018, price: 8200 },
-                    { year: 2020, price: 9000 },
-                    { year: 2022, price: 11000 },
-                    { year: 2024, price: 15800 },
-                    { year: 2026, price: 18500 }
-                ],
-                segments: { luxury: 35, ultraLuxury: 20, premium: 45 },
-                sectors: [
-                    { sector: "Sector 70", projects: 14, price: "₹17,500" },
-                    { sector: "Sector 77", projects: 10, price: "₹19,500" },
-                    { sector: "Sector 80", projects: 12, price: "₹16,000" }
-                ],
-                infrastructure: {
-                    transit: ["NH-48 Connection (5 mins)", "Golf Course Ext Road Link (Immediate)", "Sohna Road Junction (3 mins)"],
-                    commercial: ["Commercial offices in Sector 70/74", "DLF Corporate Greens (8 mins)"],
-                    education: ["The Tulip School", "The Millennium School"],
-                    healthcare: ["Medanta The Medicity (12 mins)", "Cloudnine Hospital"],
-                    leisure: ["Reach 3Roads Retail", "Sapphire Ninety Plus (10 mins)"]
-                }
+                    transit: ["Sector 53-54 Rapid Metro", "Sector 42-43 Rapid Metro", "Sikanderpur Interchange"],
+                    commercial: ["One Horizon Center", "Two Horizon Center", "Global Foyer", "American Express Campus"],
+                    education: ["The Shri Ram School", "Shiv Nadar School", "Suncity School"],
+                    healthcare: ["Fortis Hospital", "Max Hospital", "Paras Hospital"],
+                    leisure: ["DLF Golf & Country Club", "South Point Mall", "Suncity Market"]
+                },
+                // Updated specific pricing segment split data
+                segmentData: [
+                    { label: "Luxury", value: 55, color: "#006AFF" },
+                    { label: "Ultra Luxury", value: 25, color: "#0F172A" },
+                    { label: "Premium", value: 20, color: "#F59E0B" }
+                ]
             }
         };
 
-        const CORRIDOR_POLYGONS = {
-            "dwe": [
-                [28.4233, 76.9366], [28.4243, 76.9348], [28.4256, 76.9333], [28.4271, 76.9322],
-                [28.4288, 76.9314], [28.4306, 76.9310], [28.4324, 76.9311], [28.4886, 76.9675],
-                [28.4904, 76.9692], [28.5269, 77.0110], [28.5533, 77.0538], [28.5549, 77.0595],
-                [28.5542, 77.0635], [28.5523, 77.0668], [28.5476, 77.0697], [28.5440, 77.0697],
-                [28.5038, 77.0396], [28.4999, 77.0346], [28.4951, 77.0245], [28.4110, 76.9886],
-                [28.4052, 76.9800], [28.4062, 76.9744], [28.4233, 76.9366]
-            ],
-            "gcex": [
-                [28.3795, 77.0536], [28.3805, 77.0526], [28.3903, 77.0427], [28.3933, 77.0407],
-                [28.3967, 77.0401], [28.4000, 77.0410], [28.4028, 77.0432], [28.4110, 77.0645],
-                [28.4218, 77.0826], [28.4293, 77.1072], [28.4298, 77.1111], [28.4289, 77.1148],
-                [28.4268, 77.1180], [28.4221, 77.1205], [28.4050, 77.1198], [28.4004, 77.1181],
-                [28.3972, 77.1139], [28.3928, 77.1034], [28.3863, 77.0959], [28.3822, 77.0809],
-                [28.3758, 77.0754], [28.3722, 77.0684], [28.3726, 77.0643], [28.3795, 77.0536]
-            ],
-            "gcr": [
-                [28.4696, 77.0888], [28.4803, 77.0899], [28.4837, 77.0910], [28.4864, 77.0934],
-                [28.4881, 77.0969], [28.4885, 77.1008], [28.4876, 77.1046], [28.4855, 77.1078],
-                [28.4824, 77.1097], [28.4724, 77.1135], [28.4683, 77.1140], [28.4519, 77.1115],
-                [28.4414, 77.1171], [28.4380, 77.1180], [28.4346, 77.1175], [28.4304, 77.1141],
-                [28.4289, 77.1106], [28.4286, 77.1066], [28.4297, 77.1029], [28.4345, 77.0962],
-                [28.4382, 77.0932], [28.4515, 77.0875], [28.4557, 77.0869], [28.4696, 77.0888]
-            ],
-            "sohna": [
-                [28.4102, 77.0281], [28.4125, 77.0257], [28.4280, 77.0177], [28.4316, 77.0169],
-                [28.4351, 77.0176], [28.4381, 77.0198], [28.4401, 77.0232], [28.4407, 77.0272],
-                [28.4399, 77.0312], [28.4350, 77.0394], [28.4377, 77.0431], [28.4391, 77.0488],
-                [28.4383, 77.0526], [28.3742, 77.0691], [28.3722, 77.0664], [28.3733, 77.0624],
-                [28.4008, 77.0482], [28.4015, 77.0419], [28.4102, 77.0281]
-            ],
-            "spr": [
-                [28.3882, 76.9747], [28.4119, 76.9919], [28.4140, 76.9942], [28.4217, 77.0074],
-                [28.4278, 77.0193], [28.4288, 77.0224], [28.4280, 77.0271], [28.4251, 77.0305],
-                [28.4017, 77.0451], [28.3891, 77.0553], [28.3865, 77.0567], [28.3837, 77.0568],
-                [28.3800, 77.0547], [28.3779, 77.0507], [28.3766, 77.0242], [28.3594, 76.9903],
-                [28.3560, 76.9906], [28.3521, 76.9884], [28.3500, 76.9841], [28.3505, 76.9793],
-                [28.3595, 76.9560], [28.3623, 76.9523], [28.3664, 76.9511], [28.3882, 76.9747]
-            ],
-            "cg": [
-                [28.4499, 77.0464], [28.4348, 77.0246], [28.4316, 77.0173], [28.4312, 77.0092],
-                [28.4336, 77.0015], [28.4385, 76.9955], [28.4451, 76.9921], [28.4523, 76.9920],
-                [28.4590, 76.9950], [28.4657, 77.0022], [28.4734, 77.0137], [28.4753, 77.0165],
-                [28.4826, 77.0276], [28.4872, 77.0349], [28.4901, 77.0420], [28.4904, 77.0498],
-                [28.4881, 77.0572], [28.4836, 77.0630], [28.4774, 77.0665], [28.4706, 77.0671],
-                [28.4640, 77.0648], [28.4587, 77.0599], [28.4499, 77.0464]
-            ],
-            "ng": [
-                [28.3800, 76.9200], [28.4100, 76.9300], [28.4300, 76.9400], [28.4200, 76.9600],
-                [28.3900, 76.9500], [28.3750, 76.9350], [28.3800, 76.9200]
-            ],
-            "npr": [
-                [28.4700, 76.9500], [28.5000, 76.9700], [28.5100, 76.9900], [28.4900, 77.0000],
-                [28.4700, 76.9700], [28.4700, 76.9500]
-            ],
-            "mgr": [
-                [28.4750, 77.0700], [28.4900, 77.0800], [28.4850, 77.0950], [28.4700, 77.0850],
-                [28.4750, 77.0700]
-            ]
-        };
-
-        const CORRIDOR_STYLES = {
-            "cg": { color: "#3B82F6", fillColor: "#3B82F6", fillOpacity: 0.1, weight: 2 },
-            "dwe": { color: "#8B5CF6", fillColor: "#8B5CF6", fillOpacity: 0.1, weight: 2 },
-            "gcex": { color: "#F59E0B", fillColor: "#F59E0B", fillOpacity: 0.1, weight: 2 },
-            "gcr": { color: "#14B8A6", fillColor: "#14B8A6", fillOpacity: 0.1, weight: 2 },
-            "mgr": { color: "#EC4899", fillColor: "#EC4899", fillOpacity: 0.1, weight: 2 },
-            "ng": { color: "#10B981", fillColor: "#10B981", fillOpacity: 0.1, weight: 2 },
-            "nh48": { color: "#64748B", fillColor: "#64748B", fillOpacity: 0.1, weight: 2 },
-            "npr": { color: "#64748B", fillColor: "#64748B", fillOpacity: 0.1, weight: 2 },
-            "sohna": { color: "#4F46E5", fillColor: "#4F46E5", fillOpacity: 0.1, weight: 2 },
-            "spr": { color: "#06B6D4", fillColor: "#06B6D4", fillOpacity: 0.1, weight: 2 }
-        };
-
-        const PROJECTS = [
+        const projects = [
             {
-                "id": "tarc-ishva",
-                "name": "Tarc Ishva",
-                "developer": "TARC Limited",
-                "sector": "Sector 63A",
-                "corridor": "Golf Course Extension Road",
-                "bhk": ["3 BHK", "4 BHK", "Penthouse"],
-                "area": 9.15,
-                "units": 518,
-                "status": "Under Construction",
-                "priceMin": 8.5,
-                "priceMax": 10.5,
-                "score": 84,
-                "carpetEff": 50,
-                "builtupEff": 67,
-                "img": "m3m_altitude_lobby.png",
-                "lat": 28.415,
-                "lng": 77.085,
-                "targetSegment": "Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
+                id: "m3m-altitude",
+                name: "M3M Altitude",
+                developer: "M3M India",
+                sector: "Sector 65",
+                corridor: "Golf Course Extension",
+                bhk: ["4 BHK", "5 BHK"],
+                area: 4.5,
+                units: 180,
+                status: "Under Construction",
+                priceMin: 4.5,
+                priceMax: 6.8,
+                score: 88,
+                carpetEff: 72,
+                builtupEff: 84,
+                img: "m3m_altitude_facade.png",
+                lat: 28.4125,
+                lng: 77.0712,
+                targetSegment: "Luxury",
+                projectType: "High Rise",
+                structureType: "Apartment"
             },
             {
-                "id": "trump-tower-gurgaon",
-                "name": "Trump Tower (Gurgaon)",
-                "developer": "M3M India Pvt Ltd",
-                "sector": "Sector 65",
-                "corridor": "Golf Course Extension Road",
-                "bhk": ["2 BHK", "3 BHK", "4 BHK"],
-                "area": 2.83,
-                "units": 252,
-                "status": "Ready to Move In",
-                "priceMin": 11.5,
-                "priceMax": 22.08,
-                "score": 76,
-                "carpetEff": 64,
-                "builtupEff": 85,
-                "img": "m3m_altitude_lounge.png",
-                "lat": 28.411,
-                "lng": 77.074,
-                "targetSegment": "Ultra Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
+                id: "dlf-the-camellias",
+                name: "DLF The Camellias",
+                developer: "DLF Limited",
+                sector: "Sector 42",
+                corridor: "Golf Course Road",
+                bhk: ["4 BHK", "5 BHK", "Penthouse"],
+                area: 16.5,
+                units: 420,
+                status: "Ready to Move In",
+                priceMin: 35.0,
+                priceMax: 65.0,
+                score: 98,
+                carpetEff: 76,
+                builtupEff: 88,
+                img: "dlf_camellias.png",
+                lat: 28.4415,
+                lng: 77.0982,
+                targetSegment: "Ultra Luxury",
+                projectType: "High Rise",
+                structureType: "Apartment"
             },
             {
-                "id": "dlf-the-arbour",
-                "name": "DLF The Arbour",
-                "developer": "DLF Limited",
-                "sector": "Sector 63",
-                "corridor": "Golf Course Extension Road",
-                "bhk": ["4 BHK"],
-                "area": 25.08,
-                "units": 1137,
-                "status": "Under Construction",
-                "priceMin": 7.5,
-                "priceMax": 8.5,
-                "score": 72,
-                "carpetEff": 57,
-                "builtupEff": 74,
-                "img": "m3m_altitude_hero.png",
-                "lat": 28.4168,
-                "lng": 77.0805,
-                "targetSegment": "Ultra Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
+                id: "dlf-the-magnolias",
+                name: "DLF The Magnolias",
+                developer: "DLF Limited",
+                sector: "Sector 42",
+                corridor: "Golf Course Road",
+                bhk: ["4 BHK", "5 BHK"],
+                area: 22.0,
+                units: 589,
+                status: "Ready to Move In",
+                priceMin: 18.0,
+                priceMax: 32.0,
+                score: 94,
+                carpetEff: 74,
+                builtupEff: 86,
+                img: "dlf_magnolias.png",
+                lat: 28.4455,
+                lng: 77.0945,
+                targetSegment: "Luxury",
+                projectType: "High Rise",
+                structureType: "Apartment"
             },
             {
-                "id": "m3m-altitude",
-                "name": "M3M Altitude",
-                "developer": "M3M India Pvt Ltd",
-                "sector": "Sector 65",
-                "corridor": "Golf Course Extension Road",
-                "bhk": ["3 BHK", "4 BHK", "Penthouse"],
-                "area": 2.79,
-                "units": 342,
-                "status": "Under Construction",
-                "priceMin": 9.46,
-                "priceMax": 11.31,
-                "score": 27,
-                "carpetEff": 57,
-                "builtupEff": 73,
-                "img": "m3m_altitude_hero.png",
-                "lat": 28.4124,
-                "lng": 77.0724,
-                "targetSegment": "Ultra Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
+                id: "emaar-marbella",
+                name: "Emaar Marbella",
+                developer: "Emaar India",
+                sector: "Sector 66",
+                corridor: "Golf Course Extension",
+                bhk: ["4 BHK", "5 BHK"],
+                area: 28.0,
+                units: 500,
+                status: "Ready to Move In",
+                priceMin: 6.0,
+                priceMax: 9.5,
+                score: 82,
+                carpetEff: 68,
+                builtupEff: 80,
+                img: "emaar_marbella.png",
+                lat: 28.4065,
+                lng: 77.0655,
+                targetSegment: "Luxury",
+                projectType: "Low Rise",
+                structureType: "Villa"
             },
             {
-                "id": "m3m-golfestate",
-                "name": "M3M Golfestate — Fairway East",
-                "developer": "M3M India Pvt Ltd",
-                "sector": "Sector 65",
-                "corridor": "Golf Course Extension Road",
-                "bhk": ["3 BHK", "4 BHK", "Penthouse"],
-                "area": 5.6,
-                "units": 160,
-                "status": "Ready to Move In",
-                "priceMin": 4.1,
-                "priceMax": 7.6,
-                "score": 37,
-                "carpetEff": 53,
-                "builtupEff": 70,
-                "img": "m3m_altitude_lobby.png",
-                "lat": 28.4120,
-                "lng": 77.0750,
-                "targetSegment": "Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "mahindra-luminare",
-                "name": "Mahindra Luminare",
-                "developer": "Mahindra Lifespaces",
-                "sector": "Sector 59",
-                "corridor": "Golf Course Extension Road",
-                "bhk": ["3 BHK", "4 BHK", "Penthouse"],
-                "area": 6.94,
-                "units": 380,
-                "status": "Ready to Move In",
-                "priceMin": 6.5,
-                "priceMax": 9.0,
-                "score": 68,
-                "carpetEff": 56,
-                "builtupEff": 76,
-                "img": "m3m_altitude_balcony.png",
-                "lat": 28.4215,
-                "lng": 77.1002,
-                "targetSegment": "Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "emaar-digihomes",
-                "name": "Emaar DigiHomes",
-                "developer": "Emaar India",
-                "sector": "Sector 62",
-                "corridor": "Golf Course Extension Road",
-                "bhk": ["2 BHK", "3 BHK"],
-                "area": 5.64,
-                "units": 370,
-                "status": "Ready to Move In",
-                "priceMin": 2.1,
-                "priceMax": 3.4,
-                "score": 62,
-                "carpetEff": 55,
-                "builtupEff": 71,
-                "img": "m3m_altitude_balcony.png",
-                "lat": 28.4116,
-                "lng": 77.0945,
-                "targetSegment": "Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "sobha-city",
-                "name": "Sobha City",
-                "developer": "Sobha Limited",
-                "sector": "Sector 108",
-                "corridor": "Dwarka Expressway",
-                "bhk": ["2 BHK", "3 BHK"],
-                "area": 23.0,
-                "units": 1056,
-                "status": "Ready to Move In",
-                "priceMin": 2.2,
-                "priceMax": 2.9,
-                "score": 24,
-                "carpetEff": 57,
-                "builtupEff": 64,
-                "img": "m3m_altitude_lobby.png",
-                "lat": 28.517407,
-                "lng": 76.9944,
-                "targetSegment": "Premium",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "tata-la-vida",
-                "name": "Tata La Vida",
-                "developer": "Tata Housing",
-                "sector": "Sector 113",
-                "corridor": "Dwarka Expressway",
-                "bhk": ["2 BHK", "3 BHK"],
-                "area": 12.0,
-                "units": 674,
-                "status": "Ready to Move In",
-                "priceMin": 1.5,
-                "priceMax": 2.3,
-                "score": 23,
-                "carpetEff": 59,
-                "builtupEff": 71,
-                "img": "m3m_altitude_lounge.png",
-                "lat": 28.534515,
-                "lng": 77.02028,
-                "targetSegment": "Premium",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "dlf-privana-south",
-                "name": "DLF Privana South",
-                "developer": "DLF Limited",
-                "sector": "Sector 77",
-                "corridor": "Southern Peripheral Road",
-                "bhk": ["4 BHK", "Penthouse"],
-                "area": 25.14,
-                "units": 1113,
-                "status": "Under Construction",
-                "priceMin": 7.2,
-                "priceMax": 9.5,
-                "score": 59,
-                "carpetEff": 59,
-                "builtupEff": 76,
-                "img": "m3m_altitude_hero.png",
-                "lat": 28.380354,
-                "lng": 76.990843,
-                "targetSegment": "Ultra Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "parq-by-conscient",
-                "name": "Conscient ParQ",
-                "developer": "Conscient Infrastructure",
-                "sector": "Sector 80",
-                "corridor": "Southern Peripheral Road",
-                "bhk": ["2 BHK", "3 BHK", "4 BHK"],
-                "area": 5.6,
-                "units": 448,
-                "status": "Under Construction",
-                "priceMin": 3.5,
-                "priceMax": 4.8,
-                "score": 50,
-                "carpetEff": 55,
-                "builtupEff": 69,
-                "img": "m3m_altitude_balcony.png",
-                "lat": 28.374274,
-                "lng": 76.961834,
-                "targetSegment": "Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "dlf-carlton-estate",
-                "name": "DLF Carlton Estate",
-                "developer": "DLF Limited",
-                "sector": "Sector 54",
-                "corridor": "Golf Course Road",
-                "bhk": ["2 BHK", "3 BHK", "4 BHK"],
-                "area": 7.2,
-                "units": 650,
-                "status": "Ready to Move In",
-                "priceMin": 3.2,
-                "priceMax": 4.5,
-                "score": 22,
-                "carpetEff": 60,
-                "builtupEff": 70,
-                "img": "m3m_altitude_lobby.png",
-                "lat": 28.447892,
-                "lng": 77.094594,
-                "targetSegment": "Premium",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "central-park-ii-bellevue",
-                "name": "Central Park II Bellevue",
-                "developer": "Central Park",
-                "sector": "Sector 48",
-                "corridor": "Sohna Road",
-                "bhk": ["3 BHK", "4 BHK"],
-                "area": 12.5,
-                "units": 350,
-                "status": "Ready to Move In",
-                "priceMin": 3.8,
-                "priceMax": 4.9,
-                "score": 20,
-                "carpetEff": 58,
-                "builtupEff": 68,
-                "img": "m3m_altitude_lounge.png",
-                "lat": 28.414324,
-                "lng": 77.043512,
-                "targetSegment": "Luxury",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            // Representative properties for other corridors to make them look complete
-            {
-                "id": "dlf-phase-2-floors",
-                "name": "DLF City Phase II Floors",
-                "developer": "DLF Limited",
-                "sector": "Sector 25",
-                "corridor": "Central Gurgaon",
-                "bhk": ["3 BHK", "4 BHK"],
-                "area": 4.5,
-                "units": 180,
-                "status": "Ready to Move In",
-                "priceMin": 4.5,
-                "priceMax": 6.8,
-                "score": 75,
-                "carpetEff": 62,
-                "builtupEff": 78,
-                "img": "m3m_altitude_balcony.png",
-                "lat": 28.4826,
-                "lng": 77.0850,
-                "targetSegment": "Luxury",
-                "projectType": "Low Rise",
-                "structureType": "Independent Floor"
-            },
-            {
-                "id": "essel-towers",
-                "name": "Essel Towers",
-                "developer": "Essel Group",
-                "sector": "Sector 28",
-                "corridor": "M.G. Road",
-                "bhk": ["2 BHK", "3 BHK", "4 BHK"],
-                "area": 18.2,
-                "units": 1100,
-                "status": "Ready to Move In",
-                "priceMin": 2.1,
-                "priceMax": 3.8,
-                "score": 60,
-                "carpetEff": 59,
-                "builtupEff": 70,
-                "img": "m3m_altitude_lobby.png",
-                "lat": 28.4770,
-                "lng": 77.0780,
-                "targetSegment": "Premium",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "bestech-park-view-ananda",
-                "name": "Bestech Park View Ananda",
-                "developer": "Bestech Group",
-                "sector": "Sector 81",
-                "corridor": "New Gurgaon",
-                "bhk": ["3 BHK", "4 BHK"],
-                "area": 13.0,
-                "units": 720,
-                "status": "Ready to Move In",
-                "priceMin": 1.6,
-                "priceMax": 2.5,
-                "score": 64,
-                "carpetEff": 58,
-                "builtupEff": 72,
-                "img": "m3m_altitude_lounge.png",
-                "lat": 28.3980,
-                "lng": 76.9420,
-                "targetSegment": "Premium",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
-            },
-            {
-                "id": "unitech-uniworld-city",
-                "name": "Unitech Uniworld City",
-                "developer": "Unitech Group",
-                "sector": "Sector 30",
-                "corridor": "Old Gurgaon",
-                "bhk": ["3 BHK", "4 BHK"],
-                "area": 15.5,
-                "units": 850,
-                "status": "Ready to Move In",
-                "priceMin": 1.8,
-                "priceMax": 3.0,
-                "score": 55,
-                "carpetEff": 57,
-                "builtupEff": 68,
-                "img": "m3m_altitude_hero.png",
-                "lat": 28.4550,
-                "lng": 77.0420,
-                "targetSegment": "Premium",
-                "projectType": "High Rise",
-                "structureType": "Apartment"
+                id: "ireo-grand-arch",
+                name: "Ireo Grand Arch",
+                developer: "Ireo Management",
+                sector: "Sector 58",
+                corridor: "Golf Course Extension",
+                bhk: ["2 BHK", "3 BHK", "4 BHK"],
+                area: 20.0,
+                units: 1061,
+                status: "Ready to Move In",
+                priceMin: 2.5,
+                priceMax: 4.8,
+                score: 74,
+                carpetEff: 64,
+                builtupEff: 78,
+                img: "ireo_grand_arch.png",
+                lat: 28.4230,
+                lng: 77.1020,
+                targetSegment: "Premium",
+                projectType: "High Rise",
+                structureType: "Apartment"
             }
         ];
 
-        // Map corridor ID to corridor database name
-        const ID_TO_NAME = {
-            "cg": "Central Gurgaon",
-            "dwe": "Dwarka Expressway",
-            "gcex": "Golf Course Extension Road",
-            "gcr": "Golf Course Road",
-            "mgr": "M.G. Road",
-            "ng": "New Gurgaon",
-            "nh48": "Old Gurgaon",
-            "sohna": "Sohna Road",
-            "spr": "Southern Peripheral Road"
+        const corridorGeoBoundaries = {
+            "golf-course-road": [
+                [28.4754, 77.0911], [28.4696, 77.0888], [28.4557, 77.0869], 
+                [28.4515, 77.0875], [28.4382, 77.0932], [28.4345, 77.0962], 
+                [28.4297, 77.1029], [28.4286, 77.1066], [28.4289, 77.1106], [28.4192, 77.1141]
+            ]
         };
 
-        // State
-        let activeCorridor = null;
-        let filterStatus = 'all';
-        let sortCriteria = 'score';
-        let activeView = 'list';
+        let currentCorridorKey = "golf-course-road";
+        let activeView = "list";
+        let filterStatus = "all";
+        let sortCriteria = "score";
         let mapInstance = null;
-        let mapMarkers = [];
-        let mapPolygon = null;
+        let mapMarkersArray = [];
+        let boundaryPolyline = null;
 
-        function getActiveCorridor() {
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id') || 'gcex'; // default to GCEX
-            return CORRIDORS[id] || CORRIDORS['gcex'];
-        }
+        window.addEventListener('DOMContentLoaded', () => {
+            initCorridorDashboard();
+        });
 
-        function renderDetails() {
-            const c = activeCorridor;
-            document.title = `${c.name} Intelligence | prOPIUM.ai`;
-            document.getElementById('breadcrumbCorridor').textContent = c.name;
-            document.getElementById('corridorTitle').textContent = `${c.name} Deep-Dive Profile`;
-            document.getElementById('corridorDesc').textContent = c.desc;
+        function initCorridorDashboard() {
+            const c = corridors[currentCorridorKey];
+            if (!c) return;
 
-            // Telemetry
-            document.getElementById('telAvgPrice').textContent = `₹${c.avgPsft.toLocaleString('en-IN')}/sqft`;
-            document.getElementById('telPriceRange').textContent = `Range: ${c.priceRange}`;
-            document.getElementById('telAvgTicket').textContent = c.avgTicket;
-            document.getElementById('telProjects').textContent = c.activeProjects;
-            document.getElementById('telUnits').textContent = `${(c.units / 100000).toFixed(2)} Lakh`;
+            document.getElementById('breadcrumbCorridor').innerText = c.title;
+            document.getElementById('corridorTitle').innerText = c.title;
+            document.getElementById('corridorDesc').innerText = c.desc;
 
-            // Scorecard
-            const scorecardContainer = document.getElementById('scorecardContainer');
-            scorecardContainer.innerHTML = c.scorecard.map(s => {
+            document.getElementById('telAvgPrice').innerText = c.avgPrice;
+            document.getElementById('telPriceRange').innerText = `Range: ${c.priceRange}`;
+            document.getElementById('telAvgTicket').innerText = c.avgTicket;
+            document.getElementById('telProjects').innerText = c.projectsCount;
+            document.getElementById('telUnits').innerText = c.unitsTracked;
+
+            document.getElementById('scorecardContainer').innerHTML = c.scorecard.map(s => {
                 const scoreColor = s.score >= 9.0 ? 'bg-emerald-500' : s.score >= 8.0 ? 'bg-amber-500' : s.score >= 7.0 ? 'bg-brandBlue' : 'bg-slate-400';
                 return `
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-600">
-                        <span>${s.label}</span>
-                        <span class="text-primary font-display font-extrabold text-xs">${s.score.toFixed(1)}/10</span>
-                    </div>
-                    <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div style="width: ${s.score * 10}%" class="h-full ${scoreColor}"></div>
-                    </div>
-                </div>`;
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center text-[10px] font-bold text-slate-600">
+                            <span>${s.label}</span>
+                            <span class="text-primary font-display font-extrabold text-xs">${s.score.toFixed(1)}/10</span>
+                        </div>
+                        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div style="width: ${s.score * 10}%" class="h-full ${scoreColor}"></div>
+                        </div>
+                    </div>`;
             }).join('');
 
-            // Matrix
-            const sectorMatrixBody = document.getElementById('sectorMatrixBody');
-            sectorMatrixBody.innerHTML = c.sectors.map(s => `
+            document.getElementById('sectorMatrixBody').innerHTML = c.sectors.map(s => `
                 <tr class="project-row">
                     <td class="py-2.5 pr-4 font-bold text-slate-800">${s.sector}</td>
                     <td class="py-2.5 px-4 font-semibold text-slate-500 text-center">${s.projects} projects</td>
@@ -1375,140 +632,81 @@
                 </tr>
             `).join('');
 
-            // Infrastructure Catalog
-            document.getElementById('infraTransit').innerHTML = c.infrastructure.transit.map(item => `
-                <li class="infra-landmark flex items-start gap-1.5 leading-snug">
-                    <span class="text-secondary-container font-extrabold">•</span>
-                    <span>${item}</span>
-                </li>
-            `).join('');
-            document.getElementById('infraCommercial').innerHTML = c.infrastructure.commercial.map(item => `
-                <li class="infra-landmark flex items-start gap-1.5 leading-snug">
-                    <span class="text-secondary-container font-extrabold">•</span>
-                    <span>${item}</span>
-                </li>
-            `).join('');
-            document.getElementById('infraEducation').innerHTML = c.infrastructure.education.map(item => `
-                <li class="infra-landmark flex items-start gap-1.5 leading-snug">
-                    <span class="text-secondary-container font-extrabold">•</span>
-                    <span>${item}</span>
-                </li>
-            `).join('');
-            document.getElementById('infraHealthcare').innerHTML = c.infrastructure.healthcare.map(item => `
-                <li class="infra-landmark flex items-start gap-1.5 leading-snug">
-                    <span class="text-secondary-container font-extrabold">•</span>
-                    <span>${item}</span>
-                </li>
-            `).join('');
-            document.getElementById('infraLeisure').innerHTML = c.infrastructure.leisure.map(item => `
-                <li class="infra-landmark flex items-start gap-1.5 leading-snug">
-                    <span class="text-secondary-container font-extrabold">•</span>
-                    <span>${item}</span>
-                </li>
-            `).join('');
+            document.getElementById('infraTransit').innerHTML = c.infrastructure.transit.map(item => `<li class="infra-landmark flex items-start gap-1"><span>•</span> <span>${item}</span></li>`).join('');
+            document.getElementById('infraCommercial').innerHTML = c.infrastructure.commercial.map(item => `<li class="infra-landmark flex items-start gap-1"><span>•</span> <span>${item}</span></li>`).join('');
+            document.getElementById('infraEducation').innerHTML = c.infrastructure.education.map(item => `<li class="infra-landmark flex items-start gap-1"><span>•</span> <span>${item}</span></li>`).join('');
+            document.getElementById('infraHealthcare').innerHTML = c.infrastructure.healthcare.map(item => `<li class="infra-landmark flex items-start gap-1"><span>•</span> <span>${item}</span></li>`).join('');
+            document.getElementById('infraLeisure').innerHTML = c.infrastructure.leisure.map(item => `<li class="infra-landmark flex items-start gap-1"><span>•</span> <span>${item}</span></li>`).join('');
 
-            // Segment Split Legend (bar removed per design)
-            const seg = c.segments;
-            const segmentLegend = document.getElementById('segmentLegend');
-            segmentLegend.innerHTML = `
-                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]"></span> Ultra-Lux: <b>${seg.ultraLuxury}%</b></span>
-                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span> Luxury: <b>${seg.luxury}%</b></span>
-                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-brandBlue"></span> Premium: <b>${seg.premium}%</b></span>
-            `;
-
-            // SVG Price growth chart plotting
-            renderSVGChart();
+            generatePieChart(c.segmentData);
+            renderProjects();
         }
 
-        function renderSVGChart() {
-            const data = activeCorridor.priceTrend;
-            const container = document.getElementById('svgChartContainer');
+        function generatePieChart(data) {
+            const container = document.getElementById('pieChartContainer');
+            if (!container) return;
 
-            // Bucket the yearly pricing series into 4 era slices so the pie
-            // stays readable while still using the full pricing dataset.
-            const buckets = [
-                { label: 'Emerging  2015–17', color: '#1E3A8A', years: [2015, 2016, 2017] },
-                { label: 'Growth  2018–20',   color: '#2563EB', years: [2018, 2019, 2020] },
-                { label: 'Premium  2021–23',  color: '#F59E0B', years: [2021, 2022, 2023] },
-                { label: 'Luxury  2024–26',   color: '#0F172A', years: [2024, 2025, 2026] },
-            ];
+            const total = data.reduce((sum, d) => sum + d.value, 0);
+            let cumulativePercent = 0;
 
-            const byYear = Object.fromEntries(data.map(d => [d.year, d.price]));
-            const slices = buckets.map(b => {
-                const vals = b.years.map(y => byYear[y]).filter(v => typeof v === 'number');
-                const avg = vals.length ? vals.reduce((a, v) => a + v, 0) / vals.length : 0;
-                return { ...b, value: avg };
-            }).filter(s => s.value > 0);
+            function getCoordinatesForPercent(percent) {
+                const x = Math.cos(2 * Math.PI * percent);
+                const y = Math.sin(2 * Math.PI * percent);
+                return [x, y];
+            }
 
-            const total = slices.reduce((a, s) => a + s.value, 0);
+            let svgPaths = '';
+            
+            data.forEach(slice => {
+                const startPercent = cumulativePercent;
+                const endPercent = cumulativePercent + (slice.value / total);
+                
+                const [startX, startY] = getCoordinatesForPercent(startPercent);
+                const [endX, endY] = getCoordinatesForPercent(endPercent);
+                
+                const largeArcFlag = (slice.value / total) > 0.5 ? 1 : 0;
+                
+                const pathData = [
+                    `M 0 0`,
+                    `L ${startX} ${startY}`,
+                    `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`,
+                    `Z`
+                ].join(' ');
 
-            // Donut geometry
-            const W = 360, H = 220;
-            const cx = 110, cy = H / 2;
-            const rOuter = 88, rInner = 52;
-
-            const polar = (r, a) => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
-
-            let acc = -Math.PI / 2; // start at top
-            let paths = '';
-            slices.forEach(s => {
-                const frac = s.value / total;
-                const a0 = acc;
-                const a1 = acc + frac * Math.PI * 2;
-                acc = a1;
-                const large = (a1 - a0) > Math.PI ? 1 : 0;
-                const [x0, y0] = polar(rOuter, a0);
-                const [x1, y1] = polar(rOuter, a1);
-                const [x2, y2] = polar(rInner, a1);
-                const [x3, y3] = polar(rInner, a0);
-                paths += `
-                    <path d="M ${x0} ${y0} A ${rOuter} ${rOuter} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${rInner} ${rInner} 0 ${large} 0 ${x3} ${y3} Z"
-                          fill="${s.color}" stroke="#ffffff" stroke-width="2">
-                        <title>${s.label}: ₹${Math.round(s.value).toLocaleString('en-IN')}/sqft (${(frac * 100).toFixed(1)}%)</title>
-                    </path>
-                `;
+                svgPaths += `<path d="${pathData}" fill="${slice.color}" stroke="#ffffff" stroke-width="0.03" class="hover:opacity-90 transition-opacity cursor-pointer" />`;
+                
+                cumulativePercent += (slice.value / total);
             });
 
-            // Center labels: latest price + CAGR across the series
-            const first = data[0], last = data[data.length - 1];
-            const years = last.year - first.year;
-            const cagr = years > 0 ? (Math.pow(last.price / first.price, 1 / years) - 1) * 100 : 0;
-
-            // Legend (right side)
-            const legendX = 220;
-            let legend = '';
-            slices.forEach((s, i) => {
-                const ly = 40 + i * 36;
-                const frac = s.value / total;
-                legend += `
-                    <rect x="${legendX}" y="${ly}" width="10" height="10" rx="2" fill="${s.color}" />
-                    <text x="${legendX + 16}" y="${ly + 9}" fill="#0F172A" font-size="10" font-weight="700">${s.label}</text>
-                    <text x="${legendX + 16}" y="${ly + 22}" fill="#64748B" font-size="9" font-weight="600">₹${Math.round(s.value).toLocaleString('en-IN')}/sqft · ${(frac * 100).toFixed(1)}%</text>
-                `;
-            });
+            // Generating the exact requested badges with colored dots
+            const legendHtml = `
+                <div class="flex flex-wrap items-center justify-center gap-5 mt-6 w-full px-4">
+                    ${data.map(d => `
+                        <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                            <span class="w-3 h-3 rounded-full shadow-sm" style="background-color: ${d.color}"></span>
+                            ${d.label}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
 
             container.innerHTML = `
-                <svg viewBox="0 0 ${W} ${H}" class="w-full h-full">
-                    ${paths}
-                    <text x="${cx}" y="${cy - 6}" text-anchor="middle" fill="#94A3B8" font-size="9" font-weight="700" letter-spacing="1.2">LATEST</text>
-                    <text x="${cx}" y="${cy + 12}" text-anchor="middle" fill="#0F172A" font-size="18" font-weight="800">₹${(last.price / 1000).toFixed(1)}k</text>
-                    <text x="${cx}" y="${cy + 28}" text-anchor="middle" fill="#F59E0B" font-size="10" font-weight="700">CAGR ${cagr.toFixed(1)}%</text>
-                    ${legend}
-                </svg>
+                <div class="w-full max-w-[200px] aspect-square relative drop-shadow-sm flex-grow flex items-center justify-center">
+                    <svg viewBox="-1.1 -1.1 2.2 2.2" class="w-full h-full transform -rotate-90">
+                        ${svgPaths}
+                    </svg>
+                </div>
+                ${legendHtml}
             `;
         }
 
         function getFilteredProjects() {
-            // Match active corridor name
-            const corridorName = ID_TO_NAME[activeCorridor.id] || "Golf Course Extension Road";
-            let list = PROJECTS.filter(p => p.corridor.toLowerCase() === corridorName.toLowerCase());
-
-            // Status Filter
+            let list = projects.filter(p => p.corridor === "Golf Course Road");
+            
             if (filterStatus !== 'all') {
                 list = list.filter(p => p.status === filterStatus);
             }
 
-            // Sorting
             if (sortCriteria === 'score') {
                 list.sort((a, b) => b.score - a.score);
             } else if (sortCriteria === 'priceAsc') {
@@ -1518,13 +716,11 @@
             } else if (sortCriteria === 'units') {
                 list.sort((a, b) => b.units - a.units);
             }
-
             return list;
         }
 
         function renderProjects() {
             const data = getFilteredProjects();
-            
             const listContainer = document.getElementById('projectListBody');
             const cardContainer = document.getElementById('viewCards');
             const emptyState = document.getElementById('emptyState');
@@ -1554,70 +750,62 @@
                 }
             }
 
-            // 1. Render List Table
             listContainer.innerHTML = data.map(p => {
                 const targetLink = p.id === 'm3m-altitude' ? 'project_detail.html' : 'project_detail_locked.html';
-                const statusColor = p.status === 'Ready to Move In' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50';
                 return `
-                <tr class="project-row border-b border-slate-100">
-                    <td class="py-3.5 pr-4 font-bold text-slate-900">${p.name}</td>
-                    <td class="py-3.5 px-4 font-semibold text-slate-500">${p.developer}</td>
-                    <td class="py-3.5 px-4 text-slate-500">${p.sector}</td>
-                    <td class="py-3.5 px-4 text-slate-500 text-center font-medium">${p.bhk.join(', ')}</td>
-                    <td class="py-3.5 px-4 text-right font-display font-extrabold text-secondary-container">₹${p.priceMin} - ${p.priceMax} Cr</td>
-                    <td class="py-3.5 px-4 text-center text-slate-600 font-bold">${p.carpetEff}%</td>
-                    <td class="py-3.5 px-4 text-center text-slate-600 font-bold">${p.builtupEff}%</td>
-                    <td class="py-3.5 px-4 text-center font-display font-extrabold text-sm text-primary">${p.score}</td>
-                    <td class="py-3.5 pl-4 text-right">
-                        <a href="${targetLink}" class="text-brandBlue hover:underline font-bold text-xs flex items-center gap-0.5 justify-end">
-                            View Audit
-                            <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
-                        </a>
-                    </td>
-                </tr>`;
+                    <tr class="project-row border-b border-slate-100">
+                        <td class="py-4 pr-4 font-bold text-slate-900 font-display text-sm tracking-tight">${p.name}</td>
+                        <td class="py-4 px-4 font-semibold text-slate-500">${p.developer}</td>
+                        <td class="py-4 px-4 text-slate-600 font-medium">${p.sector}</td>
+                        <td class="py-4 px-4 text-center font-bold text-slate-700">${p.bhk.join(', ')}</td>
+                        <td class="py-4 px-4 text-right font-display font-extrabold text-primary text-sm">₹${p.priceMin} - ${p.priceMax} Cr</td>
+                        <td class="py-4 px-4 text-center text-slate-500 font-semibold">${p.carpetEff}%</td>
+                        <td class="py-4 px-4 text-center text-slate-500 font-semibold">${p.builtupEff}%</td>
+                        <td class="py-4 px-4 text-center">
+                            <span class="px-2 py-1 rounded bg-slate-900 text-secondary-container font-extrabold text-[11px]">${p.score}/100</span>
+                        </td>
+                        <td class="py-4 pl-4 text-right">
+                            <a href="${targetLink}" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 text-[10px] font-extrabold transition-all rounded-lg uppercase tracking-wider inline-block">Audit</a>
+                        </td>
+                    </tr>
+                `;
             }).join('');
 
-            // 2. Render Cards Grid
             cardContainer.innerHTML = data.map(p => {
                 const targetLink = p.id === 'm3m-altitude' ? 'project_detail.html' : 'project_detail_locked.html';
-                const statusColor = p.status === 'Ready to Move In' ? 'bg-emerald-500' : 'bg-amber-500';
                 return `
-                <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all p-5 flex flex-col justify-between">
-                    <div>
-                        <div class="relative rounded-xl overflow-hidden h-32 bg-slate-900 mb-4">
-                            <img src="${p.img}" class="w-full h-full object-cover opacity-80" alt="${p.name}">
-                            <span class="absolute top-3 right-3 text-[9px] font-extrabold uppercase tracking-wider text-white px-2 py-0.5 rounded ${statusColor}">${p.status}</span>
-                        </div>
-                        <h4 class="font-display font-extrabold text-base text-primary">${p.name}</h4>
-                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mt-0.5">${p.developer} · ${p.sector}</span>
-
-                        <div class="grid grid-cols-2 gap-2 mt-4 border-t border-b border-slate-100 py-3">
+                    <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
                             <div>
-                                <span class="text-[8px] text-slate-400 uppercase font-bold block">Rate Vector</span>
-                                <span class="font-display font-extrabold text-sm text-secondary-container">₹${p.priceMin} - ${p.priceMax} Cr</span>
+                                <span class="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 block">${p.developer}</span>
+                                <h4 class="font-display font-extrabold text-base text-primary tracking-tight mt-0.5">${p.name}</h4>
+                                <span class="text-xs text-slate-500 font-medium">${p.sector}</span>
                             </div>
-                            <div class="text-right">
-                                <span class="text-[8px] text-slate-400 uppercase font-bold block">prOPIUM Score</span>
-                                <span class="font-display font-extrabold text-sm text-primary">${p.score}/100</span>
+                            <span class="px-2 py-1 rounded bg-slate-900 text-secondary-container font-extrabold text-xs">${p.score}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs border-y border-slate-100 py-3">
+                            <div>
+                                <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider block">Price Grid</span>
+                                <span class="font-display font-extrabold text-primary">₹${p.priceMin} - ${p.priceMax} Cr</span>
+                            </div>
+                            <div>
+                                <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider block">Status</span>
+                                <span class="font-semibold text-slate-700 text-[11px]">${p.status}</span>
                             </div>
                         </div>
-
-                        <div class="flex justify-between items-center text-[10px] text-slate-500 font-semibold mt-3">
+                        <div class="flex justify-between items-center text-[10px] text-slate-500 font-semibold pt-1">
                             <span>Carpet Efficiency: <b>${p.carpetEff}%</b></span>
                             <span>Built-up: <b>${p.builtupEff}%</b></span>
                         </div>
-                    </div>
-                    <div class="pt-4 mt-4 border-t border-slate-100 flex justify-between items-center">
-                        <span class="text-[9px] text-slate-400 uppercase tracking-wider font-extrabold">${p.bhk[0]} - ${p.bhk[p.bhk.length-1]}</span>
-                        <a href="${targetLink}" class="text-brandBlue hover:underline text-xs font-bold flex items-center gap-0.5">
-                            View Audit
-                            <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>`;
+                        <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-[9px] text-slate-400 uppercase tracking-wider font-extrabold">${p.bhk[0]} - ${p.bhk[p.bhk.length-1]}</span>
+                            <a href="${targetLink}" class="text-brandBlue hover:underline text-xs font-bold flex items-center gap-0.5">
+                                View Audit <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>`;
             }).join('');
 
-            // 3. Render Map
             if (activeView === 'map' && mapInstance) {
                 updateMapMarkers(data);
             }
@@ -1630,87 +818,82 @@
             }
 
             mapInstance = L.map('map', {
-                zoomControl: false,
+                center: [28.4450, 77.0950],
+                zoom: 13,
+                scrollWheelZoom: false,
                 attributionControl: false
-            }).setView([28.4250, 77.0200], 12);
+            });
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                maxZoom: 19
+                maxZoom: 20
             }).addTo(mapInstance);
 
-            L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
-
-            // Draw active corridor polygon
-            const coords = CORRIDOR_POLYGONS[activeCorridor.id];
-            if (coords) {
-                const style = CORRIDOR_STYLES[activeCorridor.id] || { color: "#94A3B8", fillColor: "#94A3B8", fillOpacity: 0.1, weight: 2 };
-                mapPolygon = L.polygon(coords, {
-                    ...style,
-                    fillOpacity: 0.15,
-                    weight: 3
+            const boundaryPoints = corridorGeoBoundaries[currentCorridorKey];
+            if (boundaryPoints) {
+                boundaryPolyline = L.polyline(boundaryPoints, {
+                    color: '#006AFF',
+                    weight: 4,
+                    opacity: 0.8,
+                    dashArray: '5, 8'
                 }).addTo(mapInstance);
-
-                // Fit map view to corridor boundary
-                mapInstance.fitBounds(mapPolygon.getBounds());
             }
 
             updateMapMarkers(getFilteredProjects());
         }
 
-        function updateMapMarkers(data) {
-            if (!mapInstance) return;
+        function updateMapMarkers(dataList) {
+            mapMarkersArray.forEach(m => mapInstance.removeLayer(m));
+            mapMarkersArray = [];
 
-            // Clean previous markers
-            mapMarkers.forEach(m => mapInstance.removeLayer(m));
-            mapMarkers = [];
+            if (dataList.length === 0) return;
 
-            // Add pins
-            data.forEach(p => {
-                if (p.lat && p.lng) {
-                    const scoreColor = p.score >= 70 ? 'bg-emerald-500' : p.score >= 40 ? 'bg-amber-500' : 'bg-red-500';
-                    const customIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<div class="w-8 h-8 rounded-full ${scoreColor} text-white flex items-center justify-center font-display font-extrabold text-xs border-2 border-white shadow-lg transition-transform hover:scale-110">${p.score}</div>`,
-                        iconSize: [32, 32],
-                        iconAnchor: [16, 16]
-                    });
+            const latLngBounds = [];
 
-                    const marker = L.marker([p.lat, p.lng], { icon: customIcon }).addTo(mapInstance);
-                    const targetLink = p.id === 'm3m-altitude' ? 'project_detail.html' : 'project_detail_locked.html';
+            dataList.forEach(p => {
+                if (!p.lat || !p.lng) return;
 
-                    marker.bindPopup(`
-                        <div class="p-2.5 font-sans text-xs min-w-[180px]">
-                            <b class="text-white block text-sm font-display font-extrabold mb-0.5">${p.name}</b>
-                            <span class="text-slate-400 block text-[9px] uppercase font-bold tracking-wider mb-2">${p.developer} · ${p.sector}</span>
-                            <div class="flex justify-between items-center text-slate-300 font-semibold mb-2 border-b border-white/10 pb-1.5">
-                                <span>Rate Vector:</span>
-                                <span class="text-secondary-container font-bold">₹${p.priceMin} - ${p.priceMax} Cr</span>
-                            </div>
-                            <a href="${targetLink}" class="text-secondary-container hover:underline font-bold flex items-center gap-0.5 w-max">
-                                View Audit Dossier
-                                <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
-                            </a>
+                const customMarkerIcon = L.divIcon({
+                    className: 'custom-map-pin-container',
+                    html: `
+                        <div class="flex items-center justify-center bg-slate-950 text-secondary-container border border-white/20 px-2 py-1 rounded-xl shadow-md font-display font-black text-[10px] w-max whitespace-nowrap">
+                            ${p.name}
                         </div>
-                    `);
+                    `,
+                    iconSize: [60, 24],
+                    iconAnchor: [30, 12]
+                });
 
-                    mapMarkers.push(marker);
-                }
+                const targetLink = p.id === 'm3m-altitude' ? 'project_detail.html' : 'project_detail_locked.html';
+                const pinMarker = L.marker([p.lat, p.lng], { icon: customMarkerIcon }).addTo(mapInstance);
+                
+                const popupTemplateContent = `
+                    <div class="p-2 space-y-2 text-white">
+                        <div class="font-display font-extrabold text-sm text-white">${p.name}</div>
+                        <div class="text-[10px] text-slate-300 font-medium">${p.developer} • ${p.sector}</div>
+                        <div class="text-xs font-bold text-secondary-container">₹${p.priceMin} - ${p.priceMax} Cr</div>
+                        <a href="${targetLink}" target="_top" class="block text-center bg-brandBlue text-white text-[10px] font-bold uppercase tracking-wider py-1.5 rounded-lg mt-1 transition-opacity hover:opacity-90">View Verification</a>
+                    </div>
+                `;
+
+                pinMarker.bindPopup(popupTemplateContent);
+                mapMarkersArray.push(pinMarker);
+                latLngBounds.push([p.lat, p.lng]);
             });
 
-            // Adjust zoom to fit markers if polygon doesn't exist
-            if (!mapPolygon && mapMarkers.length > 0) {
-                const group = new L.featureGroup(mapMarkers);
-                mapInstance.fitBounds(group.getBounds());
+            if (latLngBounds.length > 0) {
+                mapInstance.fitBounds(latLngBounds, { padding: [40, 40] });
             }
         }
 
         function setFilterStatus(status) {
             filterStatus = status;
+            ['tabAll', 'tabReady', 'tabUC'].forEach(id => {
+                document.getElementById(id).className = "px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider text-slate-500 hover:text-primary";
+            });
             
-            // Toggle active styles on tabs
-            document.getElementById('tabAll').className = `px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider ${status === 'all' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-primary'}`;
-            document.getElementById('tabReady').className = `px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider ${status === 'Ready to Move In' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-primary'}`;
-            document.getElementById('tabUC').className = `px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider ${status === 'Under Construction' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-primary'}`;
+            if (status === 'all') document.getElementById('tabAll').className = "px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider bg-white text-primary shadow-sm";
+            else if (status === 'Ready to Move In') document.getElementById('tabReady').className = "px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider bg-white text-primary shadow-sm";
+            else if (status === 'Under Construction') document.getElementById('tabUC').className = "px-3.5 py-1.5 rounded-lg transition-all uppercase tracking-wider bg-white text-primary shadow-sm";
 
             renderProjects();
         }
@@ -1720,123 +903,18 @@
             renderProjects();
         }
 
-        function setView(view) {
-            activeView = view;
-            
-            document.getElementById('btnViewList').className = `p-2 rounded-lg transition-all flex items-center justify-center ${view === 'list' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-primary'}`;
-            document.getElementById('btnViewCards').className = `p-2 rounded-lg transition-all flex items-center justify-center ${view === 'cards' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-primary'}`;
-            document.getElementById('btnViewMap').className = `p-2 rounded-lg transition-all flex items-center justify-center ${view === 'map' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-primary'}`;
+        function setView(viewType) {
+            activeView = viewType;
+            ['btnViewList', 'btnViewCards', 'btnViewMap'].forEach(id => {
+                document.getElementById(id).className = "p-2 rounded-lg text-slate-500 hover:text-primary transition-all flex items-center justify-center";
+            });
+
+            if (viewType === 'list') document.getElementById('btnViewList').className = "p-2 rounded-lg text-slate-500 hover:text-primary transition-all flex items-center justify-center bg-white text-primary shadow-sm";
+            else if (viewType === 'cards') document.getElementById('btnViewCards').className = "p-2 rounded-lg text-slate-500 hover:text-primary transition-all flex items-center justify-center bg-white text-primary shadow-sm";
+            else if (viewType === 'map') document.getElementById('btnViewMap').className = "p-2 rounded-lg text-slate-500 hover:text-primary transition-all flex items-center justify-center bg-white text-primary shadow-sm";
 
             renderProjects();
         }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            activeCorridor = getActiveCorridor();
-            renderDetails();
-            renderProjects();
-        });
     </script>
-
-<!-- LOVABLE_MOBILE_NAV_INJECT -->
-<style>
-@media (max-width: 767px) {
-  header .flex.items-center.gap-stack-sm { display: none !important; }
-  #lov-mobile-hamburger { display: flex !important; }
-  footer { padding-bottom: 8rem !important; }
-}
-#lov-mobile-hamburger { display: none; }
-#lov-mobile-menu-backdrop, #lov-mobile-menu-panel { transition: opacity .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1); }
-</style>
-
-<!-- Mobile hamburger button (positioned over header right side) -->
-<button id="lov-mobile-hamburger" aria-label="Open menu"
-  onclick="document.getElementById('lov-mobile-menu').dataset.open='1'"
-  style="position:fixed;top:12px;right:16px;width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#fff;align-items:center;justify-content:center;z-index:60;cursor:pointer;">
-  <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
-</button>
-
-<!-- Mobile menu -->
-<div id="lov-mobile-menu" data-open="0" class="md:hidden">
-  <div id="lov-mobile-menu-backdrop"
-    onclick="document.getElementById('lov-mobile-menu').dataset.open='0'"
-    style="position:fixed;inset:0;background:rgba(2,6,23,0.6);backdrop-filter:blur(4px);z-index:70;opacity:0;pointer-events:none;"></div>
-  <aside id="lov-mobile-menu-panel"
-    style="position:fixed;top:0;right:0;bottom:0;width:min(82vw,320px);background:#0F172A;border-left:1px solid rgba(255,255,255,0.08);z-index:71;transform:translateX(100%);box-shadow:-20px 0 50px rgba(0,0,0,0.5);display:flex;flex-direction:column;font-family:Inter,sans-serif;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);">
-      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#fff;text-decoration:none;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
-      <button onclick="document.getElementById('lov-mobile-menu').dataset.open='0'" aria-label="Close menu"
-        style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;">
-        <span class="material-symbols-outlined" style="font-size:22px;">close</span>
-      </button>
-    </div>
-    <nav style="padding:16px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;">
-      <div style="flex:1;">
-        <a href="/" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">home</span>Home</a>
-        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">auto_awesome</span>AI Search</a>
-        <a href="/search" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">search</span>Search</a>
-        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">compare_arrows</span>Compare</a>
-      </div>
-      <div style="padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:10px;padding-bottom:8px;">
-        <button style="background:#F59E0B;color:#0F172A;border:none;border-radius:10px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
-          <span class="material-symbols-outlined" style="font-size:20px;">mail</span>Enquiry</button>
-        <button style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
-          <span class="material-symbols-outlined" style="font-size:20px;">call</span>Call Us</button>
-      </div>
-    </nav>
-  </aside>
-</div>
-<script>
-(function(){
-  var m = document.getElementById('lov-mobile-menu');
-  var b = document.getElementById('lov-mobile-menu-backdrop');
-  var p = document.getElementById('lov-mobile-menu-panel');
-  new MutationObserver(function(){
-    var open = m.dataset.open === '1';
-    b.style.opacity = open ? '1' : '0';
-    b.style.pointerEvents = open ? 'auto' : 'none';
-    p.style.transform = open ? 'translateX(0)' : 'translateX(100%)';
-    document.body.style.overflow = open ? 'hidden' : '';
-  }).observe(m, {attributes:true, attributeFilter:['data-open']});
-})();
-</script>
-<!-- /LOVABLE_MOBILE_NAV_INJECT -->
-
-
-<!-- LOVABLE_MOBILE_FOOTER -->
-<style>
-@media (max-width: 767px) {
-  body > footer, footer.bg-surface-container-low { display: none !important; }
-  #lov-mobile-footer { display: block !important; }
-}
-#lov-mobile-footer { display: none; }
-</style>
-<footer id="lov-mobile-footer" style="background:#f1f5f9;padding:48px 0 8rem;border-top:1px solid rgba(226,232,240,0.3);font-family:Inter,sans-serif;">
-  <div style="max-width:1280px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:repeat(2,1fr);gap:32px 24px;">
-    <div style="grid-column:span 2;">
-      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#0F172A;text-decoration:none;display:inline-flex;margin-bottom:16px;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
-      <p style="font-size:12px;color:#64748b;line-height:1.6;margin-bottom:24px;">Intelligence for every Real Estate decision.</p>
-      <div style="display:flex;gap:16px;color:#94a3b8;">
-        <a href="#" style="color:#94a3b8;"><svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
-        <a href="#" style="color:#94a3b8;"><svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.7 0-1.37-.2-1.95-.54v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.31 1.83c-.34 0-.68-.02-1.02-.06C3.3 20.42 5.66 21 8.2 21c8.26 0 12.78-6.86 12.78-12.78 0-.19 0-.39-.01-.58.88-.64 1.64-1.44 2.24-2.35l-.01-.01z"/></svg></a>
-      </div>
-    </div>
-    <div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">About prOPIUM</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">About prOPIUM</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">How we Verify</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Why prOPIUM</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">The Team</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">Intelligence Hub</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Builder Evaluation</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Location Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Product Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Payment Plan Intelligence</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Investment Intelligence</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">For developers</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Visibility & data</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Raise an issue</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Platform overview</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Contact & support</a></li></ul></div><div><h5 style="font-family:Outfit,sans-serif;font-weight:700;font-size:13px;color:#0F172A;margin-bottom:16px;">Support & legal</h5><ul style="display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;"><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Raise an issue</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Privacy policy</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Terms of use</a></li><li><a href="#" style="font-family:Inter,sans-serif;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;">Cookie policy</a></li></ul></div>
-  </div>
-  <div style="max-width:1280px;margin:48px auto 0;padding:0 16px;">
-    <div style="border-top:1px solid rgba(226,232,240,0.6);padding-top:32px;display:flex;flex-direction:column;gap:24px;">
-      <p style="font-size:12px;color:#64748b;line-height:1.7;"><span style="font-weight:600;color:#0F172A;margin-right:4px;">Disclaimer ·</span>prOPIUM is an independent property intelligence and analytics platform. All data, scores, and analysis are for informational purposes only and do not constitute investment or legal advice. Prices, RERA status, and project details should be independently verified before any purchase or investment decision. prOPIUM does not act as a real estate agent, broker, or developer and does not receive commissions from builders or developers.</p>
-      <div style="border-top:1px solid rgba(226,232,240,0.6);padding-top:20px;display:flex;flex-direction:column;gap:12px;font-size:12px;color:#64748b;font-weight:500;">
-        <span>© 2026 prOPIUM · All rights reserved · Built for the Indian property ecosystem</span>
-        <div style="display:flex;gap:24px;"><a href="#" style="color:#64748b;text-decoration:none;">Privacy Shield</a><a href="#" style="color:#64748b;text-decoration:none;">Disclosure Policy</a></div>
-      </div>
-    </div>
-  </div>
-</footer>
-<!-- /LOVABLE_MOBILE_FOOTER -->
-
 </body>
 </html>
