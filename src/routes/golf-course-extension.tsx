@@ -1,25 +1,1563 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { TopNav } from "@/home/components/TopNav";
+import { Footer } from "@/home/components/Footer";
 import { MobileBottomNav } from "@/home/components/MobileBottomNav";
 
 export const Route = createFileRoute("/golf-course-extension")({
   head: () => ({
     meta: [
       { title: "Golf Course Extension Road | prOPIUM.ai" },
-      { name: "description", content: "Corridor dossier for Golf Course Extension Road — projects, pricing, and delivery telemetry." },
+      {
+        name: "description",
+        content:
+          "Corridor dossier for Golf Course Extension Road — projects, pricing, and delivery telemetry.",
+      },
     ],
   }),
   component: GCEXPage,
 });
 
+// ── Corridor data (GCEX only) ────────────────────────────────────────────────
+
+const CORRIDOR = {
+  name: "Golf Course Extension Road",
+  desc: "Premium, cosmopolitan growth corridor attracting luxury developers. Combines upscale high-rises with robust office clusters and top-tier educational hubs.",
+  priceRange: "₹22,000 - ₹35,000 / sqft",
+  avgPsft: 27500,
+  avgTicket: "₹6.8 Cr",
+  activeProjects: 97,
+  units: 37826,
+  scorecard: [
+    { label: "Connectivity", score: 9.2 },
+    { label: "Social Infrastructure", score: 8.8 },
+    { label: "Commercial Proximity", score: 8.5 },
+    { label: "Price-to-Value", score: 7.9 },
+    { label: "Infrastructure Growth", score: 9.0 },
+    { label: "Livability", score: 8.6 },
+    { label: "Historical Appreciation", score: 9.4 },
+    { label: "Inventory Clearance Speed", score: 8.7 },
+  ],
+  segments: [
+    { name: "Luxury", value: 45, color: "#F59E0B" },
+    { name: "Ultra-Luxury", value: 35, color: "#0F172A" },
+    { name: "Premium", value: 20, color: "#006AFF" },
+  ],
+  infrastructure: {
+    transit: [
+      "Sector 55-56 Rapid Metro (8 mins)",
+      "SPR Linkage (Immediate)",
+      "NH-48 via Sohna Road (12 mins)",
+    ],
+    commercial: ["AIPL Business Club", "M3M Urbana", "Emaar Digital Greens"],
+    education: [
+      "St. Xavier's High School",
+      "DPS International",
+      "Heritage Experiential",
+    ],
+    healthcare: [
+      "Marengo Asia Hospital (10 mins)",
+      "Medanta The Medicity (15 mins)",
+    ],
+    leisure: [
+      "WorldMark Gurgaon",
+      "Good Earth City Centre",
+      "M3M 65th Avenue",
+    ],
+  },
+};
+
+const EXPERT_ANALYSIS = `Golf Course Extension Road has quietly emerged as Gurgaon's most compelling luxury investment corridor over the past five years — and the data now makes the thesis undeniable.
+
+The corridor's appreciation story is structural, not cyclical. Between 2015 and 2022, GCEX hovered in the ₹9,500–₹16,000/sqft band while Golf Course Road commanded a 3× premium. That gap has compressed decisively. As of 2026, GCEX trades at ₹27,500/sqft — a 189% appreciation over eleven years — while still offering meaningful headroom versus GCR's ₹37,500 average. This spread creates a rare entry window into luxury product at below-replacement-cost pricing in a fully-matured social infrastructure corridor.
+
+Builder quality on this corridor is best-in-class. M3M, TARC, DLF, Mahindra Lifespaces, and Emaar have all staked flagship projects here, keeping design and construction standards high and reducing buyer risk. The RERA compliance track record across active projects is strong, with most under-construction projects maintaining quarterly progress reporting.
+
+The inventory mix skews decidedly toward luxury and ultra-luxury (45% and 35% respectively), which is highly unusual for a corridor with 97 active projects. This reflects developer conviction that end-buyer profiles here are deep-pocketed professionals — NRIs, CXOs, and fund managers — rather than leveraged first-time buyers. Demand, accordingly, is sticky and less rate-sensitive.
+
+Infrastructure growth scores a 9.0 out of 10 — the highest in this metric across all Gurgaon corridors. The Southern Peripheral Road integration is operational, Cyber City connectivity has shortened materially, and the proposed Sector 55-56 Rapid Metro extension is in active planning. Each of these will compress travel times and push valuations further.
+
+Historical appreciation scores 9.4, reflecting the corridor's compounding track record. The 10-year CAGR on residential pricing here is approximately 10.2% — outperforming both fixed deposits and most equity mutual fund benchmarks over the same horizon.
+
+One risk to flag: carpet efficiency across the corridor averages 53–57%, which is on the lower end. Buyers should benchmark price-per-carpet-sq-ft rather than headline price-per-sq-ft to avoid overpaying for inefficient layouts. Ultra-luxury projects with sub-50% efficiency should be scrutinised closely.
+
+Our overall read: GCEX is in the late-growth phase of its value cycle — past the speculative risk, before the peak compression. For buyers with a 3–5 year horizon, it remains the highest conviction corridor in the Gurgaon matrix.`;
+
+const PROJECTS = [
+  {
+    id: "tarc-ishva",
+    name: "Tarc Ishva",
+    developer: "TARC Limited",
+    sector: "Sector 63A",
+    bhk: ["3 BHK", "4 BHK", "Penthouse"],
+    units: 518,
+    status: "Under Construction",
+    priceMin: 8.5,
+    priceMax: 10.5,
+    score: 84,
+    carpetEff: 50,
+    builtupEff: 67,
+    targetSegment: "Luxury",
+    image:
+      "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: "trump-tower-gurgaon",
+    name: "Trump Tower (Gurgaon)",
+    developer: "M3M India Pvt Ltd",
+    sector: "Sector 65",
+    bhk: ["2 BHK", "3 BHK", "4 BHK"],
+    units: 252,
+    status: "Ready to Move In",
+    priceMin: 11.5,
+    priceMax: 22.08,
+    score: 76,
+    carpetEff: 64,
+    builtupEff: 85,
+    targetSegment: "Ultra Luxury",
+    image:
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: "dlf-the-arbour",
+    name: "DLF The Arbour",
+    developer: "DLF Limited",
+    sector: "Sector 63",
+    bhk: ["4 BHK"],
+    units: 1137,
+    status: "Under Construction",
+    priceMin: 7.5,
+    priceMax: 8.5,
+    score: 72,
+    carpetEff: 57,
+    builtupEff: 74,
+    targetSegment: "Ultra Luxury",
+    image:
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: "m3m-altitude",
+    name: "M3M Altitude",
+    developer: "M3M India Pvt Ltd",
+    sector: "Sector 65",
+    bhk: ["3 BHK", "4 BHK", "Penthouse"],
+    units: 342,
+    status: "Under Construction",
+    priceMin: 9.46,
+    priceMax: 11.31,
+    score: 27,
+    carpetEff: 57,
+    builtupEff: 73,
+    targetSegment: "Ultra Luxury",
+    image:
+      "https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: "m3m-golfestate",
+    name: "M3M Golfestate — Fairway East",
+    developer: "M3M India Pvt Ltd",
+    sector: "Sector 65",
+    bhk: ["3 BHK", "4 BHK", "Penthouse"],
+    units: 160,
+    status: "Ready to Move In",
+    priceMin: 4.1,
+    priceMax: 7.6,
+    score: 37,
+    carpetEff: 53,
+    builtupEff: 70,
+    targetSegment: "Luxury",
+    image:
+      "https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: "mahindra-luminare",
+    name: "Mahindra Luminare",
+    developer: "Mahindra Lifespaces",
+    sector: "Sector 59",
+    bhk: ["3 BHK", "4 BHK", "Penthouse"],
+    units: 380,
+    status: "Ready to Move In",
+    priceMin: 6.5,
+    priceMax: 9.0,
+    score: 68,
+    carpetEff: 56,
+    builtupEff: 76,
+    targetSegment: "Luxury",
+    image:
+      "https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: "emaar-digihomes",
+    name: "Emaar DigiHomes",
+    developer: "Emaar India",
+    sector: "Sector 62",
+    bhk: ["2 BHK", "3 BHK"],
+    units: 370,
+    status: "Ready to Move In",
+    priceMin: 2.1,
+    priceMax: 3.4,
+    score: 62,
+    carpetEff: 55,
+    builtupEff: 71,
+    targetSegment: "Luxury",
+    image:
+      "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+];
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function TelemetryCard({
+  label,
+  value,
+  sub,
+}: {
+  label: string;
+  value: string;
+  sub: string;
+}) {
+  return (
+    <div
+      style={{
+        background: "#ffffff",
+        border: "1px solid rgba(226,232,240,0.8)",
+        borderRadius: 16,
+        padding: 20,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: 8,
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "Inter, sans-serif",
+          fontSize: 9,
+          color: "#94a3b8",
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+        }}
+      >
+        {label}
+      </span>
+      <div>
+        <span
+          style={{
+            fontFamily: "Outfit, sans-serif",
+            fontSize: 24,
+            fontWeight: 800,
+            color: "#0F172A",
+            display: "block",
+            lineHeight: 1,
+          }}
+        >
+          {value}
+        </span>
+        <span
+          style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: 10,
+            color: "#94a3b8",
+            display: "block",
+            marginTop: 4,
+          }}
+        >
+          {sub}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ScorecardRow({ label, score }: { label: string; score: number }) {
+  const color =
+    score >= 9.0
+      ? "#10b981"
+      : score >= 8.0
+        ? "#F59E0B"
+        : score >= 7.0
+          ? "#006AFF"
+          : "#94a3b8";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: 10,
+            fontWeight: 700,
+            color: "#475569",
+          }}
+        >
+          {label}
+        </span>
+        <span
+          style={{
+            fontFamily: "Outfit, sans-serif",
+            fontSize: 12,
+            fontWeight: 800,
+            color: "#0F172A",
+          }}
+        >
+          {score.toFixed(1)}/10
+        </span>
+      </div>
+      <div
+        style={{
+          height: 8,
+          background: "#f1f5f9",
+          borderRadius: 99,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            width: `${score * 10}%`,
+            height: "100%",
+            background: color,
+            borderRadius: 99,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+const SEGMENTS = [
+  { name: "Luxury", value: 45, color: "#006AFF" },
+  { name: "Ultra Luxury", value: 35, color: "#0F172A" },
+  { name: "Premium", value: 20, color: "#F59E0B" },
+];
+
+function SegmentPieChart() {
+  const cx = 140, cy = 130, outerR = 105, innerR = 52;
+  let cumAngle = -Math.PI / 2;
+
+  const slices = SEGMENTS.map((seg) => {
+    const sweep = (seg.value / 100) * 2 * Math.PI;
+    const start = cumAngle;
+    const end = cumAngle + sweep;
+    cumAngle = end;
+
+    const cos0 = Math.cos(start), sin0 = Math.sin(start);
+    const cos1 = Math.cos(end), sin1 = Math.sin(end);
+    const large = sweep > Math.PI ? 1 : 0;
+
+    const d = [
+      `M ${cx + innerR * cos0} ${cy + innerR * sin0}`,
+      `L ${cx + outerR * cos0} ${cy + outerR * sin0}`,
+      `A ${outerR} ${outerR} 0 ${large} 1 ${cx + outerR * cos1} ${cy + outerR * sin1}`,
+      `L ${cx + innerR * cos1} ${cy + innerR * sin1}`,
+      `A ${innerR} ${innerR} 0 ${large} 0 ${cx + innerR * cos0} ${cy + innerR * sin0}`,
+      "Z",
+    ].join(" ");
+
+    const mid = start + sweep / 2;
+    const labelR = (outerR + innerR) / 2;
+    return { ...seg, d, lx: cx + labelR * Math.cos(mid), ly: cy + labelR * Math.sin(mid) };
+  });
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+      <svg viewBox="0 0 280 260" style={{ width: "100%", maxWidth: 260, display: "block" }}>
+        {slices.map((s) => (
+          <path key={s.name} d={s.d} fill={s.color} stroke="#ffffff" strokeWidth="2.5" />
+        ))}
+        {slices.map((s) => (
+          <text
+            key={`lbl-${s.name}`}
+            x={s.lx}
+            y={s.ly}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill={s.color === "#F59E0B" ? "#0F172A" : "#ffffff"}
+            fontSize="13"
+            fontWeight="800"
+            fontFamily="Outfit, sans-serif"
+          >
+            {s.value}%
+          </text>
+        ))}
+      </svg>
+      <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
+        {SEGMENTS.map((s) => (
+          <div key={s.name} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                background: s.color,
+                display: "inline-block",
+                flexShrink: 0,
+                boxShadow: s.color === "#0F172A" ? "0 0 0 1px #cbd5e1" : "none",
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 11,
+                fontWeight: 600,
+                color: "#475569",
+              }}
+            >
+              {s.name}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ExpertAnalysisCard() {
+  const paragraphs = EXPERT_ANALYSIS.trim().split("\n\n");
+  return (
+    <div
+      style={{
+        background: "#ffffff",
+        border: "1px solid rgba(226,232,240,0.8)",
+        borderRadius: 16,
+        padding: 20,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
+    >
+      <div style={{ marginBottom: 16 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 4,
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 16, color: "#F59E0B" }}
+          >
+            analytics
+          </span>
+          <h3
+            style={{
+              fontFamily: "Outfit, sans-serif",
+              fontSize: 12,
+              fontWeight: 700,
+              color: "#0F172A",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+            }}
+          >
+            Corridor Expert Analysis
+          </h3>
+        </div>
+        <p
+          style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: 10,
+            color: "#94a3b8",
+          }}
+        >
+          prOPIUM editorial intelligence — updated Q2 2026
+        </p>
+      </div>
+
+      <ScrollArea style={{ maxHeight: 320, overflowY: "auto" }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: 14, paddingRight: 8 }}
+        >
+          {paragraphs.map((para, i) => (
+            <p
+              key={i}
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 12,
+                color: "#334155",
+                lineHeight: 1.75,
+                margin: 0,
+              }}
+            >
+              {para}
+            </p>
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
+  );
+}
+
+type FilterStatus = "all" | "Ready to Move In" | "Under Construction";
+type SortKey = "score" | "priceAsc" | "priceDesc" | "units";
+type ActiveView = "cards" | "list" | "map";
+
+function scoreColor(score: number) {
+  if (score >= 75) return "#059669";
+  if (score >= 50) return "#F59E0B";
+  if (score >= 25) return "#006AFF";
+  return "#94a3b8";
+}
+
+function ProjectsSection() {
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("score");
+  const [activeView, setActiveView] = useState<ActiveView>("cards");
+
+  const filtered = PROJECTS.filter(
+    (p) => filterStatus === "all" || p.status === filterStatus
+  ).sort((a, b) => {
+    if (sortKey === "score") return b.score - a.score;
+    if (sortKey === "priceAsc") return a.priceMin - b.priceMin;
+    if (sortKey === "priceDesc") return b.priceMax - a.priceMax;
+    return b.units - a.units;
+  });
+
+  const statusTabs: { label: string; value: FilterStatus }[] = [
+    { label: "All", value: "all" },
+    { label: "Ready", value: "Ready to Move In" },
+    { label: "UC", value: "Under Construction" },
+  ];
+
+  const viewTabs: { icon: string; value: ActiveView }[] = [
+    { icon: "grid_view", value: "cards" },
+    { icon: "table_rows", value: "list" },
+    { icon: "map", value: "map" },
+  ];
+
+  return (
+    <section
+      style={{
+        background: "#ffffff",
+        border: "1px solid rgba(226,232,240,0.8)",
+        borderRadius: 16,
+        padding: 24,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+      }}
+    >
+      {/* Header row */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 16,
+          marginBottom: 20,
+          paddingBottom: 16,
+          borderBottom: "1px solid #f1f5f9",
+        }}
+      >
+        <div>
+          <h3
+            style={{
+              fontFamily: "Outfit, sans-serif",
+              fontSize: 12,
+              fontWeight: 700,
+              color: "#0F172A",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              marginBottom: 2,
+            }}
+          >
+            Corridor Projects
+          </h3>
+          <p
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 10,
+              color: "#94a3b8",
+            }}
+          >
+            Verified RERA-audited inventory in Golf Course Extension Road
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          {/* Status filter tabs */}
+          <div
+            style={{
+              display: "flex",
+              background: "#f1f5f9",
+              border: "1px solid rgba(226,232,240,0.6)",
+              borderRadius: 10,
+              padding: 4,
+              gap: 2,
+            }}
+          >
+            {statusTabs.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setFilterStatus(tab.value)}
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: 7,
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  transition: "all 0.15s",
+                  background: filterStatus === tab.value ? "#ffffff" : "transparent",
+                  color: filterStatus === tab.value ? "#0F172A" : "#64748b",
+                  boxShadow: filterStatus === tab.value ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Sort select */}
+          <div style={{ position: "relative" }}>
+            <select
+              value={sortKey}
+              onChange={(e) => setSortKey(e.target.value as SortKey)}
+              style={{
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                borderRadius: 10,
+                padding: "8px 32px 8px 12px",
+                fontFamily: "Inter, sans-serif",
+                fontSize: 10,
+                fontWeight: 700,
+                color: "#475569",
+                cursor: "pointer",
+                appearance: "none",
+                WebkitAppearance: "none",
+              }}
+            >
+              <option value="score">Sort: prOPIUM Score</option>
+              <option value="priceAsc">Price: Low to High</option>
+              <option value="priceDesc">Price: High to Low</option>
+              <option value="units">Volume: Unit Count</option>
+            </select>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: "absolute",
+                right: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
+                fontSize: 14,
+                color: "#94a3b8",
+                pointerEvents: "none",
+              }}
+            >
+              keyboard_arrow_down
+            </span>
+          </div>
+
+          {/* View toggle */}
+          <div
+            style={{
+              display: "flex",
+              background: "#f1f5f9",
+              border: "1px solid rgba(226,232,240,0.6)",
+              borderRadius: 10,
+              padding: 4,
+              gap: 2,
+            }}
+          >
+            {viewTabs.map((vt) => (
+              <button
+                key={vt.value}
+                onClick={() => setActiveView(vt.value)}
+                title={vt.value.charAt(0).toUpperCase() + vt.value.slice(1) + " View"}
+                style={{
+                  width: 30,
+                  height: 30,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 7,
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  background: activeView === vt.value ? "#ffffff" : "transparent",
+                  color: activeView === vt.value ? "#0F172A" : "#64748b",
+                  boxShadow: activeView === vt.value ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  {vt.icon}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Content area */}
+      {filtered.length === 0 ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "64px 0",
+            gap: 8,
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 48, color: "#cbd5e1" }}>
+            inventory_2
+          </span>
+          <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 700, color: "#475569" }}>
+            No projects match this filter
+          </span>
+        </div>
+      ) : activeView === "cards" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
+          {filtered.map((p) => (
+            <ProjectCard key={p.id} project={p} />
+          ))}
+        </div>
+      ) : activeView === "list" ? (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+            <thead>
+              <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+                {["Project Name", "Locality & Corridor", "BHK Configs", "Carpet / Built-up Eff.", "prOPIUM Score", "Actions"].map((col, i) => (
+                  <th
+                    key={col}
+                    style={{
+                      padding: "12px 16px",
+                      fontFamily: "Inter, sans-serif",
+                      fontSize: 9,
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                      color: "#94a3b8",
+                      textAlign: i >= 3 ? "right" : "left",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((p, idx) => {
+                const isReady = p.status === "Ready to Move In";
+                return (
+                  <tr
+                    key={p.id}
+                    style={{
+                      borderBottom: idx < filtered.length - 1 ? "1px solid #f1f5f9" : "none",
+                    }}
+                  >
+                    {/* Project Name */}
+                    <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span
+                          style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            background: isReady ? "#059669" : "#F59E0B",
+                            flexShrink: 0,
+                          }}
+                        />
+                        <div>
+                          <div style={{ fontFamily: "Outfit, sans-serif", fontSize: 13, fontWeight: 700, color: "#0F172A" }}>
+                            {p.name}
+                          </div>
+                          <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#94a3b8", marginTop: 1 }}>
+                            {p.developer}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    {/* Locality */}
+                    <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "#334155", fontWeight: 600 }}>
+                        {p.sector}
+                      </div>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#94a3b8", marginTop: 1 }}>
+                        Golf Course Extension
+                      </div>
+                    </td>
+                    {/* BHK */}
+                    <td style={{ padding: "14px 16px", verticalAlign: "middle" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                        {p.bhk.map((b) => (
+                          <span
+                            key={b}
+                            style={{
+                              background: "#f1f5f9",
+                              color: "#334155",
+                              fontSize: 10,
+                              fontWeight: 600,
+                              fontFamily: "Inter, sans-serif",
+                              padding: "3px 7px",
+                              borderRadius: 4,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {b}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    {/* Efficiency */}
+                    <td style={{ padding: "14px 16px", textAlign: "right", verticalAlign: "middle" }}>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 700, color: "#0F172A" }}>
+                        {p.carpetEff}% / {p.builtupEff}%
+                      </div>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#94a3b8", marginTop: 1 }}>
+                        Carpet / Built-up
+                      </div>
+                    </td>
+                    {/* Score */}
+                    <td style={{ padding: "14px 16px", textAlign: "right", verticalAlign: "middle" }}>
+                      <span
+                        style={{
+                          fontFamily: "Outfit, sans-serif",
+                          fontSize: 15,
+                          fontWeight: 800,
+                          color: scoreColor(p.score),
+                        }}
+                      >
+                        {p.score}
+                      </span>
+                      <span style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#94a3b8", marginLeft: 2 }}>
+                        /100
+                      </span>
+                    </td>
+                    {/* Actions */}
+                    <td style={{ padding: "14px 16px", textAlign: "right", verticalAlign: "middle", whiteSpace: "nowrap" }}>
+                      <div style={{ fontFamily: "Inter, sans-serif", fontSize: 11, fontWeight: 700, color: "#0F172A", marginBottom: 2 }}>
+                        ₹{p.priceMin} – {p.priceMax} Cr
+                      </div>
+                      <button
+                        style={{
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          fontFamily: "Inter, sans-serif",
+                          fontSize: 10,
+                          fontWeight: 800,
+                          color: "#F59E0B",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.08em",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 2,
+                          padding: 0,
+                        }}
+                      >
+                        Dossier
+                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                          arrow_forward
+                        </span>
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        /* Map View */
+        <div
+          style={{
+            height: 420,
+            background: "#f1f5f9",
+            borderRadius: 10,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 12,
+            border: "1px dashed #cbd5e1",
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 40, color: "#94a3b8" }}>
+            map
+          </span>
+          <div style={{ textAlign: "center" }}>
+            <p style={{ fontFamily: "Outfit, sans-serif", fontSize: 13, fontWeight: 700, color: "#475569", margin: 0 }}>
+              Interactive Map Coming Soon
+            </p>
+            <p style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: "#94a3b8", marginTop: 4 }}>
+              Leaflet-powered corridor map with project pins — in development
+            </p>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ProjectCard({ project }: { project: (typeof PROJECTS)[0] }) {
+  const [hovered, setHovered] = useState(false);
+  const isReady = project.status === "Ready to Move In";
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: "#ffffff",
+        border: `1px solid ${hovered ? "rgba(245,158,11,0.4)" : "rgba(226,232,240,0.8)"}`,
+        borderRadius: 12,
+        overflow: "hidden",
+        boxShadow: hovered
+          ? "0 10px 25px -5px rgba(0,0,0,0.1)"
+          : "0 1px 3px rgba(0,0,0,0.06)",
+        transform: hovered ? "translateY(-4px)" : "translateY(0)",
+        transition: "all 0.3s ease",
+        display: "flex",
+        flexDirection: "column",
+        cursor: "pointer",
+      }}
+    >
+      <div
+        style={{ height: 160, position: "relative", overflow: "hidden" }}
+      >
+        <img
+          src={project.image}
+          alt={project.name}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transform: hovered ? "scale(1.05)" : "scale(1)",
+            transition: "transform 0.5s ease",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            left: 10,
+            background: isReady ? "#059669" : "#F59E0B",
+            color: isReady ? "#ffffff" : "#0f172a",
+            padding: "3px 8px",
+            fontSize: 9,
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            borderRadius: 3,
+            fontFamily: "Inter, sans-serif",
+          }}
+        >
+          {project.status}
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            background: "rgba(15,23,42,0.85)",
+            color: "#F59E0B",
+            padding: "3px 8px",
+            fontSize: 10,
+            fontWeight: 800,
+            borderRadius: 3,
+            fontFamily: "Outfit, sans-serif",
+          }}
+        >
+          {project.score}/100
+        </div>
+      </div>
+
+      <div
+        style={{
+          padding: 16,
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          gap: 10,
+        }}
+      >
+        <div>
+          <span
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 9,
+              color: "#94a3b8",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              display: "block",
+              marginBottom: 2,
+            }}
+          >
+            {project.developer}
+          </span>
+          <h4
+            style={{
+              fontFamily: "Outfit, sans-serif",
+              fontSize: 14,
+              fontWeight: 700,
+              color: hovered ? "#F59E0B" : "#0F172A",
+              transition: "color 0.2s",
+              marginBottom: 2,
+            }}
+          >
+            {project.name}
+          </h4>
+          <p
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 11,
+              color: "#64748b",
+              display: "flex",
+              alignItems: "center",
+              gap: 3,
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 13, color: "#F59E0B" }}
+            >
+              location_on
+            </span>
+            {project.sector}
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 4,
+          }}
+        >
+          {project.bhk.map((b) => (
+            <span
+              key={b}
+              style={{
+                background: "rgba(241,245,249,0.8)",
+                color: "#334155",
+                fontSize: 10,
+                padding: "3px 8px",
+                borderRadius: 4,
+                fontFamily: "Inter, sans-serif",
+                fontWeight: 500,
+              }}
+            >
+              {b}
+            </span>
+          ))}
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 8,
+            borderTop: "1px solid #f1f5f9",
+            paddingTop: 10,
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 9,
+                color: "#94a3b8",
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+                display: "block",
+              }}
+            >
+              Price Range
+            </span>
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 12,
+                fontWeight: 800,
+                color: "#0F172A",
+                display: "block",
+                marginTop: 2,
+              }}
+            >
+              ₹{project.priceMin} – {project.priceMax} Cr
+            </span>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 9,
+                color: "#94a3b8",
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+                display: "block",
+              }}
+            >
+              Carpet Eff.
+            </span>
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 12,
+                fontWeight: 800,
+                color: "#0F172A",
+                display: "block",
+                marginTop: 2,
+              }}
+            >
+              {project.carpetEff}%
+            </span>
+          </div>
+        </div>
+
+        <div
+          style={{
+            borderTop: "1px solid #f1f5f9",
+            paddingTop: 10,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 9,
+              color: "#64748b",
+              fontWeight: 600,
+            }}
+          >
+            {project.units} units · {project.targetSegment}
+          </span>
+          <span
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 10,
+              fontWeight: 800,
+              color: hovered ? "#d97706" : "#F59E0B",
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              transition: "color 0.2s",
+            }}
+          >
+            View Audit
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 13 }}
+            >
+              arrow_forward
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
 function GCEXPage() {
   return (
-    <>
-      <iframe
-        src="/golf-course-extension.html"
-        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", border: "none" }}
-        title="Golf Course Extension Road"
-      />
-      <MobileBottomNav defaultActive={null} />
-    </>
+    <div
+      className="antialiased blueprint-grid"
+      style={{
+        fontFamily: "Inter, sans-serif",
+        background: "#F8FAFC",
+        color: "#0F172A",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <TopNav />
+
+      <main
+        className="mx-auto px-4 md:px-8 lg:px-10 py-8 md:py-10"
+        style={{
+          maxWidth: 1280,
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          gap: 24,
+          flex: 1,
+        }}
+      >
+        {/* Breadcrumb */}
+        <nav
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            fontFamily: "Inter, sans-serif",
+            fontSize: 12,
+            color: "#64748b",
+          }}
+        >
+          <Link to="/" style={{ color: "#64748b", textDecoration: "none" }}>
+            Home
+          </Link>
+          <span style={{ color: "#cbd5e1" }}>/</span>
+          <Link
+            to="/micro-market"
+            style={{ color: "#64748b", textDecoration: "none" }}
+          >
+            Micro Markets
+          </Link>
+          <span style={{ color: "#cbd5e1" }}>/</span>
+          <span style={{ color: "#0F172A", fontWeight: 600 }}>
+            Golf Course Extension Road
+          </span>
+        </nav>
+
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            gap: 16,
+            borderBottom: "1px solid rgba(226,232,240,0.6)",
+            paddingBottom: 24,
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 9,
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                color: "#ffffff",
+                background: "#0F172A",
+                padding: "4px 10px",
+                borderRadius: 3,
+                display: "inline-block",
+                marginBottom: 10,
+              }}
+            >
+              Corridor Dossier
+            </span>
+            <h1
+              style={{
+                fontFamily: "Outfit, sans-serif",
+                fontSize: "clamp(24px, 4vw, 36px)",
+                fontWeight: 800,
+                color: "#0F172A",
+                lineHeight: 1.2,
+                marginBottom: 6,
+              }}
+            >
+              Golf Course Extension Road
+            </h1>
+            <p
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 14,
+                color: "#64748b",
+                maxWidth: 680,
+              }}
+            >
+              {CORRIDOR.desc}
+            </p>
+          </div>
+          <Link
+            to="/micro-market"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "9px 16px",
+              border: "1px solid #e2e8f0",
+              borderRadius: 10,
+              background: "#ffffff",
+              fontFamily: "Inter, sans-serif",
+              fontSize: 11,
+              fontWeight: 700,
+              color: "#475569",
+              textDecoration: "none",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 14 }}
+            >
+              arrow_back
+            </span>
+            Back to Directory
+          </Link>
+        </div>
+
+        {/* Telemetry + Scorecard */}
+        <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 20 }}>
+          <div
+            className="lg:col-span-5 grid grid-cols-2"
+            style={{ gap: 12 }}
+          >
+            <TelemetryCard
+              label="Average PSFT Rate"
+              value={`₹${CORRIDOR.avgPsft.toLocaleString("en-IN")}/sqft`}
+              sub={`Range: ${CORRIDOR.priceRange}`}
+            />
+            <TelemetryCard
+              label="Avg Ticket Size"
+              value={CORRIDOR.avgTicket}
+              sub="Typical Residential Unit"
+            />
+            <TelemetryCard
+              label="Audited Projects"
+              value={String(CORRIDOR.activeProjects)}
+              sub="Verified on RERA"
+            />
+            <TelemetryCard
+              label="Units Tracked"
+              value={`${(CORRIDOR.units / 100000).toFixed(2)} Lakh`}
+              sub="Total Mapped Registry"
+            />
+          </div>
+
+          <div
+            className="lg:col-span-7"
+            style={{
+              background: "#ffffff",
+              border: "1px solid rgba(226,232,240,0.8)",
+              borderRadius: 16,
+              padding: 20,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "Outfit, sans-serif",
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#0F172A",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                marginBottom: 2,
+              }}
+            >
+              8-Dimension Location Scorecard
+            </h3>
+            <p
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 10,
+                color: "#94a3b8",
+                marginBottom: 16,
+              }}
+            >
+              Location intelligence indicators rated out of 10.0
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: "10px 24px" }}>
+              {CORRIDOR.scorecard.map((s) => (
+                <ScorecardRow key={s.label} label={s.label} score={s.score} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Price Growth Chart + Expert Analysis */}
+        <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 20 }}>
+          <div
+            className="lg:col-span-7"
+            style={{
+              background: "#ffffff",
+              border: "1px solid rgba(226,232,240,0.8)",
+              borderRadius: 16,
+              padding: 20,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "Outfit, sans-serif",
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#0F172A",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                marginBottom: 2,
+              }}
+            >
+              Inventory Class Split
+            </h3>
+            <p
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 10,
+                color: "#94a3b8",
+                marginBottom: 16,
+              }}
+            >
+              Residential segment distribution across active GCEX projects
+            </p>
+            <SegmentPieChart />
+          </div>
+
+          <div className="lg:col-span-5" style={{ minHeight: 0 }}>
+            <ExpertAnalysisCard />
+          </div>
+        </div>
+
+        {/* Infrastructure */}
+        <section
+          style={{
+            background: "#ffffff",
+            border: "1px solid rgba(226,232,240,0.8)",
+            borderRadius: 16,
+            padding: 24,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: "Outfit, sans-serif",
+              fontSize: 12,
+              fontWeight: 700,
+              color: "#0F172A",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              marginBottom: 4,
+            }}
+          >
+            Key Infrastructure Catalog
+          </h3>
+          <p
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 10,
+              color: "#94a3b8",
+              marginBottom: 20,
+            }}
+          >
+            Audited transit terminals, commercial hubs, hospitals, and
+            educational facilities servicing the corridor
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-5" style={{ gap: 24 }}>
+            {(
+              [
+                {
+                  icon: "directions_subway",
+                  label: "Transit",
+                  items: CORRIDOR.infrastructure.transit,
+                },
+                {
+                  icon: "corporate_fare",
+                  label: "CBDs & Hubs",
+                  items: CORRIDOR.infrastructure.commercial,
+                },
+                {
+                  icon: "school",
+                  label: "Schools",
+                  items: CORRIDOR.infrastructure.education,
+                },
+                {
+                  icon: "local_hospital",
+                  label: "Healthcare",
+                  items: CORRIDOR.infrastructure.healthcare,
+                },
+                {
+                  icon: "shopping_bag",
+                  label: "Retail & Leisure",
+                  items: CORRIDOR.infrastructure.leisure,
+                },
+              ] as { icon: string; label: string; items: string[] }[]
+            ).map((cat) => (
+              <div key={cat.label} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    borderBottom: "1px solid #f1f5f9",
+                    paddingBottom: 8,
+                  }}
+                >
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 14, color: "#F59E0B" }}
+                  >
+                    {cat.icon}
+                  </span>
+                  <h4
+                    style={{
+                      fontFamily: "Outfit, sans-serif",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: "#0F172A",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    {cat.label}
+                  </h4>
+                </div>
+                <ul style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {cat.items.map((item) => (
+                    <li
+                      key={item}
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 6,
+                        fontFamily: "Inter, sans-serif",
+                        fontSize: 11,
+                        color: "#475569",
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: "#F59E0B",
+                          fontWeight: 800,
+                          flexShrink: 0,
+                          marginTop: 1,
+                        }}
+                      >
+                        •
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Projects */}
+        <ProjectsSection />
+      </main>
+
+      <Footer />
+      <MobileBottomNav />
+    </div>
   );
 }
