@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Compare Project Audits | prOPIUM.ai</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0F172A",
+                        "secondary-container": "#F59E0B",
+                        background: "#F8FAFC",
+                        "surface-bright": "#F8FAFC",
+                        "on-surface-variant": "#64748B",
+                        "on-surface": "#0F172A",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#F1F5F9",
+                        "surface-container": "#E2E8F0",
+                        "outline-variant": "#E2E8F0",
+                        error: "#E11D48",
+                        brandBlue: "#006AFF"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.125rem",
+                        lg: "0.25rem",
+                        xl: "0.5rem",
+                        full: "0.75rem"
+                    },
+                    spacing: {
+                        "stack-md": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "48px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        gutter: "32px",
+                        unit: "4px",
+                        "stack-sm": "8px"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Outfit", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .blueprint-grid {
+            background-size: 24px 24px;
+            background-image: radial-gradient(circle, #E2E8F0 1px, transparent 1px);
+        }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media print {
+            header, .no-print { display: none !important; }
+            main { padding-top: 0 !important; }
+            .print-full-width { width: 100% !important; max-width: 100% !important; }
+        }
+    </style>
+</head>
+<body class="bg-background text-[#0F172A] font-sans antialiased min-h-screen flex flex-col pt-16 relative blueprint-grid">
+
+    <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0F172A]/85 border-b border-white/10 shadow-sm text-white no-print">
+        <div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto w-full">
+            <div class="flex items-center gap-stack-md">
+                <a href="/" class="flex items-center gap-1 font-bold text-xl tracking-tight text-white hover:opacity-90">
+                    prOPIUM<span class="text-secondary-container">.ai</span>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 items-center">
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/">Home</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/directories">Projects</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/developer-scorecards">Developers</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/micro-market">Micro-Markets</a>
+                <a class="font-sans text-xs font-semibold text-white border-b-2 border-secondary-container pb-1 uppercase tracking-wider" href="/compare">Compare</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors flex items-center gap-1 uppercase tracking-wider" href="/ai-search">
+                    AI Search
+                    <span class="text-[9px] bg-amber-500/20 text-secondary-container px-2 py-0.5 rounded-full font-bold">BETA</span>
+                </a>
+            </nav>
+            <div class="flex items-center gap-stack-sm">
+                <div class="hidden md:flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/10 rounded-full text-white">
+                    <span class="material-symbols-outlined text-sm">account_circle</span>
+                    <span class="font-sans text-xs font-semibold">Sahil Rajan</span>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center text-white" style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);cursor:pointer;" aria-label="Open menu">
+                    <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile slide-in overlay -->
+    <div id="mobile-menu-overlay" onclick="closeMobileMenu()" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(2,6,23,0.6);backdrop-filter:blur(4px);opacity:0;transition:opacity 0.25s ease;"></div>
+
+    <!-- Mobile slide-in panel -->
+    <aside id="mobile-menu-panel" style="position:fixed;top:0;right:0;bottom:0;z-index:101;width:min(82vw,320px);background:#0F172A;border-left:1px solid rgba(255,255,255,0.08);box-shadow:-20px 0 50px rgba(0,0,0,0.5);transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+            <a href="/" style="font-family:'Outfit',sans-serif;font-weight:700;font-size:20px;color:#fff;text-decoration:none;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
+            <button onclick="closeMobileMenu()" style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                <span class="material-symbols-outlined" style="font-size:22px;">close</span>
+            </button>
+        </div>
+        <nav style="padding:16px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+            <div style="flex:1;">
+                <a href="/" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">home</span>Home
+                </a>
+                <div style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;min-height:44px;margin-bottom:2px;cursor:default;">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">auto_awesome</span>AI Search
+                </div>
+                <a href="/compare" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#F59E0B;background:rgba(245,158,11,0.1);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;text-decoration:none;min-height:44px;margin-bottom:2px;">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#F59E0B;">compare_arrows</span>Compare
+                </a>
+                <div style="margin-bottom:2px;">
+                    <button onclick="toggleSearchSub()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 12px;border-radius:10px;color:#e2e8f0;background:transparent;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;border:none;cursor:pointer;min-height:44px;text-align:left;">
+                        <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">search</span>
+                        Search
+                        <span id="search-chevron" class="material-symbols-outlined" style="margin-left:auto;font-size:18px;color:#94a3b8;transition:transform 0.2s ease;">expand_more</span>
+                    </button>
+                    <div id="search-sub" style="padding-left:46px;display:none;">
+                        <a href="/directories" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;text-decoration:none;">Projects</a>
+                        <a href="/micro-market" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;text-decoration:none;">Micro Markets</a>
+                        <a href="/developer-scorecards" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;text-decoration:none;">Developers</a>
+                    </div>
+                </div>
+            </div>
+            <div style="padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:10px;padding-bottom:8px;">
+                <button style="background:#F59E0B;color:#0F172A;border:none;border-radius:10px;padding:13px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+                    <span class="material-symbols-outlined" style="font-size:20px;">mail</span>Enquiry
+                </button>
+                <button style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+                    <span class="material-symbols-outlined" style="font-size:20px;">call</span>Call Us
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <script>
+        function openMobileMenu() {
+            var overlay = document.getElementById('mobile-menu-overlay');
+            var panel = document.getElementById('mobile-menu-panel');
+            overlay.style.display = 'block';
+            requestAnimationFrame(function() { overlay.style.opacity = '1'; panel.style.transform = 'translateX(0)'; });
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMobileMenu() {
+            var overlay = document.getElementById('mobile-menu-overlay');
+            var panel = document.getElementById('mobile-menu-panel');
+            overlay.style.opacity = '0';
+            panel.style.transform = 'translateX(100%)';
+            setTimeout(function() { overlay.style.display = 'none'; }, 300);
+            document.body.style.overflow = '';
+        }
+        function toggleSearchSub() {
+            var sub = document.getElementById('search-sub');
+            var chevron = document.getElementById('search-chevron');
+            var isOpen = sub.style.display !== 'none';
+            sub.style.display = isOpen ? 'none' : 'block';
+            chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+        document.getElementById('mobile-menu-btn').addEventListener('click', openMobileMenu);
+    </script>
+
+    <!-- Main Container -->
+    <main class="max-w-container-max mx-auto px-6 lg:px-margin-desktop py-8 w-full flex-grow flex flex-col gap-6 print-full-width">
+
+        <nav class="text-xs text-slate-500 flex items-center gap-2 no-print">
+            <a href="/" class="hover:text-primary transition-colors">Home</a>
+            <span class="text-slate-300">/</span>
+            <span class="text-slate-700 font-medium">Compare Projects</span>
+        </nav>
+
+        <div class="bg-[#0B0F19] rounded-2xl p-6 lg:p-8 text-white relative overflow-hidden shadow-lg border border-white/5 flex flex-col lg:flex-row justify-between gap-6">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#0F172A]/90 to-transparent pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col justify-between max-w-2xl">
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest font-extrabold text-secondary-container bg-white/10 border border-white/10 px-2.5 py-1 rounded w-max block mb-3">Project Comparison</span>
+                    <h1 id="reportTitle" class="text-2xl lg:text-3xl font-extrabold font-display tracking-tight text-white leading-tight">
+                        Select Projects to Compare
+                    </h1>
+                    <p class="text-slate-400 text-xs mt-2">
+                        Comparing architectural footprint, carpet efficiency, pricing telemetry, and local connectivity vectors.
+                    </p>
+                </div>
+                <div class="mt-6 flex flex-wrap gap-3 no-print">
+                    <button onclick="window.print()" class="px-4 py-2 bg-secondary-container hover:bg-[#D97706] text-slate-950 text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                        <span class="material-symbols-outlined text-sm">download</span> Export as PDF
+                    </button>
+                    <button id="toggleWinnerBtn" onclick="toggleWinners()" class="px-4 py-2 border border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                        <span class="material-symbols-outlined text-sm">emoji_events</span> Highlight Winners
+                    </button>
+                </div>
+            </div>
+
+            <div id="bestPickContainer" class="relative z-10 bg-white/5 border border-white/10 rounded-2xl p-5 min-w-[280px] lg:max-w-sm flex flex-col justify-between shadow-inner backdrop-blur-sm">
+                <div>
+                    <span class="text-[8px] uppercase tracking-widest font-extrabold text-slate-400 block mb-1">Overall Recommendation</span>
+                    <h3 class="text-sm font-bold font-display text-white">Best Overall Pick</h3>
+                </div>
+                <div class="mt-4 pt-4 border-t border-white/10">
+                    <div id="bestPickContent" class="text-slate-400 text-xs">
+                        Select at least two projects to view our data-backed recommendation.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-background/95 sticky top-16 z-30 py-3 border-b border-slate-200/60 backdrop-blur-md no-print">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                <div class="hidden md:block">
+                    <span class="text-xs uppercase tracking-wider font-bold text-slate-500">Select Projects</span>
+                    <p class="text-[10px] text-slate-400">Add up to 3 properties to compare</p>
+                </div>
+                <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div id="selector-wrapper-0" class="relative">
+                        <div id="empty-selector-0" class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                            <input type="text" id="input-selector-0" oninput="handleSearchInput(0)" onfocus="handleSearchFocus(0)" onblur="handleSearchBlur(0)" placeholder="Type project name (Slot 1)..." class="w-full pl-9 pr-4 py-2 border border-slate-200 bg-white rounded-xl text-xs font-medium focus:ring-1 focus:ring-brandBlue focus:border-brandBlue outline-none transition-all shadow-sm placeholder-slate-400"/>
+                            <div id="dropdown-0" class="absolute left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg z-50 hidden"></div>
+                        </div>
+                        <div id="selected-card-0" class="hidden flex items-center justify-between p-2 bg-white border border-slate-200 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-2 overflow-hidden">
+                                <img id="selected-img-0" src="" class="w-8 h-8 rounded-lg object-cover bg-slate-100 flex-shrink-0"/>
+                                <div class="overflow-hidden">
+                                    <h4 id="selected-name-0" class="text-xs font-bold text-slate-900 truncate">Project 1</h4>
+                                    <p id="selected-dev-0" class="text-[9px] text-slate-500 truncate">Developer</p>
+                                </div>
+                            </div>
+                            <button onclick="removeProject(0)" class="p-1 text-slate-400 hover:text-red-500 rounded-full hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-sm">close</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="selector-wrapper-1" class="relative">
+                        <div id="empty-selector-1" class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                            <input type="text" id="input-selector-1" oninput="handleSearchInput(1)" onfocus="handleSearchFocus(1)" onblur="handleSearchBlur(1)" placeholder="Type project name (Slot 2)..." class="w-full pl-9 pr-4 py-2 border border-slate-200 bg-white rounded-xl text-xs font-medium focus:ring-1 focus:ring-brandBlue focus:border-brandBlue outline-none transition-all shadow-sm placeholder-slate-400"/>
+                            <div id="dropdown-1" class="absolute left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg z-50 hidden"></div>
+                        </div>
+                        <div id="selected-card-1" class="hidden flex items-center justify-between p-2 bg-white border border-slate-200 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-2 overflow-hidden">
+                                <img id="selected-img-1" src="" class="w-8 h-8 rounded-lg object-cover bg-slate-100 flex-shrink-0"/>
+                                <div class="overflow-hidden">
+                                    <h4 id="selected-name-1" class="text-xs font-bold text-slate-900 truncate">Project 2</h4>
+                                    <p id="selected-dev-1" class="text-[9px] text-slate-500 truncate">Developer</p>
+                                </div>
+                            </div>
+                            <button onclick="removeProject(1)" class="p-1 text-slate-400 hover:text-red-500 rounded-full hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-sm">close</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="selector-wrapper-2" class="relative">
+                        <div id="empty-selector-2" class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                            <input type="text" id="input-selector-2" oninput="handleSearchInput(2)" onfocus="handleSearchFocus(2)" onblur="handleSearchBlur(2)" placeholder="Type project name (Slot 3)..." class="w-full pl-9 pr-4 py-2 border border-slate-200 bg-white rounded-xl text-xs font-medium focus:ring-1 focus:ring-brandBlue focus:border-brandBlue outline-none transition-all shadow-sm placeholder-slate-400"/>
+                            <div id="dropdown-2" class="absolute left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg z-50 hidden"></div>
+                        </div>
+                        <div id="selected-card-2" class="hidden flex items-center justify-between p-2 bg-white border border-slate-200 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-2 overflow-hidden">
+                                <img id="selected-img-2" src="" class="w-8 h-8 rounded-lg object-cover bg-slate-100 flex-shrink-0"/>
+                                <div class="overflow-hidden">
+                                    <h4 id="selected-name-2" class="text-xs font-bold text-slate-900 truncate">Project 3</h4>
+                                    <p id="selected-dev-2" class="text-[9px] text-slate-500 truncate">Developer</p>
+                                </div>
+                            </div>
+                            <button onclick="removeProject(2)" class="p-1 text-slate-400 hover:text-red-500 rounded-full hover:bg-slate-50 transition-colors">
+                                <span class="material-symbols-outlined text-sm">close</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch">
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-6 flex flex-col justify-center gap-2 shadow-sm">
+                <span class="text-brandBlue font-bold text-xs uppercase tracking-wider block">Telemetry Highlights</span>
+                <h3 class="text-lg font-extrabold font-display text-slate-900">Credibility & Quality</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">Overview of scores out of 100 derived from verified builder timeline performance and architectural efficiency audits.</p>
+            </div>
+
+            <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div id="score-card-0" class="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm min-h-[160px] opacity-40 transition-all duration-300">
+                    <div id="score-empty-0" class="flex items-center justify-center h-full text-slate-400 text-xs">Slot 1 Empty</div>
+                    <div id="score-filled-0" class="hidden flex flex-col justify-between h-full">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 id="score-name-0" class="text-sm font-bold text-slate-900 line-clamp-1">Project 1</h4>
+                                <span id="score-best-for-0" class="text-[10px] text-brandBlue font-semibold block mt-1">Best For tag</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-end mt-4 pt-4 border-t border-slate-100">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block">prOPIUM Score</span>
+                                <span id="score-value-0" class="text-2xl font-extrabold font-display text-slate-900">72</span>
+                            </div>
+                            <div id="score-ring-0" class="w-12 h-12 flex items-center justify-center"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="score-card-1" class="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm min-h-[160px] opacity-40 transition-all duration-300">
+                    <div id="score-empty-1" class="flex items-center justify-center h-full text-slate-400 text-xs">Slot 2 Empty</div>
+                    <div id="score-filled-1" class="hidden flex flex-col justify-between h-full">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 id="score-name-1" class="text-sm font-bold text-slate-900 line-clamp-1">Project 2</h4>
+                                <span id="score-best-for-1" class="text-[10px] text-brandBlue font-semibold block mt-1">Best For tag</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-end mt-4 pt-4 border-t border-slate-100">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block">prOPIUM Score</span>
+                                <span id="score-value-1" class="text-2xl font-extrabold font-display text-slate-900">72</span>
+                            </div>
+                            <div id="score-ring-1" class="w-12 h-12 flex items-center justify-center"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="score-card-2" class="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col justify-between shadow-sm min-h-[160px] opacity-40 transition-all duration-300">
+                    <div id="score-empty-2" class="flex items-center justify-center h-full text-slate-400 text-xs">Slot 3 Empty</div>
+                    <div id="score-filled-2" class="hidden flex flex-col justify-between h-full">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 id="score-name-2" class="text-sm font-bold text-slate-900 line-clamp-1">Project 3</h4>
+                                <span id="score-best-for-2" class="text-[10px] text-brandBlue font-semibold block mt-1">Best For tag</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-end mt-4 pt-4 border-t border-slate-100">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block">prOPIUM Score</span>
+                                <span id="score-value-2" class="text-2xl font-extrabold font-display text-slate-900">72</span>
+                            </div>
+                            <div id="score-ring-2" class="w-12 h-12 flex items-center justify-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <div class="bg-[#0F172A] text-white rounded-xl p-4 font-display font-bold text-xs uppercase tracking-wider grid grid-cols-4 items-center">
+                <div>Parameter Spec</div>
+                <div id="table-col-header-0" class="text-center">Slot 1</div>
+                <div id="table-col-header-1" class="text-center">Slot 2</div>
+                <div id="table-col-header-2" class="text-center">Slot 3</div>
+            </div>
+
+            <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-overview')" class="w-full px-6 py-4 flex justify-between items-center bg-slate-50 hover:bg-slate-100/70 border-b border-slate-100 transition-colors text-left">
+                    <div>
+                        <span class="text-brandBlue font-bold text-[10px] uppercase tracking-wider block">01 / Parameters</span>
+                        <h4 class="font-display font-extrabold text-sm text-slate-900">Project Overview</h4>
+                    </div>
+                    <span id="icon-acc-overview" class="material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+                </button>
+                <div id="content-acc-overview" class="p-6 transition-all duration-300">
+                    <table class="w-full text-xs"><tbody>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Developer</td>
+                            <td id="val-overview-dev-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-dev-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-dev-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Location</td>
+                            <td id="val-overview-loc-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-loc-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-loc-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Status</td>
+                            <td id="val-overview-status-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-status-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-status-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Possession</td>
+                            <td id="val-overview-poss-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-poss-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-poss-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Project Area</td>
+                            <td id="val-overview-area-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-area-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-area-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Total Units</td>
+                            <td id="val-overview-units-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-units-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-units-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Density<span class="text-[9px] text-slate-400 font-normal block">Units per acre (lower is better)</span></td>
+                            <td id="val-overview-density-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-density-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-overview-density-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-product')" class="w-full px-6 py-4 flex justify-between items-center bg-slate-50 hover:bg-slate-100/70 border-b border-slate-100 transition-colors text-left">
+                    <div>
+                        <span class="text-brandBlue font-bold text-[10px] uppercase tracking-wider block">02 / Parameters</span>
+                        <h4 class="font-display font-extrabold text-sm text-slate-900">Product Details</h4>
+                    </div>
+                    <span id="icon-acc-product" class="material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+                </button>
+                <div id="content-acc-product" class="p-6 transition-all duration-300">
+                    <table class="w-full text-xs"><tbody>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Configurations</td>
+                            <td id="val-product-bhk-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-product-bhk-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-product-bhk-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Carpet Efficiency (%)</td>
+                            <td id="val-product-carpet-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-product-carpet-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-product-carpet-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Built-up Efficiency (%)</td>
+                            <td id="val-product-builtup-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-product-builtup-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-product-builtup-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-infra')" class="w-full px-6 py-4 flex justify-between items-center bg-slate-50 hover:bg-slate-100/70 border-b border-slate-100 transition-colors text-left">
+                    <div>
+                        <span class="text-brandBlue font-bold text-[10px] uppercase tracking-wider block">03 / Parameters</span>
+                        <h4 class="font-display font-extrabold text-sm text-slate-900">Nearby Infrastructure</h4>
+                    </div>
+                    <span id="icon-acc-infra" class="material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+                </button>
+                <div id="content-acc-infra" class="p-6 transition-all duration-300">
+                    <table class="w-full text-xs"><tbody>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Transit Points</td>
+                            <td id="val-infra-transit-0" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-transit-1" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-transit-2" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Commercial Hubs (CBDs)</td>
+                            <td id="val-infra-cbds-0" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-cbds-1" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-cbds-2" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Educational Centers</td>
+                            <td id="val-infra-schools-0" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-schools-1" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-schools-2" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Healthcare Facilities</td>
+                            <td id="val-infra-health-0" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-health-1" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-health-2" class="text-center text-slate-850 px-2 leading-relaxed">—</td>
+                        </tr>
+                        <tr class="py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Hospitality & Lifestyle</td>
+                            <td id="val-infra-hospitality-0" class="text-center text-slate-855 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-hospitality-1" class="text-center text-slate-855 px-2 leading-relaxed">—</td>
+                            <td id="val-infra-hospitality-2" class="text-center text-slate-855 px-2 leading-relaxed">—</td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-price')" class="w-full px-6 py-4 flex justify-between items-center bg-slate-50 hover:bg-slate-100/70 border-b border-slate-100 transition-colors text-left">
+                    <div>
+                        <span class="text-brandBlue font-bold text-[10px] uppercase tracking-wider block">04 / Parameters</span>
+                        <h4 class="font-display font-extrabold text-sm text-slate-900">Price Intelligence</h4>
+                    </div>
+                    <span id="icon-acc-price" class="material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+                </button>
+                <div id="content-acc-price" class="p-6 transition-all duration-300">
+                    <table class="w-full text-xs"><tbody>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Price Range (Cr)</td>
+                            <td id="val-price-range-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-price-range-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-price-range-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Estimated Rate (PSFT)</td>
+                            <td id="val-price-psft-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-price-psft-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-price-psft-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Target Segment</td>
+                            <td id="val-price-segment-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-price-segment-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-price-segment-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+                <button onclick="toggleAccordion('acc-scores')" class="w-full px-6 py-4 flex justify-between items-center bg-slate-50 hover:bg-slate-100/70 border-b border-slate-100 transition-colors text-left">
+                    <div>
+                        <span class="text-brandBlue font-bold text-[10px] uppercase tracking-wider block">05 / Parameters</span>
+                        <h4 class="font-display font-extrabold text-sm text-slate-900">prOPIUM Scores™ Detailed Analysis</h4>
+                    </div>
+                    <span id="icon-acc-scores" class="material-symbols-outlined text-slate-400 transition-transform duration-200">expand_more</span>
+                </button>
+                <div id="content-acc-scores" class="p-6 transition-all duration-300">
+                    <table class="w-full text-xs"><tbody>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Overall Audit Score</td>
+                            <td id="val-score-overall-0" class="text-center text-slate-800 font-bold px-2 text-sm">—</td>
+                            <td id="val-score-overall-1" class="text-center text-slate-800 font-bold px-2 text-sm">—</td>
+                            <td id="val-score-overall-2" class="text-center text-slate-800 font-bold px-2 text-sm">—</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Credibility Rating</td>
+                            <td id="val-score-credibility-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-score-credibility-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-score-credibility-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                        <tr class="py-3 grid grid-cols-4 items-center min-h-[52px]">
+                            <td class="font-semibold text-slate-500">Construction Timelines Score</td>
+                            <td id="val-score-timeline-0" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-score-timeline-1" class="text-center text-slate-800 font-medium px-2">—</td>
+                            <td id="val-score-timeline-2" class="text-center text-slate-800 font-medium px-2">—</td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+            <div>
+                <span class="text-brandBlue font-bold text-[10px] uppercase tracking-wider block">AI Advisory Summary</span>
+                <h3 class="text-lg font-extrabold font-display text-slate-900">prOPIUM Final Decision™</h3>
+                <p class="text-xs text-slate-500 mt-1">Independent data-driven advisory summary. We accept zero builder sponsorships.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100">
+                <div id="ai-summary-card-0" class="flex flex-col gap-3 min-h-[140px] opacity-40">
+                    <h4 id="ai-summary-title-0" class="text-xs font-bold text-slate-955">Slot 1</h4>
+                    <p id="ai-summary-text-0" class="text-slate-500 text-xs leading-relaxed">Select a project to load its intelligence summary.</p>
+                </div>
+                <div id="ai-summary-card-1" class="flex flex-col gap-3 min-h-[140px] opacity-40">
+                    <h4 id="ai-summary-title-1" class="text-xs font-bold text-slate-955">Slot 2</h4>
+                    <p id="ai-summary-text-1" class="text-slate-500 text-xs leading-relaxed">Select a project to load its intelligence summary.</p>
+                </div>
+                <div id="ai-summary-card-2" class="flex flex-col gap-3 min-h-[140px] opacity-40">
+                    <h4 id="ai-summary-title-2" class="text-xs font-bold text-slate-955">Slot 3</h4>
+                    <p id="ai-summary-text-2" class="text-slate-500 text-xs leading-relaxed">Select a project to load its intelligence summary.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center pt-4 mb-8">
+            <div class="hidden md:block">
+                <span class="text-xs uppercase tracking-wider font-bold text-slate-500">Explore dossier</span>
+                <p class="text-[10px] text-slate-400">Deep dive into a single property audit report</p>
+            </div>
+            <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div id="cta-slot-0" class="flex justify-center opacity-40">
+                    <button disabled class="w-full py-2.5 border border-slate-200 bg-slate-50 text-slate-400 text-xs font-bold transition-all rounded-xl uppercase tracking-wider cursor-not-allowed">Explore Audit</button>
+                </div>
+                <div id="cta-slot-1" class="flex justify-center opacity-40">
+                    <button disabled class="w-full py-2.5 border border-slate-200 bg-slate-50 text-slate-400 text-xs font-bold transition-all rounded-xl uppercase tracking-wider cursor-not-allowed">Explore Audit</button>
+                </div>
+                <div id="cta-slot-2" class="flex justify-center opacity-40">
+                    <button disabled class="w-full py-2.5 border border-slate-200 bg-slate-50 text-slate-400 text-xs font-bold transition-all rounded-xl uppercase tracking-wider cursor-not-allowed">Explore Audit</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-surface-container-low pt-stack-lg pb-stack-md border-t border-outline-variant/30 no-print">
+        <div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-6 gap-gutter">
+            <div class="md:col-span-2">
+                <a href="/" class="flex items-center gap-1 font-bold text-xl tracking-tight text-primary hover:opacity-90 mb-4">prOPIUM<span class="text-secondary-container">.ai</span></a>
+                <p class="text-on-surface-variant text-xs leading-relaxed mb-6">Intelligence for every Real Estate decision.</p>
+            </div>
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">About prOPIUM</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="/about">About prOPIUM</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="/verify">How we Verify</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="/why">Why prOPIUM</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">Intelligence Hub</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="/intelligence/builder-evaluation">Builder Evaluation</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="/intelligence/location">Location Intelligence</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="/intelligence/product">Product Intelligence</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-sans font-bold text-xs text-primary mb-4">Support & legal</h5>
+                <ul class="space-y-2 text-xs text-on-surface-variant">
+                    <li><a class="hover:text-primary transition-colors" href="/privacy-policy">Privacy policy</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="/terms-of-use">Terms of use</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-container-max mx-auto px-margin-desktop mt-12 pt-8 border-t border-outline-variant/20">
+            <div class="flex justify-between items-center text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">
+                <span>© 2026 prOPIUM · All rights reserved</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const PROJECTS = [
+            { "id": "tarc-ishva", "name": "Tarc Ishva", "developer": "TARC Limited", "sector": "Sector 63A", "corridor": "Golf Course Extension Road", "bhk": ["3 BHK", "4 BHK", "Penthouse"], "area": 9.15, "units": 518, "status": "Under Construction", "priceMin": 8.5, "priceMax": 10.5, "score": 84, "carpetEff": 50, "builtupEff": 67, "img": "m3m_altitude_lobby.png", "lat": 28.415, "lng": 77.085, "targetSegment": "Luxury" },
+            { "id": "trump-tower-gurgaon", "name": "Trump Tower (Gurgaon)", "developer": "M3M India Pvt Ltd", "sector": "Sector 65", "corridor": "Golf Course Extension Road", "bhk": ["2 BHK", "3 BHK", "4 BHK"], "area": 2.83, "units": 252, "status": "Ready to Move In", "priceMin": 11.5, "priceMax": 22.08, "score": 76, "carpetEff": 64, "builtupEff": 85, "img": "m3m_altitude_lounge.png", "lat": 28.411, "lng": 77.074, "targetSegment": "Ultra Luxury" },
+            { "id": "dlf-the-arbour", "name": "DLF The Arbour", "developer": "DLF Limited", "sector": "Sector 63", "corridor": "Golf Course Extension Road", "bhk": ["4 BHK"], "area": 25.08, "units": 1137, "status": "Under Construction", "priceMin": 7.5, "priceMax": 8.5, "score": 72, "carpetEff": 57, "builtupEff": 74, "img": "m3m_altitude_hero.png", "lat": 28.4168, "lng": 77.0805, "targetSegment": "Ultra Luxury" },
+            { "id": "m3m-altitude", "name": "M3M Altitude", "developer": "M3M India Pvt Ltd", "sector": "Sector 65", "corridor": "Golf Course Extension Road", "bhk": ["3 BHK", "4 BHK", "Penthouse"], "area": 2.79, "units": 342, "status": "Under Construction", "priceMin": 9.46, "priceMax": 11.31, "score": 27, "carpetEff": 57, "builtupEff": 73, "img": "m3m_altitude_hero.png", "lat": 28.4124, "lng": 77.0724, "targetSegment": "Ultra Luxury" },
+            { "id": "mahindra-luminare", "name": "Mahindra Luminare", "developer": "Mahindra Lifespaces", "sector": "Sector 59", "corridor": "Golf Course Extension Road", "bhk": ["3 BHK", "4 BHK", "Penthouse"], "area": 6.94, "units": 380, "status": "Ready to Move In", "priceMin": 6.5, "priceMax": 9.0, "score": 68, "carpetEff": 56, "builtupEff": 76, "img": "m3m_altitude_balcony.png", "lat": 28.4215, "lng": 77.1002, "targetSegment": "Luxury" },
+            { "id": "sobha-city", "name": "Sobha City", "developer": "Sobha Limited", "sector": "Sector 108", "corridor": "Dwarka Expressway", "bhk": ["2 BHK", "3 BHK"], "area": 23.0, "units": 1056, "status": "Ready to Move In", "priceMin": 2.2, "priceMax": 2.9, "score": 24, "carpetEff": 57, "builtupEff": 64, "img": "m3m_altitude_lobby.png", "lat": 28.517407, "lng": 76.9944, "targetSegment": "Luxury" },
+            { "id": "tata-la-vida", "name": "Tata La Vida", "developer": "Tata Housing", "sector": "Sector 113", "corridor": "Dwarka Expressway", "bhk": ["2 BHK", "3 BHK"], "area": 12.0, "units": 674, "status": "Ready to Move In", "priceMin": 1.5, "priceMax": 2.3, "score": 23, "carpetEff": 59, "builtupEff": 71, "img": "m3m_altitude_lounge.png", "lat": 28.534515, "lng": 77.02028, "targetSegment": "Premium" },
+            { "id": "dlf-privana-south", "name": "DLF Privana South", "developer": "DLF Limited", "sector": "Sector 77", "corridor": "Southern Peripheral Road", "bhk": ["4 BHK", "Penthouse"], "area": 25.14, "units": 1113, "status": "Under Construction", "priceMin": 7.2, "priceMax": 9.5, "score": 59, "carpetEff": 59, "builtupEff": 76, "img": "m3m_altitude_hero.png", "lat": 28.380354, "lng": 76.990843, "targetSegment": "Ultra Luxury" },
+            { "id": "parq-by-conscient", "name": "Conscient ParQ", "developer": "Conscient Infrastructure", "sector": "Sector 80", "corridor": "Southern Peripheral Road", "bhk": ["2 BHK", "3 BHK", "4 BHK"], "area": 5.6, "units": 448, "status": "Under Construction", "priceMin": 3.5, "priceMax": 4.8, "score": 50, "carpetEff": 55, "builtupEff": 69, "img": "m3m_altitude_balcony.png", "lat": 28.374274, "lng": 76.961834, "targetSegment": "Luxury" },
+            { "id": "dlf-carlton-estate", "name": "DLF Carlton Estate", "developer": "DLF Limited", "sector": "Sector 54", "corridor": "Golf Course Road", "bhk": ["2 BHK", "3 BHK", "4 BHK"], "area": 7.2, "units": 650, "status": "Ready to Move In", "priceMin": 3.2, "priceMax": 4.5, "score": 22, "carpetEff": 60, "builtupEff": 70, "img": "m3m_altitude_lobby.png", "lat": 28.447892, "lng": 77.094594, "targetSegment": "Luxury" },
+            { "id": "central-park-ii-bellevue", "name": "Central Park II Bellevue", "developer": "Central Park", "sector": "Sector 48", "corridor": "Sohna Road", "bhk": ["3 BHK", "4 BHK"], "area": 12.5, "units": 350, "status": "Ready to Move In", "priceMin": 3.8, "priceMax": 4.9, "score": 20, "carpetEff": 58, "builtupEff": 68, "img": "m3m_altitude_lounge.png", "lat": 28.414324, "lng": 77.043512, "targetSegment": "Luxury" }
+        ];
+
+        const INFRASTRUCTURE_MOCK = {
+            "tarc-ishva": { "transit": "Rapid Metro Sector 55-56 (6 km) · Huda City Centre Metro (10 km) · IGI Airport (23 km)", "cbds": "WorldMark 2 (2 km) · Cyber Hub / Cyber City (15 km)", "schools": "Heritage Xperiential (2 km) · St. Xavier's High School (3 km)", "healthcare": "CK Birla Hospital (6 km) · Marengo Asia Hospital (6 km)", "hospitality": "Hotel Grand Hyatt (6 km)" },
+            "trump-tower-gurgaon": { "transit": "Rapid Metro Sector 55-56 (5 km) · Huda City Centre Metro (9 km) · IGI Airport (22 km)", "cbds": "WorldMark 2 (1 km) · Cyber Hub / Cyber City (14 km)", "schools": "Shriram Millennium School (2 km) · St. Xavier's High School (2 km) · Heritage Xperiential (3 km)", "healthcare": "CK Birla Hospital (5 km) · Marengo Asia Hospital (5 km) · Fortis Hospital (9 km)", "hospitality": "Hotel Grand Hyatt (5 km)" },
+            "dlf-the-arbour": { "transit": "Rapid Metro Sector 55-56 (4 km) · Huda City Centre Metro (8 km) · IGI Airport (21 km)", "cbds": "WorldMark 2 (1.5 km) · Cyber Hub / Cyber City (13 km)", "schools": "Heritage Xperiential (1 km) · Shriram Millennium (2 km)", "healthcare": "Marengo Asia Hospital (3 km) · CK Birla Hospital (4 km)", "hospitality": "Hotel Grand Hyatt (4 km)" },
+            "m3m-altitude": { "transit": "Rapid Metro Sector 55-56 (5 km) · Huda City Centre Metro (9 km) · IGI Airport (22 km)", "cbds": "WorldMark 2 (1.2 km) · Cyber Hub / Cyber City (14 km)", "schools": "Heritage Xperiential (1.1 km) · Shriram Millennium (2 km)", "healthcare": "CK Birla Hospital (4.8 km) · Marengo Asia Hospital (5 km)", "hospitality": "Hotel Grand Hyatt (5 km)" },
+            "mahindra-luminare": { "transit": "Rapid Metro Sector 55-56 (3 km) · Huda City Centre Metro (7 km) · IGI Airport (20 km)", "cbds": "WorldMark 2 (2.5 km) · Cyber Hub / Cyber City (12 km)", "schools": "St. Xavier's High School (1.5 km) · Heritage Xperiential (2.2 km)", "healthcare": "Marengo Asia Hospital (4 km) · CK Birla Hospital (4 km)", "hospitality": "Hotel Grand Hyatt (3 km)" },
+            "sobha-city": { "transit": "Dwarka Sector 21 Metro (8 km) · IGI Airport (15 km)", "cbds": "Aerocity (12 km) · Cyber City (17 km)", "schools": "Delhi Public School (Sector 102) (3 km) · Mount Olympus School (2 km)", "healthcare": "Signature Advanced Super Speciality Hospital (4 km)", "hospitality": "The Leela Ambience (15 km)" },
+            "tata-la-vida": { "transit": "Dwarka Sector 21 Metro (7 km) · IGI Airport (14 km)", "cbds": "Aerocity (11 km) · Cyber City (16 km)", "schools": "Delhi Public School (Sector 102) (4 km) · Mount Olympus School (3 km)", "healthcare": "Signature Advanced Super Speciality Hospital (3 km)", "hospitality": "The Leela Ambience (14 km)" },
+            "dlf-privana-south": { "transit": "Rapid Metro Sector 55-56 (9 km) · Huda City Centre Metro (12 km)", "cbds": "Southern Peripheral CBD (2 km) · Cyber City (19 km)", "schools": "LPS Global School (1 km) · GD Goenka Signature (3 km)", "healthcare": "Medanta The Medicity (10 km) · Polaris Hospital (3 km)", "hospitality": "Hyatt Regency (6 km)" },
+            "parq-by-conscient": { "transit": "Rapid Metro Sector 55-56 (10 km) · Huda City Centre Metro (13 km)", "cbds": "Southern Peripheral CBD (3 km) · Cyber City (20 km)", "schools": "LPS Global School (2 km) · GD Goenka Signature (4 km)", "healthcare": "Medanta The Medicity (11 km) · Polaris Hospital (2 km)", "hospitality": "Hyatt Regency (5 km)" },
+            "dlf-carlton-estate": { "transit": "Rapid Metro Sector 54 (0.5 km) · Huda City Centre (5 km)", "cbds": "Golf Course Road (0.1 km) · Cyber City (6 km)", "schools": "The Shiv Nadar School (2 km) · Pathways School (3 km)", "healthcare": "Fortis Hospital (5 km) · Max Hospital (5 km)", "hospitality": "DoubleTree by Hilton (1 km)" },
+            "central-park-ii-bellevue": { "transit": "Huda City Centre Metro (5 km) · Sector 54 Rapid Metro (6 km)", "cbds": "Sohna Road Commercial Hub (0.5 km) · Cyber City (11 km)", "schools": "GD Goenka Public School (1.5 km) · Pathways School (4 km)", "healthcare": "Park Hospital (1 km) · Medanta The Medicity (4 km)", "hospitality": "Hilton Garden Inn (1 km)" }
+        };
+
+        const PROJECT_VERDICTS = {
+            "tarc-ishva": { "bestFor": "Luxury buyers prioritizing connectivity and space efficiency", "verdict": "Tarc Ishva represents a highly balanced luxury offering on Golf Course Extension Road. With strong carpet efficiency and a moderate density layout, it provides a high-reliability option for mid-to-high budget families looking for under-construction capital growth." },
+            "trump-tower-gurgaon": { "bestFor": "Affluent buyers focused on ultra luxury brands", "verdict": "Trump Tower in Gurgaon represents a flagship luxury development situated in the prestigious Golf Course Extension Road corridor. Its status as a ready-to-move-in asset with global brand backing makes it a highly liquid option for elite investors and expats." },
+            "dlf-the-arbour": { "bestFor": "Ultra luxury buyers seeking massive community scale", "verdict": "DLF The Arbour is a sprawling premium development on Golf Course Extension Road. Its scale, coupled with DLF's brand credibility, commands a high premium. It is ideal for long-term investors looking for institutional-grade township security." },
+            "m3m-altitude": { "bestFor": "High-end buyers looking for boutique ultra-luxury styling", "verdict": "M3M Altitude offers high-density vertical luxury with premium fittings and a boutique feel. Its modern architecture and prime Golf Course Extension Road positioning make it a compelling premium luxury buy." },
+            "mahindra-luminare": { "bestFor": "Luxury buyers prioritizing ready possession and low density", "verdict": "Mahindra Lifespaces' ready-to-move asset boasts extremely low density. It is perfect for immediate occupancy by families seeking premium privacy and established community living." },
+            "sobha-city": { "bestFor": "Active lifestyle buyers seeking reliable construction quality", "verdict": "Sobha City Dwarka Expressway provides excellent sports-centric amenities and legendary Sobha construction quality. It is ready for occupancy and highly recommended for families focusing on sports and open spaces." },
+            "tata-la-vida": { "bestFor": "Premium buyers seeking mid-market trusted brand security", "verdict": "Tata La Vida is a ready-to-move premium development offering high-trust Tata branding at a reasonable entry price. Ideal for mid-market buyers prioritizing green landscaping and immediate possession." },
+            "dlf-privana-south": { "bestFor": "Luxury investors targeting rapid growth in SPR corridor", "verdict": "DLF Privana South is an under-construction project in the high-potential SPR corridor. It represents an excellent investment play for capital appreciation over the next 4 years." },
+            "parq-by-conscient": { "bestFor": "Premium family living with focus on aesthetic landscaping", "verdict": "Conscient ParQ offers an under-construction premium ecosystem with well-planned landscapes. It targets buyers who want a premium product with established developer pedigree." },
+            "dlf-carlton-estate": { "bestFor": "Commercial professionals seeking GCR walking-distance", "verdict": "DLF Carlton Estate is an established, ready-to-move project on Golf Course Road. Its unbeatable location ensures high rental yield and perpetual demand." },
+            "central-park-ii-bellevue": { "bestFor": "Families prioritizing rich community landscape amenities", "verdict": "Central Park II Bellevue is a ready-to-move luxury project on Sohna Road with extensive park landscaping and resort-style living." }
+        };
+
+        let selectedProjects = [null, null, null];
+        let highlightWinnersMode = false;
+        let accordionStates = { "acc-overview": true, "acc-product": true, "acc-infra": false, "acc-price": true, "acc-scores": false };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initFromURL();
+            renderSelectors();
+            renderMatrix();
+            renderRecommendations();
+            updateReportHeader();
+            updateCTAs();
+        });
+
+        function initFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const idsStr = params.get('ids');
+            if (idsStr) {
+                const ids = idsStr.split(',').slice(0, 3);
+                ids.forEach((id, idx) => {
+                    const match = PROJECTS.find(p => p.id === id);
+                    if (match) selectedProjects[idx] = match;
+                });
+            }
+        }
+
+        function updateURL() {
+            const activeIds = selectedProjects.filter(p => p !== null).map(p => p.id);
+            const newURL = window.location.pathname + (activeIds.length > 0 ? '?ids=' + activeIds.join(',') : '');
+            window.history.replaceState({}, '', newURL);
+        }
+
+        function renderSelectors() {
+            for (let i = 0; i < 3; i++) {
+                const emptyEl = document.getElementById(`empty-selector-${i}`);
+                const cardEl = document.getElementById(`selected-card-${i}`);
+                const inputEl = document.getElementById(`input-selector-${i}`);
+                const proj = selectedProjects[i];
+                if (proj) {
+                    emptyEl.classList.add('hidden');
+                    cardEl.classList.remove('hidden');
+                    document.getElementById(`selected-img-${i}`).src = proj.img;
+                    document.getElementById(`selected-name-${i}`).innerText = proj.name;
+                    document.getElementById(`selected-dev-${i}`).innerText = proj.developer;
+                    document.getElementById(`table-col-header-${i}`).innerText = proj.name;
+                } else {
+                    emptyEl.classList.remove('hidden');
+                    cardEl.classList.add('hidden');
+                    inputEl.value = '';
+                    document.getElementById(`table-col-header-${i}`).innerText = `Slot ${i + 1}`;
+                }
+            }
+        }
+
+        function handleSearchInput(slotIdx) {
+            const inputEl = document.getElementById(`input-selector-${slotIdx}`);
+            const dropdownEl = document.getElementById(`dropdown-${slotIdx}`);
+            const query = inputEl.value.trim().toLowerCase();
+            if (query.length === 0) { dropdownEl.innerHTML = ''; dropdownEl.classList.add('hidden'); return; }
+            const selectedIds = selectedProjects.filter(p => p !== null).map(p => p.id);
+            const matches = PROJECTS.filter(p => !selectedIds.includes(p.id) && (p.name.toLowerCase().includes(query) || p.developer.toLowerCase().includes(query)));
+            if (matches.length === 0) {
+                dropdownEl.innerHTML = `<div class="p-3 text-xs text-slate-400">No projects found</div>`;
+            } else {
+                dropdownEl.innerHTML = matches.map(p => `
+                    <div onclick="selectProject(${slotIdx}, '${p.id}')" class="p-3 hover:bg-slate-50 cursor-pointer flex items-center gap-2 border-b border-slate-100 last:border-0 transition-colors">
+                        <img src="${p.img}" class="w-6 h-6 rounded object-cover bg-slate-100 flex-shrink-0"/>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900">${p.name}</div>
+                            <div class="text-[9px] text-slate-500">${p.developer} · ${p.sector}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            dropdownEl.classList.remove('hidden');
+        }
+
+        function handleSearchFocus(slotIdx) { setTimeout(() => handleSearchInput(slotIdx), 100); }
+        function handleSearchBlur(slotIdx) { setTimeout(() => document.getElementById(`dropdown-${slotIdx}`).classList.add('hidden'), 200); }
+
+        function selectProject(slotIdx, projectId) {
+            const match = PROJECTS.find(p => p.id === projectId);
+            if (match) {
+                selectedProjects[slotIdx] = match;
+                updateURL(); renderSelectors(); updateReportHeader(); renderMatrix(); renderRecommendations(); updateCTAs();
+            }
+        }
+
+        function removeProject(slotIdx) {
+            selectedProjects[slotIdx] = null;
+            updateURL(); renderSelectors(); updateReportHeader(); renderMatrix(); renderRecommendations(); updateCTAs();
+        }
+
+        function updateReportHeader() {
+            const activeProjects = selectedProjects.filter(p => p !== null);
+            const titleEl = document.getElementById('reportTitle');
+            const bestPickContent = document.getElementById('bestPickContent');
+            const bestPickContainer = document.getElementById('bestPickContainer');
+            if (activeProjects.length === 0) {
+                titleEl.innerText = 'Select Projects to Compare';
+                bestPickContent.innerHTML = 'Select at least two projects to view our data-backed recommendation.';
+                bestPickContainer.classList.add('opacity-50');
+            } else {
+                titleEl.innerText = activeProjects.map(p => p.name).join(' vs ');
+                if (activeProjects.length >= 2) {
+                    bestPickContainer.classList.remove('opacity-50');
+                    const sorted = [...activeProjects].sort((a, b) => b.score - a.score);
+                    const best = sorted[0];
+                    bestPickContent.innerHTML = `<div class="flex items-center gap-2 mb-2"><span class="text-xs font-extrabold text-white bg-secondary-container px-2 py-0.5 rounded">${best.score} Pts</span><span class="font-bold text-white text-sm block">${best.name}</span></div><p class="text-[10px] text-slate-300 leading-normal">Top Pick: Highest prOPIUM Score based on a high carpet efficiency (${best.carpetEff}%) and superior builder delivery credentials.</p>`;
+                } else {
+                    bestPickContent.innerHTML = 'Add one more project to calculate the top recommendation pick.';
+                    bestPickContainer.classList.add('opacity-50');
+                }
+            }
+        }
+
+        function toggleAccordion(accId) {
+            accordionStates[accId] = !accordionStates[accId];
+            const contentEl = document.getElementById(`content-${accId}`);
+            const iconEl = document.getElementById(`icon-${accId}`);
+            if (accordionStates[accId]) { contentEl.classList.remove('hidden'); iconEl.style.transform = 'rotate(0deg)'; }
+            else { contentEl.classList.add('hidden'); iconEl.style.transform = 'rotate(-90deg)'; }
+        }
+
+        function toggleWinners() {
+            highlightWinnersMode = !highlightWinnersMode;
+            const btn = document.getElementById('toggleWinnerBtn');
+            if (highlightWinnersMode) { btn.classList.add('bg-secondary-container', 'text-slate-950'); btn.classList.remove('bg-white/5', 'text-white'); }
+            else { btn.classList.remove('bg-secondary-container', 'text-slate-950'); btn.classList.add('bg-white/5', 'text-white'); }
+            renderMatrix();
+        }
+
+        function renderMatrix() {
+            const activeProjects = selectedProjects.filter(p => p !== null);
+            let bestCarpetIdx = -1, lowestPriceIdx = -1, highestScoreIdx = -1, lowestDensityIdx = -1;
+            if (activeProjects.length > 0) {
+                let maxCarpet = -1, minPrice = 999, maxScore = -1, minDensity = 999;
+                selectedProjects.forEach((p, idx) => {
+                    if (p) {
+                        const density = Math.round(p.units / p.area);
+                        if (p.carpetEff > maxCarpet) { maxCarpet = p.carpetEff; bestCarpetIdx = idx; }
+                        if (p.priceMin < minPrice) { minPrice = p.priceMin; lowestPriceIdx = idx; }
+                        if (p.score > maxScore) { maxScore = p.score; highestScoreIdx = idx; }
+                        if (density < minDensity) { minDensity = density; lowestDensityIdx = idx; }
+                    }
+                });
+            }
+
+            for (let i = 0; i < 3; i++) {
+                const p = selectedProjects[i];
+                const cells = {
+                    dev: document.getElementById(`val-overview-dev-${i}`), loc: document.getElementById(`val-overview-loc-${i}`),
+                    status: document.getElementById(`val-overview-status-${i}`), poss: document.getElementById(`val-overview-poss-${i}`),
+                    area: document.getElementById(`val-overview-area-${i}`), units: document.getElementById(`val-overview-units-${i}`),
+                    density: document.getElementById(`val-overview-density-${i}`), bhk: document.getElementById(`val-product-bhk-${i}`),
+                    carpet: document.getElementById(`val-product-carpet-${i}`), builtup: document.getElementById(`val-product-builtup-${i}`),
+                    transit: document.getElementById(`val-infra-transit-${i}`), cbds: document.getElementById(`val-infra-cbds-${i}`),
+                    schools: document.getElementById(`val-infra-schools-${i}`), health: document.getElementById(`val-infra-health-${i}`),
+                    hospitality: document.getElementById(`val-infra-hospitality-${i}`), range: document.getElementById(`val-price-range-${i}`),
+                    psft: document.getElementById(`val-price-psft-${i}`), segment: document.getElementById(`val-price-segment-${i}`),
+                    overall: document.getElementById(`val-score-overall-${i}`), cred: document.getElementById(`val-score-credibility-${i}`),
+                    time: document.getElementById(`val-score-timeline-${i}`),
+                    scoreCard: document.getElementById(`score-card-${i}`), scoreEmpty: document.getElementById(`score-empty-${i}`),
+                    scoreFilled: document.getElementById(`score-filled-${i}`), scoreName: document.getElementById(`score-name-${i}`),
+                    scoreBestFor: document.getElementById(`score-best-for-${i}`), scoreVal: document.getElementById(`score-value-${i}`),
+                    scoreRing: document.getElementById(`score-ring-${i}`), aiSummaryCard: document.getElementById(`ai-summary-card-${i}`),
+                    aiSummaryTitle: document.getElementById(`ai-summary-title-${i}`), aiSummaryText: document.getElementById(`ai-summary-text-${i}`)
+                };
+
+                Object.values(cells).forEach(cell => {
+                    if (cell && cell.classList) cell.classList.remove('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-700', 'font-extrabold', 'rounded-xl', 'p-1');
+                });
+
+                if (p) {
+                    const infra = INFRASTRUCTURE_MOCK[p.id] || {};
+                    const verdicts = PROJECT_VERDICTS[p.id] || {};
+                    const density = Math.round(p.units / p.area);
+                    const densityRating = density < 30 ? "Excellent" : (density < 60 ? "Good" : "Average");
+
+                    cells.dev.innerText = p.developer;
+                    cells.loc.innerText = `${p.sector} · ${p.corridor}`;
+                    cells.status.innerHTML = `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${p.status === 'Ready to Move In' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-amber-50 text-amber-600 border border-amber-200'}">${p.status}</span>`;
+                    cells.poss.innerText = p.status === 'Ready to Move In' ? 'Immediate' : '2029-2030';
+                    cells.area.innerText = `${p.area} Acres`;
+                    cells.units.innerText = `~${p.units} units`;
+                    cells.density.innerHTML = `<div class="flex flex-col items-center"><span class="font-bold">${density} / acre</span><span class="text-[9px] font-semibold text-slate-450">${densityRating}</span></div>`;
+                    if (highlightWinnersMode && i === lowestDensityIdx) cells.density.classList.add('bg-emerald-500/10', 'text-emerald-700', 'font-extrabold', 'rounded-xl', 'p-1');
+
+                    cells.bhk.innerText = p.bhk.join(', ');
+                    cells.carpet.innerText = `${p.carpetEff}%`;
+                    if (highlightWinnersMode && i === bestCarpetIdx) cells.carpet.classList.add('bg-emerald-500/10', 'text-emerald-700', 'font-extrabold', 'rounded-xl', 'p-1');
+                    cells.builtup.innerText = `${p.builtupEff}%`;
+
+                    cells.transit.innerText = infra.transit || '—';
+                    cells.cbds.innerText = infra.cbds || '—';
+                    cells.schools.innerText = infra.schools || '—';
+                    cells.health.innerText = infra.health || '—';
+                    cells.hospitality.innerText = infra.hospitality || '—';
+
+                    cells.range.innerText = `₹${p.priceMin} - ${p.priceMax} Cr`;
+                    if (highlightWinnersMode && i === lowestPriceIdx) cells.range.classList.add('bg-emerald-500/10', 'text-emerald-700', 'font-extrabold', 'rounded-xl', 'p-1');
+
+                    const estimatedPsft = Math.round((p.priceMin * 10000000) / 2000);
+                    cells.psft.innerText = `₹${estimatedPsft.toLocaleString('en-IN')} / sq ft`;
+                    cells.segment.innerText = p.targetSegment;
+
+                    cells.overall.innerText = `${p.score} / 100`;
+                    if (highlightWinnersMode && i === highestScoreIdx) cells.overall.classList.add('bg-emerald-500/10', 'text-emerald-700', 'font-extrabold', 'rounded-xl', 'p-1');
+                    cells.cred.innerText = p.score > 70 ? 'AAA (High Credibility)' : (p.score > 40 ? 'A (Moderate)' : 'B (Low/Unrated)');
+                    cells.time.innerText = p.status === 'Ready to Move In' ? '100% Complete' : 'On-Track (80%)';
+
+                    cells.scoreCard.classList.remove('opacity-40');
+                    cells.scoreEmpty.classList.add('hidden');
+                    cells.scoreFilled.classList.remove('hidden');
+                    cells.scoreName.innerText = p.name;
+                    cells.scoreBestFor.innerText = verdicts.bestFor || 'Premium Choice';
+                    cells.scoreVal.innerText = p.score;
+                    const circleDash = 175.9;
+                    const offset = circleDash - (circleDash * p.score / 100);
+                    cells.scoreRing.innerHTML = `<svg class="w-12 h-12 transform -rotate-90"><circle cx="24" cy="24" r="20" stroke="rgba(226,232,240,0.5)" stroke-width="4" fill="transparent"/><circle cx="24" cy="24" r="20" stroke="#006AFF" stroke-width="4" fill="transparent" stroke-dasharray="${circleDash}" stroke-dashoffset="${offset}"/></svg>`;
+
+                    cells.aiSummaryCard.classList.remove('opacity-40');
+                    cells.aiSummaryTitle.innerText = `${p.name} Verdict`;
+                    cells.aiSummaryText.innerText = verdicts.verdict || 'No advisory verdict generated yet.';
+                } else {
+                    Object.keys(cells).forEach(key => {
+                        if (cells[key] && key !== 'scoreCard' && key !== 'scoreEmpty' && key !== 'scoreFilled' && key !== 'aiSummaryCard' && key !== 'aiSummaryTitle' && key !== 'aiSummaryText')
+                            cells[key].innerText = '—';
+                    });
+                    cells.scoreCard.classList.add('opacity-40');
+                    cells.scoreEmpty.classList.remove('hidden');
+                    cells.scoreFilled.classList.add('hidden');
+                    cells.aiSummaryCard.classList.add('opacity-40');
+                    cells.aiSummaryTitle.innerText = `Slot ${i + 1} Empty`;
+                    cells.aiSummaryText.innerText = 'Select a project to load its intelligence summary.';
+                }
+            }
+        }
+
+        function renderRecommendations() {}
+
+        function updateCTAs() {
+            for (let i = 0; i < 3; i++) {
+                const ctaEl = document.getElementById(`cta-slot-${i}`);
+                const p = selectedProjects[i];
+                if (p) {
+                    ctaEl.classList.remove('opacity-40');
+                    const targetLink = p.id === 'm3m-altitude' ? '/m3m-developer' : '/golf-course-extension';
+                    ctaEl.innerHTML = `<a href="${targetLink}" class="w-full text-center py-2.5 bg-brandBlue hover:bg-[#0250C7] text-white text-xs font-bold transition-all rounded-xl uppercase tracking-wider block shadow-sm">Explore Audit</a>`;
+                } else {
+                    ctaEl.classList.add('opacity-40');
+                    ctaEl.innerHTML = `<button disabled class="w-full py-2.5 border border-slate-200 bg-slate-50 text-slate-400 text-xs font-bold transition-all rounded-xl uppercase tracking-wider cursor-not-allowed">Explore Audit</button>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

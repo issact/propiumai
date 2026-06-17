@@ -12,4 +12,22 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Explicitly enable nitro so the cloudflare-module deploy build runs even when
+  // LOVABLE_SANDBOX / DEV_SERVER__PROJECT_PATH env vars are not set.
+  nitro: {
+    preset: "cloudflare-module",
+    output: { dir: "dist", serverDir: "dist/server", publicDir: "dist/client" },
+    // deployConfig generates .wrangler/deploy/config.json at project root, which Bolt's
+    // deployment pipeline reads to locate dist/server/wrangler.json. Wrangler must be
+    // invoked from dist/ (not dist/server/) to avoid a "different base path" conflict —
+    // dist/nitro.json's deploy command ("npx wrangler --cwd ./ deploy") does exactly this.
+    cloudflare: { nodeCompat: true },
+  },
+  vite: {
+    server: {
+      // Fail loudly if port 8080 is taken instead of silently moving to 8081,
+      // which would break the Bolt preview iframe.
+      strictPort: true,
+    },
+  },
 });

@@ -1,0 +1,3244 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Property Audits Directory | prOPIUM.ai</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Leaflet.js Assets -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0F172A", // Slate Navy
+                        "secondary-container": "#F59E0B", // Amber Gold
+                        background: "#F8FAFC", // Light Slate Canvas
+                        "surface-bright": "#F8FAFC",
+                        "on-surface-variant": "#64748B", // Muted slate gray
+                        "on-surface": "#0F172A",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#F1F5F9",
+                        "surface-container": "#E2E8F0",
+                        "outline-variant": "#E2E8F0",
+                        error: "#E11D48",
+                        brandBlue: "#006AFF" // Accent telemetry blue
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.125rem",
+                        lg: "0.25rem",
+                        xl: "0.5rem",
+                        full: "0.75rem"
+                    },
+                    spacing: {
+                        "stack-md": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "48px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        gutter: "32px",
+                        unit: "4px",
+                        "stack-sm": "8px"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Outfit", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .blueprint-grid {
+            background-size: 24px 24px;
+            background-image: radial-gradient(circle, #E2E8F0 1px, transparent 1px);
+        }
+        .strip::-webkit-scrollbar {
+            display: none;
+        }
+        .strip {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Custom map pin style */
+        .custom-map-pin {
+            background: none;
+            border: none;
+        }
+        .custom-select-dark {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+            padding-right: 2rem;
+            appearance: none;
+        }
+        /* Leaflet popup customization */
+        .leaflet-popup-content-wrapper {
+            background: #0F172A !important;
+            color: #FFFFFF !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+            padding: 2px !important;
+        }
+        .leaflet-popup-tip {
+            background: #0F172A !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+    
+        /* Dual-handle slider container styling */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 16px;
+        }
+        .slider-container input[type="range"] {
+            pointer-events: none;
+            position: absolute;
+            height: 0;
+            width: 100%;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            background: none;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0;
+            z-index: 20;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            pointer-events: auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #F59E0B; /* Amber Gold */
+            border: 2px solid #0F172A; /* Slate Navy */
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(0.95);
+        }
+        .slider-container input[type="range"]::-moz-range-thumb {
+            pointer-events: auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #F59E0B;
+            border: 2px solid #0F172A;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        .slider-track-bg {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .slider-track-fill {
+            position: absolute;
+            height: 4px;
+            background: #F59E0B;
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 11;
+        }
+
+        /* Dual-handle slider container styling */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 16px;
+        }
+        .slider-container input[type="range"] {
+            pointer-events: none;
+            position: absolute;
+            height: 0;
+            width: 100%;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            background: none;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0;
+            z-index: 20;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            pointer-events: auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #F59E0B; /* Amber Gold */
+            border: 2px solid #0F172A; /* Slate Navy */
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(0.95);
+        }
+        .slider-container input[type="range"]::-moz-range-thumb {
+            pointer-events: auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #F59E0B;
+            border: 2px solid #0F172A;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        .slider-track-bg {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .slider-track-fill {
+            position: absolute;
+            height: 4px;
+            background: #F59E0B;
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 11;
+        }
+
+        /* Dual-handle slider container styling */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 16px;
+        }
+        .slider-container input[type="range"] {
+            pointer-events: none;
+            position: absolute;
+            height: 0;
+            width: 100%;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            background: none;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0;
+            z-index: 20;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            pointer-events: auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #F59E0B; /* Amber Gold */
+            border: 2px solid #0F172A; /* Slate Navy */
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(0.95);
+        }
+        .slider-container input[type="range"]::-moz-range-thumb {
+            pointer-events: auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #F59E0B;
+            border: 2px solid #0F172A;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        .slider-track-bg {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .slider-track-fill {
+            position: absolute;
+            height: 4px;
+            background: #F59E0B;
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 11;
+        }
+
+        /* Dual-handle slider container styling */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 16px;
+        }
+        .slider-container input[type="range"] {
+            pointer-events: none;
+            position: absolute;
+            height: 0;
+            width: 100%;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            background: none;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0;
+            z-index: 20;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            pointer-events: auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #F59E0B; /* Amber Gold */
+            border: 2px solid #0F172A; /* Slate Navy */
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(0.95);
+        }
+        .slider-container input[type="range"]::-moz-range-thumb {
+            pointer-events: auto;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #F59E0B;
+            border: 2px solid #0F172A;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        .slider-track-bg {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .slider-track-fill {
+            position: absolute;
+            height: 4px;
+            background: #F59E0B;
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 11;
+        }
+
+        /* Premium custom scrollbar for popover menus */
+        .multiselect-popover::-webkit-scrollbar {
+            width: 4px;
+        }
+        .multiselect-popover::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        .multiselect-popover::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+        .multiselect-popover::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Float menu shadow transition */
+        .multiselect-popover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.15s ease-out;
+        }
+</style>
+</head>
+<body class="bg-background text-[#0F172A] font-sans antialiased min-h-screen flex flex-col md:pt-16 relative blueprint-grid">
+
+    <!-- Top Navigation Bar -->
+    <header class="hidden fixed top-0 w-full z-50 backdrop-blur-md bg-[#0F172A]/85 border-b border-white/10 shadow-sm text-white">
+        <div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto w-full">
+            <div class="flex items-center gap-stack-md">
+                <a href="/home" class="flex items-center gap-1 font-bold text-xl tracking-tight text-white hover:opacity-90">
+                    prOPIUM<span class="text-secondary-container">.ai</span>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 items-center">
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/home">Home</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider flex items-center gap-1" href="/ai-search">
+                    AI Search
+                    <span class="text-[9px] bg-amber-500/20 text-secondary-container px-2 py-0.5 rounded-full font-bold">BETA</span>
+                </a>
+                <a class="font-sans text-xs font-semibold text-white border-b-2 border-secondary-container pb-1 uppercase tracking-wider" href="/projects">Search</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/compare">Compare</a>
+            </nav>
+            <div class="flex items-center gap-stack-sm">
+                <div class="flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/10 rounded-full text-white">
+                    <span class="material-symbols-outlined text-sm">account_circle</span>
+                    <span class="font-sans text-xs font-semibold">Sahil Rajan</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-container-max mx-auto px-6 lg:px-margin-desktop py-8 w-full flex-grow flex flex-col gap-6">
+        
+        <!-- Breadcrumb Navigation -->
+        <nav class="text-xs text-slate-500 flex items-center gap-2">
+            <a href="/home" class="hover:text-primary transition-colors">Home</a>
+            <span class="text-slate-300">/</span>
+            <span class="text-slate-700 font-medium">Projects Directory</span>
+        </nav>
+
+        <!-- Page Header -->
+        <div class="space-y-1">
+            <h1 class="text-3xl font-extrabold font-display text-primary tracking-tight">Property Audits Directory</h1>
+            <p class="text-slate-500 text-sm max-w-2xl">
+                Explore Gurgaon's premium residential developments. Search independent builder scorecards, construction timelines, and carpet efficiency.
+            </p>
+        </div>
+
+        <!-- Search Console (Dark Panel) -->
+        <section class="bg-primary text-white p-4 sm:p-6 rounded-2xl shadow-xl border border-white/10 space-y-4">
+            
+            <!-- Primary Search Row -->
+            <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+                
+                                                                                <!-- Search Bar Input -->
+                <div class="flex-grow flex items-center bg-white border-2 border-secondary-container rounded-full pl-5 pr-2 py-1.5 shadow-md focus-within:ring-2 focus-within:ring-secondary-container/20 transition-all">
+                    <span class="material-symbols-outlined text-secondary-container mr-3 text-xl select-none">auto_awesome</span>
+                    <input id="searchInput" type="text" placeholder="Search project name, developer, or location... (or try AI query: '3 bhk ready under 10 cr')" class="w-full bg-transparent border-0 focus:ring-0 text-sm text-slate-800 placeholder-slate-400 p-0 outline-none">
+                    <button onclick="document.getElementById('searchInput').focus()" class="w-9 h-9 bg-secondary-container hover:bg-amber-600 text-primary rounded-full flex items-center justify-center transition-colors shrink-0 shadow-sm ml-2">
+                        <span class="material-symbols-outlined text-lg font-bold">search</span>
+                    </button>
+                </div>
+                <!-- AI Chips Overlay Container -->
+                <div id="aiChipsContainer" class="hidden pt-1 px-2"></div>
+
+                <!-- Advanced Filters Toggle -->
+                <button onclick="toggleFilters()" class="px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-sm text-secondary-container">tune</span>
+                    Advanced Filters
+                    <span id="filterChevron" class="material-symbols-outlined text-xs transition-transform duration-200">keyboard_arrow_down</span>
+                </button>
+
+                <!-- Results Counter & Controls -->
+                <div class="flex items-center justify-between lg:justify-end gap-4">
+                    <div class="text-xs text-slate-300 font-medium whitespace-nowrap">
+                        <span id="resultsCount" class="font-display font-bold text-sm text-secondary-container">5</span> audits match
+                    </div>
+                    
+                    <button id="clearFiltersBtn" onclick="clearFilters()" disabled class="px-4 py-2 text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-white transition-all text-xs font-bold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+                        Clear
+                    </button>
+
+                    <!-- View Switcher -->
+                    <div class="bg-slate-950/60 p-1 border border-white/10 rounded-xl flex gap-0.5">
+                        <button onclick="setView('cards')" id="viewBtnCards" class="p-2 rounded-lg text-secondary-container bg-white/10 shadow-sm transition-all" title="Cards View">
+                            <span class="material-symbols-outlined text-sm block leading-none">grid_view</span>
+                        </button>
+                        <button onclick="setView('list')" id="viewBtnList" class="p-2 rounded-lg text-slate-400 hover:text-white transition-all" title="List View">
+                            <span class="material-symbols-outlined text-sm block leading-none">list</span>
+                        </button>
+                        <button onclick="setView('map')" id="viewBtnMap" class="p-2 rounded-lg text-slate-400 hover:text-white transition-all" title="Map View">
+                            <span class="material-symbols-outlined text-sm block leading-none">map</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide-Down Advanced Filters Grid -->
+            <div id="advancedFiltersGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-5 pt-4 border-t border-white/10 animate-fade-in text-slate-300">
+                
+                <!-- Locality / Sector Multi-Select -->
+                <div class="relative custom-multiselect" id="multiSelectSector">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Locality / Sector</label>
+                    <div onclick="toggleMultiSelect(event, 'multiSelectSector')" class="multiselect-btn w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2 px-3 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span class="multiselect-label truncate">All Locations</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div class="multiselect-popover absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 65" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 65
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 63" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 63
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 63A" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 63A
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 59" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 59
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 108" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 108
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 113" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 113
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 77" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 77
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 80" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 80
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 54" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 54
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sector 48" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sector 48
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Construction Status Multi-Select -->
+                <div class="relative custom-multiselect" id="multiSelectStatus">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Construction Status</label>
+                    <div onclick="toggleMultiSelect(event, 'multiSelectStatus')" class="multiselect-btn w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2 px-3 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span class="multiselect-label truncate">All Statuses</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div class="multiselect-popover absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Ready to Move In" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Ready to Move In
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Under Construction" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Under Construction
+                        </label>
+                    </div>
+                </div>
+
+                <!-- BHK Configuration Multi-Select Dropdown -->
+                <div class="relative custom-multiselect" id="multiSelectBHK">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">BHK Configuration</label>
+                    <div onclick="toggleMultiSelect(event, 'multiSelectBHK')" class="multiselect-btn w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2 px-3 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span class="multiselect-label truncate">Any BHK</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div class="multiselect-popover absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="2 BHK" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            2 BHK
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="3 BHK" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            3 BHK
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="4 BHK" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            4 BHK
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Penthouse" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Penthouse
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Budget Range Slider -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Budget Range</label>
+                        <span id="lblBudget" class="text-xs font-bold text-secondary-container">₹1.0 - 25.0 Cr</span>
+                    </div>
+                    <div class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 h-[38px] flex items-center">
+                        <div class="relative w-full h-4 slider-container">
+                            <div class="slider-track-bg"></div>
+                            <div id="trackFillBudget" class="slider-track-fill" style="left: 0%; right: 0%;"></div>
+                            <input type="range" id="sliderBudgetMin" min="1" max="25" value="1" step="0.5" oninput="updateSliders('budget')" class="w-full">
+                            <input type="range" id="sliderBudgetMax" min="1" max="25" value="25" step="0.5" oninput="updateSliders('budget')" class="w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Developer Multi-Select -->
+                <div class="relative custom-multiselect" id="multiSelectDeveloper">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Developer</label>
+                    <div onclick="toggleMultiSelect(event, 'multiSelectDeveloper')" class="multiselect-btn w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2 px-3 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span class="multiselect-label truncate">All Developers</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div class="multiselect-popover absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="M3M India Pvt Ltd" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            M3M India
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="DLF Limited" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            DLF Limited
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="TARC Limited" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            TARC Limited
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Mahindra Lifespaces" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Mahindra Lifespaces
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Sobha Limited" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Sobha Limited
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Tata Housing" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Tata Housing
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Conscient Infrastructure" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Conscient Infrastructure
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Central Park" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Central Park
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Target Segment Multi-Select -->
+                <div class="relative custom-multiselect" id="multiSelectSegment">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Target Segment</label>
+                    <div onclick="toggleMultiSelect(event, 'multiSelectSegment')" class="multiselect-btn w-full bg-white/5 border border-white/10 rounded-xl text-xs font-semibold py-2 px-3 text-slate-200 flex justify-between items-center cursor-pointer select-none hover:border-amber-500 transition-colors">
+                        <span class="multiselect-label truncate">All Segments</span>
+                        <span class="material-symbols-outlined text-xs text-slate-400 select-none">keyboard_arrow_down</span>
+                    </div>
+                    <div class="multiselect-popover absolute z-50 w-full mt-1 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-2 max-h-52 overflow-y-auto space-y-0.5 hidden">
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Ultra Luxury" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Ultra Luxury
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Luxury" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Luxury
+                        </label>
+                        <label class="flex items-center gap-2 px-2 py-1.5 text-xs text-slate-300 hover:bg-white/5 rounded-lg cursor-pointer select-none">
+                            <input type="checkbox" value="Premium" onchange="runFilter()" class="rounded border-white/10 bg-white/5 text-amber-500 focus:ring-0 w-3.5 h-3.5">
+                            Premium
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Carpet Efficiency Slider -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Min Carpet Efficiency</label>
+                        <span id="lblCarpet" class="text-xs font-bold text-secondary-container">> 50%</span>
+                    </div>
+                    <div class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 h-[38px] flex items-center">
+                        <div class="relative w-full h-4 slider-container">
+                            <div class="slider-track-bg"></div>
+                            <div id="trackFillCarpet" class="slider-track-fill" style="left: 0%; right: 0%;"></div>
+                            <input type="range" id="sliderCarpet" min="50" max="75" value="50" step="1" oninput="updateSliders('carpet')" class="w-full" style="pointer-events: auto; position: absolute; width: 100%; appearance: none; background: none; height: 0;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Scale Slider -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Project Scale</label>
+                        <span id="lblArea" class="text-xs font-bold text-secondary-container">1 - 40 Acres</span>
+                    </div>
+                    <div class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 h-[38px] flex items-center">
+                        <div class="relative w-full h-4 slider-container">
+                            <div class="slider-track-bg"></div>
+                            <div id="trackFillArea" class="slider-track-fill" style="left: 0%; right: 0%;"></div>
+                            <input type="range" id="sliderAreaMin" min="1" max="40" value="1" step="1" oninput="updateSliders('area')" class="w-full">
+                            <input type="range" id="sliderAreaMax" min="1" max="40" value="40" step="1" oninput="updateSliders('area')" class="w-full">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- View Display Area -->
+        <section id="viewDisplayArea">
+            
+            <!-- VIEW 1: Cards Grid View (Default) -->
+            <div id="viewCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Javascript Renders Project Cards Here -->
+            </div>
+
+            <!-- VIEW 2: High-Density List Table View (Hidden) -->
+            <div id="viewList" class="hidden bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr class="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                                <th class="py-3.5 px-6">Project & Builder</th>
+                                <th class="py-3.5 px-4">Locality & Corridor</th>
+                                <th class="py-3.5 px-4">BHK Configurations</th>
+                                <th class="py-3.5 px-4 text-right">Carpet / Built-up Eff.</th>
+                                <th class="py-3.5 px-6 text-right">prOPIUM Score</th>
+                                <th class="py-3.5 px-6 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listTableBody" class="divide-y divide-slate-100">
+                            <!-- Javascript Renders Rows Here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW 3: Interactive Split Map View (Hidden) -->
+            <div id="viewMap" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                <!-- Left Side: Project List Pane (lg:col-span-5) -->
+                <div class="lg:col-span-5 flex flex-col gap-4 max-h-[560px] overflow-y-auto pr-2 strip" id="mapViewListContainer">
+                    <!-- Javascript Renders Compact Cards Here -->
+                </div>
+
+                <!-- Right Side: Interactive Map Container (lg:col-span-7) -->
+                <div class="lg:col-span-7 min-h-[440px] lg:min-h-[560px] relative rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-slate-100 flex flex-col">
+                    
+                    <!-- Corridor quick filter strip overlay -->
+                    <div class="absolute top-3 left-3 right-3 z-[1000] flex gap-1.5 overflow-x-auto strip bg-slate-900/80 backdrop-blur-sm p-2 rounded-xl border border-white/10">
+                        <button onclick="setMapCorridor('all')" class="map-corridor-btn active px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider bg-amber-500 text-primary transition-all shrink-0">
+                            All Corridors
+                        </button>
+                        <button onclick="setMapCorridor('Golf Course Extension Road')" class="map-corridor-btn px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-all shrink-0">
+                            Golf Course Ext Road
+                        </button>
+                        <button onclick="setMapCorridor('Golf Course Road')" class="map-corridor-btn px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-all shrink-0">
+                            Golf Course Road
+                        </button>
+                        <button onclick="setMapCorridor('Southern Peripheral Road')" class="map-corridor-btn px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-all shrink-0">
+                            Southern Peripheral Rd
+                        </button>
+                        <button onclick="setMapCorridor('Dwarka Expressway')" class="map-corridor-btn px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-all shrink-0">
+                            Dwarka Expressway
+                        </button>
+                        <button onclick="setMapCorridor('Sohna Road')" class="map-corridor-btn px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-all shrink-0">
+                            Sohna Road
+                        </button>
+                    </div>
+
+                    <!-- Leaflet Div -->
+                    <div id="map" class="w-full h-full flex-grow"></div>
+                </div>
+            </div>
+
+            <!-- Empty Results State -->
+            <div id="emptyState" class="hidden py-20 bg-white border border-slate-200/80 rounded-2xl text-center space-y-4 shadow-sm">
+                <span class="material-symbols-outlined text-slate-300 text-5xl leading-none block">find_in_page</span>
+                <div class="space-y-1">
+                    <h3 class="font-display text-base font-bold text-primary">No Matching Audits Found</h3>
+                    <p class="text-xs text-slate-500 max-w-sm mx-auto">We couldn't find any premium properties matching your exact search filters. Try adjusting your selections.</p>
+                </div>
+                <button onclick="clearFilters()" class="bg-primary hover:bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl uppercase tracking-wider transition-all">
+                    Reset Filters
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Javascript Script block containing database, view management and leaf map config -->
+    <script>
+        /* ================= DATABASE OF PROPERTY TELEMETRY ================= */
+        const PROJECTS = [
+            {
+                        "id": "tarc-ishva",
+                        "name": "Tarc Ishva",
+                        "developer": "TARC Limited",
+                        "sector": "Sector 63A",
+                        "corridor": "Golf Course Extension Road",
+                        "bhk": [
+                                    "3 BHK",
+                                    "4 BHK",
+                                    "Penthouse"
+                        ],
+                        "area": 9.15,
+                        "units": 518,
+                        "status": "Under Construction",
+                        "priceMin": 8.5,
+                        "priceMax": 10.5,
+                        "score": 84,
+                        "carpetEff": 50,
+                        "builtupEff": 67,
+                        "img": "m3m_altitude_lobby.png",
+                        "lat": 28.415,
+                        "lng": 77.085,
+                        "targetSegment": "Luxury",
+                        "budget": "5 - 10 Cr"
+            },
+            {
+                        "id": "trump-tower-gurgaon",
+                        "name": "Trump Tower (Gurgaon)",
+                        "developer": "M3M India Pvt Ltd",
+                        "sector": "Sector 65",
+                        "corridor": "Golf Course Extension Road",
+                        "bhk": [
+                                    "2 BHK",
+                                    "3 BHK",
+                                    "4 BHK"
+                        ],
+                        "area": 2.83,
+                        "units": 252,
+                        "status": "Ready to Move In",
+                        "priceMin": 11.5,
+                        "priceMax": 22.08,
+                        "score": 76,
+                        "carpetEff": 64,
+                        "builtupEff": 85,
+                        "img": "m3m_altitude_lounge.png",
+                        "lat": 28.411,
+                        "lng": 77.074,
+                        "targetSegment": "Ultra Luxury",
+                        "budget": "10 Cr+"
+            },
+            {
+                        "id": "dlf-the-arbour",
+                        "name": "DLF The Arbour",
+                        "developer": "DLF Limited",
+                        "sector": "Sector 63",
+                        "corridor": "Golf Course Extension Road",
+                        "bhk": [
+                                    "4 BHK"
+                        ],
+                        "area": 25.08,
+                        "units": 1137,
+                        "status": "Under Construction",
+                        "priceMin": 7.5,
+                        "priceMax": 8.5,
+                        "score": 72,
+                        "carpetEff": 57,
+                        "builtupEff": 74,
+                        "img": "m3m_altitude_hero.png",
+                        "lat": 28.4168,
+                        "lng": 77.0805,
+                        "targetSegment": "Ultra Luxury",
+                        "budget": "5 - 10 Cr"
+            },
+            {
+                        "id": "m3m-altitude",
+                        "name": "M3M Altitude",
+                        "developer": "M3M India Pvt Ltd",
+                        "sector": "Sector 65",
+                        "corridor": "Golf Course Extension Road",
+                        "bhk": [
+                                    "3 BHK",
+                                    "4 BHK",
+                                    "Penthouse"
+                        ],
+                        "area": 2.79,
+                        "units": 342,
+                        "status": "Under Construction",
+                        "priceMin": 9.46,
+                        "priceMax": 11.31,
+                        "score": 27,
+                        "carpetEff": 57,
+                        "builtupEff": 73,
+                        "img": "m3m_altitude_hero.png",
+                        "lat": 28.4124,
+                        "lng": 77.0724,
+                        "targetSegment": "Ultra Luxury",
+                        "budget": "5 - 10 Cr"
+            },
+            {
+                        "id": "mahindra-luminare",
+                        "name": "Mahindra Luminare",
+                        "developer": "Mahindra Lifespaces",
+                        "sector": "Sector 59",
+                        "corridor": "Golf Course Extension Road",
+                        "bhk": [
+                                    "3 BHK",
+                                    "4 BHK",
+                                    "Penthouse"
+                        ],
+                        "area": 6.94,
+                        "units": 380,
+                        "status": "Ready to Move In",
+                        "priceMin": 6.5,
+                        "priceMax": 9.0,
+                        "score": 68,
+                        "carpetEff": 56,
+                        "builtupEff": 76,
+                        "img": "m3m_altitude_balcony.png",
+                        "lat": 28.4215,
+                        "lng": 77.1002,
+                        "targetSegment": "Luxury",
+                        "budget": "5 - 10 Cr"
+            },
+            {
+                        "id": "sobha-city",
+                        "name": "Sobha City",
+                        "developer": "Sobha Limited",
+                        "sector": "Sector 108",
+                        "corridor": "Dwarka Expressway",
+                        "bhk": [
+                                    "2 BHK",
+                                    "3 BHK"
+                        ],
+                        "area": 23.0,
+                        "units": 1056,
+                        "status": "Ready to Move In",
+                        "priceMin": 2.2,
+                        "priceMax": 2.9,
+                        "score": 24,
+                        "carpetEff": 57,
+                        "builtupEff": 64,
+                        "img": "m3m_altitude_lobby.png",
+                        "lat": 28.517407,
+                        "lng": 76.9944,
+                        "targetSegment": "Luxury",
+                        "budget": "2 - 3 Cr"
+            },
+            {
+                        "id": "tata-la-vida",
+                        "name": "Tata La Vida",
+                        "developer": "Tata Housing",
+                        "sector": "Sector 113",
+                        "corridor": "Dwarka Expressway",
+                        "bhk": [
+                                    "2 BHK",
+                                    "3 BHK"
+                        ],
+                        "area": 12.0,
+                        "units": 674,
+                        "status": "Ready to Move In",
+                        "priceMin": 1.5,
+                        "priceMax": 2.3,
+                        "score": 23,
+                        "carpetEff": 59,
+                        "builtupEff": 71,
+                        "img": "m3m_altitude_lounge.png",
+                        "lat": 28.534515,
+                        "lng": 77.02028,
+                        "targetSegment": "Premium",
+                        "budget": "1 - 2 Cr"
+            },
+            {
+                        "id": "dlf-privana-south",
+                        "name": "DLF Privana South",
+                        "developer": "DLF Limited",
+                        "sector": "Sector 77",
+                        "corridor": "Southern Peripheral Road",
+                        "bhk": [
+                                    "4 BHK",
+                                    "Penthouse"
+                        ],
+                        "area": 25.14,
+                        "units": 1113,
+                        "status": "Under Construction",
+                        "priceMin": 7.2,
+                        "priceMax": 9.5,
+                        "score": 59,
+                        "carpetEff": 59,
+                        "builtupEff": 76,
+                        "img": "m3m_altitude_hero.png",
+                        "lat": 28.380354,
+                        "lng": 76.990843,
+                        "targetSegment": "Ultra Luxury",
+                        "budget": "5 - 10 Cr"
+            },
+            {
+                        "id": "parq-by-conscient",
+                        "name": "Conscient ParQ",
+                        "developer": "Conscient Infrastructure",
+                        "sector": "Sector 80",
+                        "corridor": "Southern Peripheral Road",
+                        "bhk": [
+                                    "2 BHK",
+                                    "3 BHK",
+                                    "4 BHK"
+                        ],
+                        "area": 5.6,
+                        "units": 448,
+                        "status": "Under Construction",
+                        "priceMin": 3.5,
+                        "priceMax": 4.8,
+                        "score": 50,
+                        "carpetEff": 55,
+                        "builtupEff": 69,
+                        "img": "m3m_altitude_balcony.png",
+                        "lat": 28.374274,
+                        "lng": 76.961834,
+                        "targetSegment": "Luxury",
+                        "budget": "3 - 5 Cr"
+            },
+            {
+                        "id": "dlf-carlton-estate",
+                        "name": "DLF Carlton Estate",
+                        "developer": "DLF Limited",
+                        "sector": "Sector 54",
+                        "corridor": "Golf Course Road",
+                        "bhk": [
+                                    "2 BHK",
+                                    "3 BHK",
+                                    "4 BHK"
+                        ],
+                        "area": 7.2,
+                        "units": 650,
+                        "status": "Ready to Move In",
+                        "priceMin": 3.2,
+                        "priceMax": 4.5,
+                        "score": 22,
+                        "carpetEff": 60,
+                        "builtupEff": 70,
+                        "img": "m3m_altitude_lobby.png",
+                        "lat": 28.447892,
+                        "lng": 77.094594,
+                        "targetSegment": "Luxury",
+                        "budget": "3 - 5 Cr"
+            },
+            {
+                        "id": "central-park-ii-bellevue",
+                        "name": "Central Park II Bellevue",
+                        "developer": "Central Park",
+                        "sector": "Sector 48",
+                        "corridor": "Sohna Road",
+                        "bhk": [
+                                    "3 BHK",
+                                    "4 BHK"
+                        ],
+                        "area": 12.5,
+                        "units": 350,
+                        "status": "Ready to Move In",
+                        "priceMin": 3.8,
+                        "priceMax": 4.9,
+                        "score": 20,
+                        "carpetEff": 58,
+                        "builtupEff": 68,
+                        "img": "m3m_altitude_lounge.png",
+                        "lat": 28.414324,
+                        "lng": 77.043512,
+                        "targetSegment": "Luxury",
+                        "budget": "3 - 5 Cr"
+            }
+];
+
+        /* ================= CORRIDOR POLYGONS GEOMETRY ================= */
+        const CORRIDOR_POLYGONS = {
+            "Dwarka Expressway": [
+                        [
+                                    28.423342379,
+                                    76.936618279
+                        ],
+                        [
+                                    28.424340286,
+                                    76.934876221
+                        ],
+                        [
+                                    28.425629134,
+                                    76.933398549
+                        ],
+                        [
+                                    28.427155619,
+                                    76.93224639
+                        ],
+                        [
+                                    28.428856607,
+                                    76.931467413
+                        ],
+                        [
+                                    28.43066174,
+                                    76.931093855
+                        ],
+                        [
+                                    28.432496351,
+                                    76.931141191
+                        ],
+                        [
+                                    28.43428455,
+                                    76.931607483
+                        ],
+                        [
+                                    28.435952361,
+                                    76.932473461
+                        ],
+                        [
+                                    28.488619739,
+                                    76.967578897
+                        ],
+                        [
+                                    28.490459475,
+                                    76.969202114
+                        ],
+                        [
+                                    28.526922649,
+                                    77.011025463
+                        ],
+                        [
+                                    28.527914392,
+                                    77.012379218
+                        ],
+                        [
+                                    28.553316069,
+                                    77.053880962
+                        ],
+                        [
+                                    28.554182447,
+                                    77.055648314
+                        ],
+                        [
+                                    28.554724653,
+                                    77.057574271
+                        ],
+                        [
+                                    28.55492146,
+                                    77.05958344
+                        ],
+                        [
+                                    28.554765167,
+                                    77.061597169
+                        ],
+                        [
+                                    28.554261892,
+                                    77.063536627
+                        ],
+                        [
+                                    28.553431338,
+                                    77.065325895
+                        ],
+                        [
+                                    28.552306017,
+                                    77.066894936
+                        ],
+                        [
+                                    28.55092998,
+                                    77.068182339
+                        ],
+                        [
+                                    28.549357088,
+                                    77.069137725
+                        ],
+                        [
+                                    28.547648907,
+                                    77.069723715
+                        ],
+                        [
+                                    28.545872293,
+                                    77.069917392
+                        ],
+                        [
+                                    28.544096777,
+                                    77.069711196
+                        ],
+                        [
+                                    28.542391845,
+                                    77.069113216
+                        ],
+                        [
+                                    28.540824218,
+                                    77.068146871
+                        ],
+                        [
+                                    28.503826047,
+                                    77.039645518
+                        ],
+                        [
+                                    28.502648883,
+                                    77.03856484
+                        ],
+                        [
+                                    28.501648114,
+                                    77.037276369
+                        ],
+                        [
+                                    28.499948224,
+                                    77.034676465
+                        ],
+                        [
+                                    28.499224304,
+                                    77.033374578
+                        ],
+                        [
+                                    28.495119823,
+                                    77.024589087
+                        ],
+                        [
+                                    28.411052259,
+                                    76.98866771
+                        ],
+                        [
+                                    28.409538121,
+                                    76.987831092
+                        ],
+                        [
+                                    28.408187934,
+                                    76.986690639
+                        ],
+                        [
+                                    28.407048789,
+                                    76.985286137
+                        ],
+                        [
+                                    28.406160418,
+                                    76.983666579
+                        ],
+                        [
+                                    28.405553804,
+                                    76.981888452
+                        ],
+                        [
+                                    28.405250105,
+                                    76.980013773
+                        ],
+                        [
+                                    28.405259912,
+                                    76.97810792
+                        ],
+                        [
+                                    28.405582884,
+                                    76.976237361
+                        ],
+                        [
+                                    28.406207758,
+                                    76.974467334
+                        ],
+                        [
+                                    28.423342379,
+                                    76.936618279
+                        ]
+            ],
+            "Golf Course Extension Road": [
+                        [
+                                    28.379587147,
+                                    77.053687435
+                        ],
+                        [
+                                    28.380511892,
+                                    77.05260909
+                        ],
+                        [
+                                    28.390342354,
+                                    77.04271787
+                        ],
+                        [
+                                    28.39173698,
+                                    77.041564812
+                        ],
+                        [
+                                    28.393300385,
+                                    77.040733465
+                        ],
+                        [
+                                    28.39497525,
+                                    77.040254323
+                        ],
+                        [
+                                    28.396700169,
+                                    77.04014497
+                        ],
+                        [
+                                    28.398411894,
+                                    77.040409435
+                        ],
+                        [
+                                    28.400047662,
+                                    77.041038036
+                        ],
+                        [
+                                    28.40154749,
+                                    77.04200774
+                        ],
+                        [
+                                    28.402856377,
+                                    77.043282999
+                        ],
+                        [
+                                    28.403926325,
+                                    77.044817057
+                        ],
+                        [
+                                    28.404718095,
+                                    77.04655366
+                        ],
+                        [
+                                    28.411070555,
+                                    77.064535979
+                        ],
+                        [
+                                    28.421830787,
+                                    77.082639075
+                        ],
+                        [
+                                    28.422907684,
+                                    77.08512386
+                        ],
+                        [
+                                    28.429371114,
+                                    77.107208514
+                        ],
+                        [
+                                    28.429756461,
+                                    77.109132525
+                        ],
+                        [
+                                    28.429807363,
+                                    77.111104461
+                        ],
+                        [
+                                    28.42952192,
+                                    77.113050628
+                        ],
+                        [
+                                    28.428910798,
+                                    77.114898294
+                        ],
+                        [
+                                    28.427996838,
+                                    77.11657841
+                        ],
+                        [
+                                    28.426814197,
+                                    77.118028195
+                        ],
+                        [
+                                    28.425407068,
+                                    77.119193481
+                        ],
+                        [
+                                    28.423828034,
+                                    77.120030735
+                        ],
+                        [
+                                    28.422136098,
+                                    77.120508687
+                        ],
+                        [
+                                    28.420394479,
+                                    77.120609497
+                        ],
+                        [
+                                    28.405003616,
+                                    77.119814033
+                        ],
+                        [
+                                    28.403389261,
+                                    77.119564035
+                        ],
+                        [
+                                    28.401840991,
+                                    77.118989731
+                        ],
+                        [
+                                    28.400409305,
+                                    77.118109865
+                        ],
+                        [
+                                    28.399140895,
+                                    77.116953146
+                        ],
+                        [
+                                    28.398077129,
+                                    77.115557304
+                        ],
+                        [
+                                    28.397252699,
+                                    77.113967869
+                        ],
+                        [
+                                    28.392871398,
+                                    77.103446915
+                        ],
+                        [
+                                    28.386355623,
+                                    77.09590683
+                        ],
+                        [
+                                    28.38526722,
+                                    77.094377183
+                        ],
+                        [
+                                    28.384458069,
+                                    77.09264014
+                        ],
+                        [
+                                    28.383958132,
+                                    77.090760021
+                        ],
+                        [
+                                    28.382239493,
+                                    77.080959703
+                        ],
+                        [
+                                    28.375815064,
+                                    77.075454694
+                        ],
+                        [
+                                    28.374481094,
+                                    77.074050606
+                        ],
+                        [
+                                    28.373423896,
+                                    77.072372082
+                        ],
+                        [
+                                    28.372686603,
+                                    77.070487607
+                        ],
+                        [
+                                    28.372299293,
+                                    77.068474065
+                        ],
+                        [
+                                    28.37227777,
+                                    77.066413602
+                        ],
+                        [
+                                    28.372622912,
+                                    77.064390276
+                        ],
+                        [
+                                    28.373320641,
+                                    77.062486634
+                        ],
+                        [
+                                    28.37434249,
+                                    77.060780342
+                        ],
+                        [
+                                    28.379587147,
+                                    77.053687435
+                        ]
+            ],
+            "Golf Course Road": [
+                        [
+                                    28.469691521,
+                                    77.088880465
+                        ],
+                        [
+                                    28.480378303,
+                                    77.089927133
+                        ],
+                        [
+                                    28.482105965,
+                                    77.09029079
+                        ],
+                        [
+                                    28.483738564,
+                                    77.091026621
+                        ],
+                        [
+                                    28.485214155,
+                                    77.092106724
+                        ],
+                        [
+                                    28.486476748,
+                                    77.093490128
+                        ],
+                        [
+                                    28.487478435,
+                                    77.095124348
+                        ],
+                        [
+                                    28.488181206,
+                                    77.096947376
+                        ],
+                        [
+                                    28.488558393,
+                                    77.098890036
+                        ],
+                        [
+                                    28.488595683,
+                                    77.100878609
+                        ],
+                        [
+                                    28.488291664,
+                                    77.102837632
+                        ],
+                        [
+                                    28.487657871,
+                                    77.104692767
+                        ],
+                        [
+                                    28.486718358,
+                                    77.106373617
+                        ],
+                        [
+                                    28.485508775,
+                                    77.107816409
+                        ],
+                        [
+                                    28.484075021,
+                                    77.108966404
+                        ],
+                        [
+                                    28.482471497,
+                                    77.109779981
+                        ],
+                        [
+                                    28.472471273,
+                                    77.113579134
+                        ],
+                        [
+                                    28.470457791,
+                                    77.11406365
+                        ],
+                        [
+                                    28.468399671,
+                                    77.114019038
+                        ],
+                        [
+                                    28.451944038,
+                                    77.111518906
+                        ],
+                        [
+                                    28.441455519,
+                                    77.117127971
+                        ],
+                        [
+                                    28.439812688,
+                                    77.117795137
+                        ],
+                        [
+                                    28.438087048,
+                                    77.118091904
+                        ],
+                        [
+                                    28.436343191,
+                                    77.118007183
+                        ],
+                        [
+                                    28.434646389,
+                                    77.117544164
+                        ],
+                        [
+                                    28.433060149,
+                                    77.116720193
+                        ],
+                        [
+                                    28.431643838,
+                                    77.115566122
+                        ],
+                        [
+                                    28.430450461,
+                                    77.114125155
+                        ],
+                        [
+                                    28.429524678,
+                                    77.112451223
+                        ],
+                        [
+                                    28.428901134,
+                                    77.110606975
+                        ],
+                        [
+                                    28.428603165,
+                                    77.108661426
+                        ],
+                        [
+                                    28.428641922,
+                                    77.106687381
+                        ],
+                        [
+                                    28.429015955,
+                                    77.104758711
+                        ],
+                        [
+                                    28.429711269,
+                                    77.102947589
+                        ],
+                        [
+                                    28.430701844,
+                                    77.101321796
+                        ],
+                        [
+                                    28.434501595,
+                                    77.096221858
+                        ],
+                        [
+                                    28.435580941,
+                                    77.094999916
+                        ],
+                        [
+                                    28.436826975,
+                                    77.094001374
+                        ],
+                        [
+                                    28.438204009,
+                                    77.093254842
+                        ],
+                        [
+                                    28.451503669,
+                                    77.087553765
+                        ],
+                        [
+                                    28.453615361,
+                                    77.086965578
+                        ],
+                        [
+                                    28.455790095,
+                                    77.086966224
+                        ],
+                        [
+                                    28.469691521,
+                                    77.088880465
+                        ]
+            ],
+            "Old Gurgaon": [
+                        [
+                                    28.449910669,
+                                    77.046478614
+                        ],
+                        [
+                                    28.434871125,
+                                    77.024655244
+                        ],
+                        [
+                                    28.432940428,
+                                    77.021184844
+                        ],
+                        [
+                                    28.431661661,
+                                    77.017348035
+                        ],
+                        [
+                                    28.431086401,
+                                    77.013299566
+                        ],
+                        [
+                                    28.431237851,
+                                    77.009202708
+                        ],
+                        [
+                                    28.432109909,
+                                    77.005222683
+                        ],
+                        [
+                                    28.433667407,
+                                    77.001520012
+                        ],
+                        [
+                                    28.435847533,
+                                    76.998244045
+                        ],
+                        [
+                                    28.438562356,
+                                    76.995526946
+                        ],
+                        [
+                                    28.44170237,
+                                    76.993478362
+                        ],
+                        [
+                                    28.445140909,
+                                    76.992180999
+                        ],
+                        [
+                                    28.448739249,
+                                    76.991687271
+                        ],
+                        [
+                                    28.452352203,
+                                    76.992017182
+                        ],
+                        [
+                                    28.455833983,
+                                    76.993157501
+                        ],
+                        [
+                                    28.45904408,
+                                    76.995062286
+                        ],
+                        [
+                                    28.461852936,
+                                    76.997654722
+                        ],
+                        [
+                                    28.464153208,
+                                    77.000254757
+                        ],
+                        [
+                                    28.465735951,
+                                    77.002299603
+                        ],
+                        [
+                                    28.473436944,
+                                    77.013700378
+                        ],
+                        [
+                                    28.473504745,
+                                    77.013801416
+                        ],
+                        [
+                                    28.475304978,
+                                    77.016501606
+                        ],
+                        [
+                                    28.475399191,
+                                    77.016644211
+                        ],
+                        [
+                                    28.482600126,
+                                    77.027645018
+                        ],
+                        [
+                                    28.482761947,
+                                    77.027896239
+                        ],
+                        [
+                                    28.487262535,
+                                    77.034996797
+                        ],
+                        [
+                                    28.488999686,
+                                    77.038381329
+                        ],
+                        [
+                                    28.490134404,
+                                    77.042078878
+                        ],
+                        [
+                                    28.490624995,
+                                    77.045953579
+                        ],
+                        [
+                                    28.490453437,
+                                    77.049863047
+                        ],
+                        [
+                                    28.489626036,
+                                    77.053663621
+                        ],
+                        [
+                                    28.4881732,
+                                    77.057215648
+                        ],
+                        [
+                                    28.486148317,
+                                    77.060388622
+                        ],
+                        [
+                                    28.483625789,
+                                    77.063065984
+                        ],
+                        [
+                                    28.480698297,
+                                    77.065149406
+                        ],
+                        [
+                                    28.477473392,
+                                    77.066562403
+                        ],
+                        [
+                                    28.474069539,
+                                    77.067253131
+                        ],
+                        [
+                                    28.470611766,
+                                    77.067196291
+                        ],
+                        [
+                                    28.467227068,
+                                    77.066394042
+                        ],
+                        [
+                                    28.464039746,
+                                    77.064875914
+                        ],
+                        [
+                                    28.461166841,
+                                    77.062697714
+                        ],
+                        [
+                                    28.458713842,
+                                    77.059939468
+                        ],
+                        [
+                                    28.456514119,
+                                    77.056939629
+                        ],
+                        [
+                                    28.455667111,
+                                    77.055689428
+                        ],
+                        [
+                                    28.449910669,
+                                    77.046478614
+                        ]
+            ],
+            "Sohna Road": [
+                        [
+                                    28.41027188,
+                                    77.028199363
+                        ],
+                        [
+                                    28.4112986,
+                                    77.026879341
+                        ],
+                        [
+                                    28.412510399,
+                                    77.02577821
+                        ],
+                        [
+                                    28.413871314,
+                                    77.024928658
+                        ],
+                        [
+                                    28.428088883,
+                                    77.017783593
+                        ],
+                        [
+                                    28.429805614,
+                                    77.017144768
+                        ],
+                        [
+                                    28.431600451,
+                                    77.01690579
+                        ],
+                        [
+                                    28.433401384,
+                                    77.017076266
+                        ],
+                        [
+                                    28.435136152,
+                                    77.017649378
+                        ],
+                        [
+                                    28.436735148,
+                                    77.018602148
+                        ],
+                        [
+                                    28.438134208,
+                                    77.019896358
+                        ],
+                        [
+                                    28.439277191,
+                                    77.021480086
+                        ],
+                        [
+                                    28.440118228,
+                                    77.023289784
+                        ],
+                        [
+                                    28.44062357,
+                                    77.025252831
+                        ],
+                        [
+                                    28.440772936,
+                                    77.027290447
+                        ],
+                        [
+                                    28.440560334,
+                                    77.029320858
+                        ],
+                        [
+                                    28.439994297,
+                                    77.031262581
+                        ],
+                        [
+                                    28.439097541,
+                                    77.033037693
+                        ],
+                        [
+                                    28.435026643,
+                                    77.039494498
+                        ],
+                        [
+                                    28.436723061,
+                                    77.041569008
+                        ],
+                        [
+                                    28.437782728,
+                                    77.043148557
+                        ],
+                        [
+                                    28.438552413,
+                                    77.044930123
+                        ],
+                        [
+                                    28.43900306,
+                                    77.046846453
+                        ],
+                        [
+                                    28.439117659,
+                                    77.048825205
+                        ],
+                        [
+                                    28.438891883,
+                                    77.050791677
+                        ],
+                        [
+                                    28.438334257,
+                                    77.052671633
+                        ],
+                        [
+                                    28.437465832,
+                                    77.054394103
+                        ],
+                        [
+                                    28.436319393,
+                                    77.055894071
+                        ],
+                        [
+                                    28.434938217,
+                                    77.057114922
+                        ],
+                        [
+                                    28.431738081,
+                                    77.059414748
+                        ],
+                        [
+                                    28.431632492,
+                                    77.059489477
+                        ],
+                        [
+                                    28.43051199,
+                                    77.060270355
+                        ],
+                        [
+                                    28.426569144,
+                                    77.069144318
+                        ],
+                        [
+                                    28.425621382,
+                                    77.070838608
+                        ],
+                        [
+                                    28.424399071,
+                                    77.072290565
+                        ],
+                        [
+                                    28.422949393,
+                                    77.073444153
+                        ],
+                        [
+                                    28.421328306,
+                                    77.074254856
+                        ],
+                        [
+                                    28.419598381,
+                                    77.074691399
+                        ],
+                        [
+                                    28.417826387,
+                                    77.074736953
+                        ],
+                        [
+                                    28.416080713,
+                                    77.074389777
+                        ],
+                        [
+                                    28.41442873,
+                                    77.073663289
+                        ],
+                        [
+                                    28.412934189,
+                                    77.072585542
+                        ],
+                        [
+                                    28.408026449,
+                                    77.068224435
+                        ],
+                        [
+                                    28.406730956,
+                                    77.066815934
+                        ],
+                        [
+                                    28.405707951,
+                                    77.065145022
+                        ],
+                        [
+                                    28.40499801,
+                                    77.063277976
+                        ],
+                        [
+                                    28.404629293,
+                                    77.061288851
+                        ],
+                        [
+                                    28.404616423,
+                                    77.059256538
+                        ],
+                        [
+                                    28.404959913,
+                                    77.057261641
+                        ],
+                        [
+                                    28.405646139,
+                                    77.055383281
+                        ],
+                        [
+                                    28.405668294,
+                                    77.055336482
+                        ],
+                        [
+                                    28.405104052,
+                                    77.054953671
+                        ],
+                        [
+                                    28.403604775,
+                                    77.053679444
+                        ],
+                        [
+                                    28.402370798,
+                                    77.052082225
+                        ],
+                        [
+                                    28.40145543,
+                                    77.050231025
+                        ],
+                        [
+                                    28.400898216,
+                                    77.048205817
+                        ],
+                        [
+                                    28.400723227,
+                                    77.046094089
+                        ],
+                        [
+                                    28.400938023,
+                                    77.043987063
+                        ],
+                        [
+                                    28.401533327,
+                                    77.041975757
+                        ],
+                        [
+                                    28.402483424,
+                                    77.040147061
+                        ],
+                        [
+                                    28.41027188,
+                                    77.028199363
+                        ]
+            ],
+            "Southern Peripheral Road": [
+                        [
+                                    28.388257048,
+                                    76.974750753
+                        ],
+                        [
+                                    28.41191416,
+                                    76.991958258
+                        ],
+                        [
+                                    28.413067967,
+                                    76.993000951
+                        ],
+                        [
+                                    28.414009976,
+                                    76.994287457
+                        ],
+                        [
+                                    28.421782387,
+                                    77.007441924
+                        ],
+                        [
+                                    28.422027549,
+                                    77.007887253
+                        ],
+                        [
+                                    28.427895866,
+                                    77.019353746
+                        ],
+                        [
+                                    28.42848768,
+                                    77.020832336
+                        ],
+                        [
+                                    28.428809243,
+                                    77.022414146
+                        ],
+                        [
+                                    28.428847848,
+                                    77.024036656
+                        ],
+                        [
+                                    28.428601967,
+                                    77.025635742
+                        ],
+                        [
+                                    28.428081321,
+                                    77.027148201
+                        ],
+                        [
+                                    28.427306487,
+                                    77.028514259
+                        ],
+                        [
+                                    28.426308088,
+                                    77.029679932
+                        ],
+                        [
+                                    28.425125582,
+                                    77.030599158
+                        ],
+                        [
+                                    28.401739145,
+                                    77.045134541
+                        ],
+                        [
+                                    28.389138393,
+                                    77.055394575
+                        ],
+                        [
+                                    28.387921962,
+                                    77.056193841
+                        ],
+                        [
+                                    28.386591521,
+                                    77.056711071
+                        ],
+                        [
+                                    28.385197622,
+                                    77.056926625
+                        ],
+                        [
+                                    28.383793222,
+                                    77.056832325
+                        ],
+                        [
+                                    28.382431676,
+                                    77.056431765
+                        ],
+                        [
+                                    28.381164712,
+                                    77.055740174
+                        ],
+                        [
+                                    28.380040458,
+                                    77.054783834
+                        ],
+                        [
+                                    28.379101624,
+                                    77.053599082
+                        ],
+                        [
+                                    28.378383873,
+                                    77.052230928
+                        ],
+                        [
+                                    28.37791447,
+                                    77.050731345
+                        ],
+                        [
+                                    28.377711246,
+                                    77.049157296
+                        ],
+                        [
+                                    28.376666101,
+                                    77.024273573
+                        ],
+                        [
+                                    28.35941354,
+                                    76.990331096
+                        ],
+                        [
+                                    28.358971152,
+                                    76.990462166
+                        ],
+                        [
+                                    28.357521813,
+                                    76.990717392
+                        ],
+                        [
+                                    28.356056757,
+                                    76.990636119
+                        ],
+                        [
+                                    28.354636485,
+                                    76.990221715
+                        ],
+                        [
+                                    28.353319645,
+                                    76.989491306
+                        ],
+                        [
+                                    28.352160612,
+                                    76.988475063
+                        ],
+                        [
+                                    28.351207245,
+                                    76.987214956
+                        ],
+                        [
+                                    28.350498908,
+                                    76.985763018
+                        ],
+                        [
+                                    28.350064848,
+                                    76.984179203
+                        ],
+                        [
+                                    28.349922987,
+                                    76.982528903
+                        ],
+                        [
+                                    28.350079184,
+                                    76.980880258
+                        ],
+                        [
+                                    28.350526989,
+                                    76.979301335
+                        ],
+                        [
+                                    28.35953138,
+                                    76.956004433
+                        ],
+                        [
+                                    28.360234976,
+                                    76.954587592
+                        ],
+                        [
+                                    28.361172932,
+                                    76.953356414
+                        ],
+                        [
+                                    28.362308062,
+                                    76.952359711
+                        ],
+                        [
+                                    28.363595367,
+                                    76.951637007
+                        ],
+                        [
+                                    28.364983808,
+                                    76.951216964
+                        ],
+                        [
+                                    28.366418339,
+                                    76.951116249
+                        ],
+                        [
+                                    28.36784208,
+                                    76.951338867
+                        ],
+                        [
+                                    28.369198581,
+                                    76.951876004
+                        ],
+                        [
+                                    28.370434052,
+                                    76.952706373
+                        ],
+                        [
+                                    28.371499503,
+                                    76.953797055
+                        ],
+                        [
+                                    28.388257048,
+                                    76.974750753
+                        ]
+            ]
+};
+
+        let activeView = 'cards';
+        let filteredData = [...PROJECTS];
+        let mapInstance = null;
+        let mapMarkers = [];
+        let mapPolygonLayers = [];
+        let activeCorridorFilter = 'all';
+        let activeAICheckChips = [];
+
+        /* ================= VIEW CONTROLLER ================= */
+        function setView(view) {
+            activeView = view;
+            
+            // Toggle Display Container
+            document.getElementById('viewCards').classList.toggle('hidden', view !== 'cards');
+            document.getElementById('viewList').classList.toggle('hidden', view !== 'list');
+            document.getElementById('viewMap').classList.toggle('hidden', view !== 'map');
+            
+            // Toggle Active Switch Buttons
+            const btnC = document.getElementById('viewBtnCards');
+            const btnL = document.getElementById('viewBtnList');
+            const btnM = document.getElementById('viewBtnMap');
+            
+            btnC.className = view === 'cards' ? "p-2 rounded-lg text-secondary-container bg-white/10 shadow-sm transition-all" : "p-2 rounded-lg text-slate-400 hover:text-white transition-all";
+            btnL.className = view === 'list' ? "p-2 rounded-lg text-secondary-container bg-white/10 shadow-sm transition-all" : "p-2 rounded-lg text-slate-400 hover:text-white transition-all";
+            btnM.className = view === 'map' ? "p-2 rounded-lg text-secondary-container bg-white/10 shadow-sm transition-all" : "p-2 rounded-lg text-slate-400 hover:text-white transition-all";
+            
+            if (view === 'map') {
+                setTimeout(() => {
+                    initMap();
+                }, 100);
+            }
+            
+            renderViews();
+        }
+
+        /* ================= EXPAND FILTER TOGGLE ================= */
+        function toggleFilters() {
+            const grid = document.getElementById('advancedFiltersGrid');
+            const chevron = document.getElementById('filterChevron');
+            const isHidden = grid.classList.toggle('hidden');
+            if (isHidden) {
+                chevron.classList.remove('rotate-180');
+            } else {
+                chevron.classList.add('rotate-180');
+            }
+        }
+
+        /* ================= MULTI-SELECT DROPDOWN SYSTEM ================= */
+        function toggleMultiSelect(event, id) {
+            event.stopPropagation();
+            const popover = document.querySelector(`#${id} .multiselect-popover`);
+            const isHidden = popover.classList.contains('hidden');
+            
+            // Close all other dropdowns
+            document.querySelectorAll('.multiselect-popover').forEach(el => {
+                if (el !== popover) el.classList.add('hidden');
+            });
+            
+            if (isHidden) {
+                popover.classList.remove('hidden');
+            } else {
+                popover.classList.add('hidden');
+            }
+        }
+
+        function getSelectedValues(id) {
+            const checkboxes = document.querySelectorAll(`#${id} input[type="checkbox"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function updateMultiSelectLabels() {
+            const dropdowns = ['Sector', 'Developer', 'Status', 'Segment', 'BHK'];
+            dropdowns.forEach(type => {
+                const id = `multiSelect${type}`;
+                const checked = Array.from(document.querySelectorAll(`#${id} input[type="checkbox"]:checked`));
+                const btnLabel = document.querySelector(`#${id} .multiselect-label`);
+                
+                if (checked.length === 0) {
+                    if (type === 'Sector') btnLabel.textContent = 'All Locations';
+                    else if (type === 'Developer') btnLabel.textContent = 'All Developers';
+                    else if (type === 'Status') btnLabel.textContent = 'All Statuses';
+                    else if (type === 'Segment') btnLabel.textContent = 'All Segments';
+                    else if (type === 'BHK') btnLabel.textContent = 'Any BHK';
+                } else if (checked.length === 1) {
+                    btnLabel.textContent = checked[0].parentNode.textContent.trim();
+                } else {
+                    btnLabel.textContent = `${checked.length} Selected`;
+                }
+            });
+        }
+
+        /* ================= TACTILE RANGE SLIDERS LOGIC ================= */
+        function updateSliders(type) {
+            if (type === 'budget') {
+                const minVal = parseFloat(document.getElementById('sliderBudgetMin').value);
+                const maxVal = parseFloat(document.getElementById('sliderBudgetMax').value);
+                
+                if (minVal > maxVal) {
+                    document.getElementById('sliderBudgetMin').value = maxVal;
+                }
+                
+                const currentMin = parseFloat(document.getElementById('sliderBudgetMin').value);
+                const currentMax = parseFloat(document.getElementById('sliderBudgetMax').value);
+                
+                const pctMin = ((currentMin - 1) / 24) * 100;
+                const pctMax = ((currentMax - 1) / 24) * 100;
+                const fill = document.getElementById('trackFillBudget');
+                fill.style.left = pctMin + '%';
+                fill.style.right = (100 - pctMax) + '%';
+                
+                document.getElementById('lblBudget').textContent = `₹${currentMin.toFixed(1)} - ${currentMax.toFixed(1)}${currentMax === 25 ? '+' : ''} Cr`;
+            }
+            if (type === 'carpet') {
+                const val = parseInt(document.getElementById('sliderCarpet').value);
+                
+                const pct = ((val - 50) / 25) * 100;
+                const fill = document.getElementById('trackFillCarpet');
+                fill.style.left = '0%';
+                fill.style.right = (100 - pct) + '%';
+                
+                document.getElementById('lblCarpet').textContent = `> ${val}%`;
+            }
+            if (type === 'area') {
+                const minVal = parseInt(document.getElementById('sliderAreaMin').value);
+                const maxVal = parseInt(document.getElementById('sliderAreaMax').value);
+                
+                if (minVal > maxVal) {
+                    document.getElementById('sliderAreaMin').value = maxVal;
+                }
+                
+                const currentMin = parseInt(document.getElementById('sliderAreaMin').value);
+                const currentMax = parseInt(document.getElementById('sliderAreaMax').value);
+                
+                const pctMin = ((currentMin - 1) / 39) * 100;
+                const pctMax = ((currentMax - 1) / 39) * 100;
+                const fill = document.getElementById('trackFillArea');
+                fill.style.left = pctMin + '%';
+                fill.style.right = (100 - pctMax) + '%';
+                
+                document.getElementById('lblArea').textContent = `${currentMin} - ${currentMax}${currentMax === 40 ? '+' : ''} Acres`;
+            }
+            
+            runFilter();
+        }
+
+        /* ================= FILTER ENGINE ================= */
+        function runFilter() {
+            // Update labels first
+            updateMultiSelectLabels();
+
+            let searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+            // If there are AI chips, we strip out the matched terms from searchVal to avoid failing the literal text match.
+            if (typeof activeAICheckChips !== 'undefined' && activeAICheckChips && activeAICheckChips.length > 0) {
+                let cleanSearch = searchVal;
+                // Remove BHK configuration
+                cleanSearch = cleanSearch.replace(/\b\d+\s*bhk\b/gi, '');
+                cleanSearch = cleanSearch.replace(/\bpenthouse\b/gi, '');
+                // Remove budget terms
+                cleanSearch = cleanSearch.replace(/\b(?:under|below|less than)?\s*\d+\s*(?:cr|crore)\b/gi, '');
+                // Remove status terms
+                cleanSearch = cleanSearch.replace(/\b(?:ready to move in|ready|rtmi|completed|under construction|construction|ongoing)\b/gi, '');
+                // Remove segment terms
+                cleanSearch = cleanSearch.replace(/\b(?:ultra luxury|luxury|premium)\b/gi, '');
+                // Remove corridor terms
+                cleanSearch = cleanSearch.replace(/\b(?:golf course ext|gcer|extension|golf course|gcr|dwarka|dwe|expressway|southern peripheral|spr|sohna)\b/gi, '');
+                // Clean extra whitespace
+                cleanSearch = cleanSearch.replace(/\s+/g, ' ').trim();
+                searchVal = cleanSearch;
+            }
+
+            // Read Multi-select Checked Arrays
+            const selectedSectors = getSelectedValues('multiSelectSector');
+            const selectedDevelopers = getSelectedValues('multiSelectDeveloper');
+            const selectedStatuses = getSelectedValues('multiSelectStatus');
+            const selectedSegments = getSelectedValues('multiSelectSegment');
+            const selectedBHKs = getSelectedValues('multiSelectBHK');
+
+            // Read slider values
+            const minBudget = parseFloat(document.getElementById('sliderBudgetMin').value);
+            const maxBudget = parseFloat(document.getElementById('sliderBudgetMax').value);
+            const minCarpet = parseInt(document.getElementById('sliderCarpet').value);
+            const minArea = parseInt(document.getElementById('sliderAreaMin').value);
+            const maxArea = parseInt(document.getElementById('sliderAreaMax').value);
+
+            filteredData = PROJECTS.filter(p => {
+                // Search term matching
+                const termMatch = !searchVal || 
+                    p.name.toLowerCase().includes(searchVal) ||
+                    p.developer.toLowerCase().includes(searchVal) ||
+                    p.sector.toLowerCase().includes(searchVal) ||
+                    p.corridor.toLowerCase().includes(searchVal);
+                
+                // Multi-select matches (empty selected array matches everything)
+                const sectorMatch = selectedSectors.length === 0 || selectedSectors.includes(p.sector);
+                const devMatch = selectedDevelopers.length === 0 || selectedDevelopers.includes(p.developer);
+                const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(p.status);
+                const segmentMatch = selectedSegments.length === 0 || selectedSegments.includes(p.targetSegment);
+                
+                // BHK intersection match: if project offers any of the selected BHK requirements
+                const bhkMatch = selectedBHKs.length === 0 || p.bhk.some(b => selectedBHKs.includes(b));
+                
+                // Slider matches
+                const budgetMatch = p.priceMin <= maxBudget && p.priceMax >= minBudget;
+                const carpetMatch = p.carpetEff >= minCarpet;
+                const areaMatch = p.area >= minArea && p.area <= maxArea;
+
+                return termMatch && sectorMatch && devMatch && statusMatch && segmentMatch && bhkMatch && budgetMatch && carpetMatch && areaMatch;
+            });
+
+            // Toggle clear button disabled state
+            const hasActiveFilters = searchVal || 
+                selectedSectors.length > 0 || 
+                selectedDevelopers.length > 0 || 
+                selectedStatuses.length > 0 || 
+                selectedSegments.length > 0 ||
+                selectedBHKs.length > 0 ||
+                minBudget > 1 || maxBudget < 25 || minCarpet > 50 || minArea > 1 || maxArea < 40;
+            document.getElementById('clearFiltersBtn').disabled = !hasActiveFilters;
+
+            // Render Views & Map Update
+            renderViews();
+            updateMapPolygonsAndMarkers();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = "";
+            
+            // Uncheck all checkboxes
+            document.querySelectorAll('.custom-multiselect input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            // Reset Sliders
+            document.getElementById('sliderBudgetMin').value = 1;
+            document.getElementById('sliderBudgetMax').value = 25;
+            document.getElementById('sliderCarpet').value = 50;
+            document.getElementById('sliderAreaMin').value = 1;
+            document.getElementById('sliderAreaMax').value = 40;
+            
+            // Re-sync slider tracks and labels
+            updateSliders('budget');
+            updateSliders('carpet');
+            updateSliders('area');
+            
+            activeAICheckChips = [];
+            renderAICheckChips();
+            runFilter();
+        }
+
+        /* ================= AI SEARCH QUERY PARSER ================= */
+        function handleSearchInput() {
+            const query = document.getElementById('searchInput').value.trim();
+            const isConversational = /\b(\d+\s*bhk|penthouse|cr|crore|under|below|ready|construction|ongoing|luxury|premium)\b/i.test(query);
+            
+            if (isConversational) {
+                parseAIQuery(query);
+            } else {
+                activeAICheckChips = [];
+                renderAICheckChips();
+                runFilter();
+            }
+        }
+
+        function parseAIQuery(query) {
+            query = query.toLowerCase().trim();
+            activeAICheckChips = [];
+
+            // 1. BHK Parsing
+            const bhkMatch = query.match(/(\d+)\s*bhk/);
+            if (bhkMatch) {
+                const val = parseInt(bhkMatch[1]);
+                if (val >= 2 && val <= 5) {
+                    activeAICheckChips.push({
+                        type: 'bhk',
+                        val: val,
+                        label: `${val} BHK`
+                    });
+                }
+            } else if (query.includes('penthouse')) {
+                activeAICheckChips.push({
+                    type: 'bhk',
+                    val: 5,
+                    label: 'Penthouse'
+                });
+            }
+
+            // 2. Budget Parsing
+            const underCrMatch = query.match(/(?:under|below|less than)\s*(\d+)\s*(?:cr|crore)/);
+            const rangeCrMatch = query.match(/(\d+)\s*(?:to|-)\s*(\d+)\s*(?:cr|crore)/);
+            if (rangeCrMatch) {
+                const minB = parseFloat(rangeCrMatch[1]);
+                const maxB = parseFloat(rangeCrMatch[2]);
+                activeAICheckChips.push({
+                    type: 'budget',
+                    min: minB,
+                    max: maxB,
+                    label: `₹${minB} - ${maxB} Cr`
+                });
+            } else if (underCrMatch) {
+                const maxB = parseFloat(underCrMatch[1]);
+                activeAICheckChips.push({
+                    type: 'budget',
+                    min: 1,
+                    max: maxB,
+                    label: `Under ${maxB} Cr`
+                });
+            } else {
+                const generalCr = query.match(/(\d+)\s*(?:cr|crore)/);
+                if (generalCr) {
+                    const maxB = parseFloat(generalCr[1]);
+                    activeAICheckChips.push({
+                        type: 'budget',
+                        min: 1,
+                        max: maxB,
+                        label: `Under ${maxB} Cr`
+                    });
+                }
+            }
+
+            // 3. Status Parsing
+            if (query.includes('ready') || query.includes('rtmi') || query.includes('completed')) {
+                activeAICheckChips.push({
+                    type: 'status',
+                    val: 'Ready to Move In',
+                    label: 'Ready to Move'
+                });
+            } else if (query.includes('under construction') || query.includes('construction') || query.includes('ongoing')) {
+                activeAICheckChips.push({
+                    type: 'status',
+                    val: 'Under Construction',
+                    label: 'Under Construction'
+                });
+            }
+
+            // 4. Segment Parsing
+            if (query.includes('ultra luxury') || query.includes('ultra-luxury')) {
+                activeAICheckChips.push({
+                    type: 'segment',
+                    val: 'Ultra Luxury',
+                    label: 'Ultra Luxury'
+                });
+            } else if (query.includes('luxury')) {
+                activeAICheckChips.push({
+                    type: 'segment',
+                    val: 'Luxury',
+                    label: 'Luxury'
+                });
+            } else if (query.includes('premium')) {
+                activeAICheckChips.push({
+                    type: 'segment',
+                    val: 'Premium',
+                    label: 'Premium'
+                });
+            }
+
+            // 5. Corridor Parsing
+            if (query.includes('golf course ext') || query.includes('gcer') || query.includes('extension')) {
+                activeAICheckChips.push({
+                    type: 'corridor',
+                    val: 'Golf Course Extension Road',
+                    label: 'Golf Course Ext Rd'
+                });
+            } else if (query.includes('golf course') || query.includes('gcr')) {
+                activeAICheckChips.push({
+                    type: 'corridor',
+                    val: 'Golf Course Road',
+                    label: 'Golf Course Rd'
+                });
+            } else if (query.includes('dwarka') || query.includes('dwe') || query.includes('expressway')) {
+                activeAICheckChips.push({
+                    type: 'corridor',
+                    val: 'Dwarka Expressway',
+                    label: 'Dwarka Expressway'
+                });
+            } else if (query.includes('southern peripheral') || query.includes('spr')) {
+                activeAICheckChips.push({
+                    type: 'corridor',
+                    val: 'Southern Peripheral Road',
+                    label: 'Southern Peripheral Rd'
+                });
+            } else if (query.includes('sohna')) {
+                activeAICheckChips.push({
+                    type: 'corridor',
+                    val: 'Sohna Road',
+                    label: 'Sohna Road'
+                });
+            }
+
+            syncControlsWithAIChips();
+            renderAICheckChips();
+            runFilter();
+        }
+
+        function syncControlsWithAIChips() {
+            // Reset to defaults first (uncheck all)
+            document.querySelectorAll('.custom-multiselect input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            document.getElementById('sliderBudgetMin').value = 1;
+            document.getElementById('sliderBudgetMax').value = 25;
+            
+            activeAICheckChips.forEach(chip => {
+                if (chip.type === 'bhk') {
+                    const label = chip.val === 5 ? 'Penthouse' : `${chip.val} BHK`;
+                    const cb = document.querySelector(`.custom-multiselect#multiSelectBHK input[value="${label}"]`);
+                    if (cb) cb.checked = true;
+                }
+                if (chip.type === 'budget') {
+                    document.getElementById('sliderBudgetMin').value = chip.min;
+                    document.getElementById('sliderBudgetMax').value = Math.min(25, chip.max);
+                }
+                if (chip.type === 'status') {
+                    const cb = document.querySelector(`.custom-multiselect#multiSelectStatus input[value="${chip.val}"]`);
+                    if (cb) cb.checked = true;
+                }
+                if (chip.type === 'segment') {
+                    const cb = document.querySelector(`.custom-multiselect#multiSelectSegment input[value="${chip.val}"]`);
+                    if (cb) cb.checked = true;
+                }
+                if (chip.type === 'corridor') {
+                    activeCorridorFilter = chip.val;
+                    setMapCorridor(chip.val);
+                }
+            });
+
+            // Update sliders visually without triggering double filter loop
+            syncSliderTracksAndLabelsOnly();
+        }
+
+        function syncSliderTracksAndLabelsOnly() {
+            // Budget
+            const budMin = parseFloat(document.getElementById('sliderBudgetMin').value);
+            const budMax = parseFloat(document.getElementById('sliderBudgetMax').value);
+            document.getElementById('trackFillBudget').style.left = ((budMin - 1) / 24 * 100) + '%';
+            document.getElementById('trackFillBudget').style.right = (100 - (budMax - 1) / 24 * 100) + '%';
+            document.getElementById('lblBudget').textContent = `₹${budMin.toFixed(1)} - ${budMax.toFixed(1)}${budMax === 25 ? '+' : ''} Cr`;
+
+            // Carpet
+            const carpetVal = parseInt(document.getElementById('sliderCarpet').value);
+            document.getElementById('trackFillCarpet').style.left = '0%';
+            document.getElementById('trackFillCarpet').style.right = (100 - (carpetVal - 50) / 25 * 100) + '%';
+            document.getElementById('lblCarpet').textContent = `> ${carpetVal}%`;
+
+            // Area
+            const areaMin = parseInt(document.getElementById('sliderAreaMin').value);
+            const areaMax = parseInt(document.getElementById('sliderAreaMax').value);
+            document.getElementById('trackFillArea').style.left = ((areaMin - 1) / 39 * 100) + '%';
+            document.getElementById('trackFillArea').style.right = (100 - (areaMax - 1) / 39 * 100) + '%';
+            document.getElementById('lblArea').textContent = `${areaMin} - ${areaMax}${areaMax === 40 ? '+' : ''} Acres`;
+        }
+
+        function renderAICheckChips() {
+            const container = document.getElementById('aiChipsContainer');
+            if (activeAICheckChips.length === 0) {
+                container.innerHTML = "";
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            container.innerHTML = `
+                <div class="flex flex-wrap gap-2 items-center text-[10px] text-slate-400 mt-1 pb-1">
+                    <span class="font-bold uppercase tracking-wider flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-amber-500">auto_awesome</span>
+                        AI Filter Extracted:
+                    </span>
+                    ${activeAICheckChips.map((chip, idx) => `
+                        <span class="bg-amber-500/10 text-secondary-container border border-amber-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 font-semibold text-[10px]">
+                            ${chip.label}
+                            <button onclick="removeAIChip(${idx})" class="hover:text-white leading-none font-bold text-[11px] ml-1">&times;</button>
+                        </span>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function removeAIChip(idx) {
+            const chip = activeAICheckChips[idx];
+            activeAICheckChips.splice(idx, 1);
+            
+            if (chip.type === 'corridor') {
+                activeCorridorFilter = 'all';
+                setMapCorridor('all');
+            }
+            
+            syncControlsWithAIChips();
+            renderAICheckChips();
+            runFilter();
+        }
+
+        /* ================= HTML RENDERERS ================= */
+        const fmt = n => n.toLocaleString('en-IN');
+
+        function renderViews() {
+            document.getElementById('resultsCount').textContent = filteredData.length;
+            
+            const isZero = filteredData.length === 0;
+            document.getElementById('emptyState').classList.toggle('hidden', !isZero);
+            
+            if (activeView === 'cards') {
+                renderCardsView();
+            } else if (activeView === 'list') {
+                renderListView();
+            } else if (activeView === 'map') {
+                renderMapViewings();
+            }
+        }
+
+        function renderCardsView() {
+            const container = document.getElementById('viewCards');
+            if (filteredData.length === 0) {
+                container.innerHTML = "";
+                return;
+            }
+            
+            container.innerHTML = filteredData.map(p => {
+                const targetLink = p.id === 'm3m-altitude' ? '/project_detail.html' : '/project_detail_locked.html';
+                const scoreLabel = p.score <= 30 ? 'Provisional' : 'Audit Score';
+                
+                let scoreColorClass = 'text-secondary-container';
+                if (p.score >= 70) {
+                    scoreColorClass = 'text-emerald-500';
+                } else if (p.score >= 40) {
+                    scoreColorClass = 'text-amber-500';
+                } else {
+                    scoreColorClass = 'text-rose-500';
+                }
+
+                return `
+                <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-secondary-container/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <!-- Image Block -->
+                        <div class="relative h-48 w-full overflow-hidden bg-slate-900">
+                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none"></div>
+                            
+                            <!-- Construction Badge -->
+                            <span class="absolute top-3 left-3 bg-[#0F172A] text-white text-[9px] px-2.5 py-1 rounded font-bold uppercase tracking-wider">
+                                ${p.status}
+                            </span>
+                            
+                            <!-- prOPIUM Score Badge -->
+                            <div class="absolute top-3 right-3 flex flex-col items-center bg-[#0F172A] text-white border border-white/10 px-3 py-1.5 rounded-xl text-center shadow-lg">
+                                <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider leading-none">${scoreLabel}</span>
+                                <span class="font-display font-extrabold text-sm ${scoreColorClass} mt-0.5 leading-none">${p.score}</span>
+                            </div>
+                        </div>
+
+                        <!-- Info Content -->
+                        <div class="p-5 space-y-3">
+                            <div>
+                                <span class="text-[9px] bg-slate-100 text-slate-600 border border-slate-200/50 font-bold px-2 py-0.5 rounded font-sans uppercase tracking-wider">
+                                    ${p.developer}
+                                </span>
+                                <h3 class="font-display font-extrabold text-base text-primary mt-1">${p.name}</h3>
+                                <p class="text-slate-400 text-xs flex items-center gap-0.5 mt-0.5">
+                                    <span class="material-symbols-outlined text-[13px] text-secondary-container">location_on</span>
+                                    ${p.sector}, ${p.corridor}
+                                </p>
+                            </div>
+
+                            <div class="flex flex-wrap gap-1">
+                                ${p.bhk.map(b => `<span class="bg-slate-50 text-slate-500 border border-slate-200/50 px-2 py-0.5 rounded text-[10px] font-semibold">${b}</span>`).join('')}
+                            </div>
+                            
+                            <!-- Telemetry bars -->
+                            <div class="space-y-2 pt-2 border-t border-slate-100">
+                                <div>
+                                    <div class="flex justify-between items-center text-[10px] text-slate-500 font-semibold mb-0.5">
+                                        <span>Carpet Efficiency</span>
+                                        <span class="font-bold text-slate-900">${p.carpetEff}%</span>
+                                    </div>
+                                    <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-emerald-500" style="width: ${p.carpetEff}%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center text-[10px] text-slate-500 font-semibold mb-0.5">
+                                        <span>Built-up Efficiency</span>
+                                        <span class="font-bold text-slate-900">${p.builtupEff}%</span>
+                                    </div>
+                                    <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-amber-500" style="width: ${p.builtupEff}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer / Actions -->
+                    <div class="p-5 pt-0 border-t border-slate-100/50 flex justify-between items-center">
+                        <div>
+                            <span class="text-slate-400 block text-[9px] font-bold uppercase tracking-wider">Current budget range</span>
+                            <span class="font-display font-extrabold text-sm text-secondary-container">₹${p.priceMin.toFixed(2)} - ${p.priceMax.toFixed(2)} Cr</span>
+                        </div>
+                        <a href="${targetLink}" class="bg-primary hover:bg-slate-900 text-white text-[10px] font-bold px-3.5 py-2 rounded-xl uppercase tracking-wider transition-all flex items-center gap-1 shadow-sm shadow-slate-900/5">
+                            Audit Dossier
+                            <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderListView() {
+            const body = document.getElementById('listTableBody');
+            if (filteredData.length === 0) {
+                body.innerHTML = "";
+                return;
+            }
+
+            body.innerHTML = filteredData.map(p => {
+                const targetLink = p.id === 'm3m-altitude' ? '/project_detail.html' : '/project_detail_locked.html';
+                
+                let scoreColor = 'text-secondary-container';
+                if (p.score >= 70) {
+                    scoreColor = 'text-emerald-500';
+                } else if (p.score >= 40) {
+                    scoreColor = 'text-amber-500';
+                } else {
+                    scoreColor = 'text-rose-500';
+                }
+
+                return `
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <span class="flex-shrink-0 w-2.5 h-2.5 rounded-full ${p.status === 'Ready to Move In' ? 'bg-emerald-500' : 'bg-amber-500'}" title="${p.status}"></span>
+                            <div>
+                                <h4 class="font-bold text-slate-950 font-display text-sm">${p.name}</h4>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${p.developer}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <span class="block font-semibold text-slate-700 text-[11px]">${p.sector}</span>
+                        <span class="text-[9px] text-slate-400 uppercase tracking-wider block font-semibold">${p.corridor}</span>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="flex gap-1">
+                            ${p.bhk.map(b => `<span class="bg-slate-100 text-slate-500 border border-slate-200/30 px-2 py-0.5 rounded text-[9px] font-semibold">${b}</span>`).join('')}
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 text-right">
+                        <div class="inline-block w-36 text-[10px] space-y-1">
+                            <div class="flex justify-between font-semibold">
+                                <span class="text-slate-400">Carpet:</span>
+                                <span class="text-slate-800 font-bold">${p.carpetEff}%</span>
+                            </div>
+                            <div class="flex justify-between font-semibold">
+                                <span class="text-slate-400">Built-up:</span>
+                                <span class="text-slate-800 font-bold">${p.builtupEff}%</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-right font-display font-extrabold text-sm ${scoreColor}">
+                        ${p.score} <span class="text-[10px] text-slate-400 font-normal">/ 100</span>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <div class="flex justify-end gap-2 items-center">
+                            <span class="font-display font-extrabold text-xs text-slate-900 mr-4">₹${p.priceMin.toFixed(2)} - ${p.priceMax.toFixed(2)} Cr</span>
+                            <a href="${targetLink}" class="bg-primary hover:bg-slate-900 text-white text-[9px] font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider transition-all">
+                                View Dossier
+                            </a>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function renderMapViewings() {
+            const container = document.getElementById('mapViewListContainer');
+            if (filteredData.length === 0) {
+                container.innerHTML = "";
+                return;
+            }
+
+            const displayed = activeCorridorFilter === 'all' 
+                ? filteredData 
+                : filteredData.filter(p => p.corridor === activeCorridorFilter);
+
+            container.innerHTML = displayed.map((p, idx) => {
+                const targetLink = p.id === 'm3m-altitude' ? '/project_detail.html' : '/project_detail_locked.html';
+                
+                let scoreColor = 'text-secondary-container';
+                if (p.score >= 70) {
+                    scoreColor = 'text-emerald-500';
+                } else if (p.score >= 40) {
+                    scoreColor = 'text-amber-500';
+                } else {
+                    scoreColor = 'text-rose-500';
+                }
+
+                return `
+                <div onmouseenter="highlightMarker(${idx})" onmouseleave="resetMarker(${idx})" class="bg-white border border-slate-200/80 hover:border-amber-500 rounded-xl p-4 shadow-sm transition-all duration-200 cursor-pointer flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start gap-2">
+                            <div>
+                                <h4 class="font-display font-extrabold text-xs text-slate-955">${p.name}</h4>
+                                <span class="text-[9px] text-slate-400 uppercase tracking-widest block mt-0.5">${p.developer} · ${p.sector}</span>
+                            </div>
+                            <span class="font-display font-extrabold text-xs ${scoreColor}">
+                                ${p.score} <span class="text-[8px] text-slate-400 font-normal">/100</span>
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] text-slate-600 mt-2 border-t border-slate-100 pt-2">
+                            <span>Carpet Eff: <b class="text-slate-900">${p.carpetEff}%</b></span>
+                            <span>Scale: <b class="text-slate-900">${p.area} Acres</b></span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-3 pt-2 border-t border-dashed border-slate-100">
+                        <span class="font-display font-extrabold text-[10px] text-secondary-container">₹${p.priceMin.toFixed(2)} - ${p.priceMax.toFixed(2)} Cr</span>
+                        <a href="${targetLink}" class="bg-primary hover:bg-slate-900 text-white text-[8px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider transition-all">
+                            Dossier →
+                        </a>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        /* ================= MAP LOGIC ================= */
+        const CORRIDOR_STYLES = {
+            "Dwarka Expressway": {
+                color: "#8B5CF6", // Violet
+                fillColor: "#8B5CF6",
+                fillOpacity: 0.12,
+                weight: 2
+            },
+            "Golf Course Road": {
+                color: "#14B8A6", // Teal
+                fillColor: "#14B8A6",
+                fillOpacity: 0.12,
+                weight: 2
+            },
+            "Golf Course Extension Road": {
+                color: "#F59E0B", // Amber Gold
+                fillColor: "#F59E0B",
+                fillOpacity: 0.12,
+                weight: 2
+            },
+            "Southern Peripheral Road": {
+                color: "#3B82F6", // Blue
+                fillColor: "#3B82F6",
+                fillOpacity: 0.12,
+                weight: 2
+            },
+            "Sohna Road": {
+                color: "#4F46E5", // Indigo
+                fillColor: "#4F46E5",
+                fillOpacity: 0.12,
+                weight: 2
+            },
+            "Old Gurgaon": {
+                color: "#64748B", // Slate
+                fillColor: "#64748B",
+                fillOpacity: 0.12,
+                weight: 2
+            }
+        };
+
+        function initMap() {
+            if (mapInstance) return;
+            
+            mapInstance = L.map('map', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView([28.4140, 77.0800], 12);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(mapInstance);
+
+            L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
+            
+            updateMapPolygonsAndMarkers();
+        }
+
+        function updateMapPolygonsAndMarkers() {
+            if (!mapInstance) return;
+            
+            mapMarkers.forEach(m => mapInstance.removeLayer(m));
+            mapMarkers = [];
+            mapPolygonLayers.forEach(poly => mapInstance.removeLayer(poly));
+            mapPolygonLayers = [];
+
+            for (const [name, coords] of Object.entries(CORRIDOR_POLYGONS)) {
+                const matchingAudits = filteredData.filter(p => p.corridor === name).length;
+
+                const style = CORRIDOR_STYLES[name] || {
+                    color: "#94A3B8",
+                    fillColor: "#94A3B8",
+                    fillOpacity: 0.1,
+                    weight: 1.5
+                };
+
+                const polygon = L.polygon(coords, {
+                    ...style,
+                    dashArray: name === activeCorridorFilter ? '' : '4, 4'
+                }).addTo(mapInstance);
+
+                polygon.bindTooltip(`
+                    <div class="px-2 py-1 font-sans text-xs">
+                        <b class="text-slate-900 block">${name}</b>
+                        <span class="text-slate-500">${matchingAudits} audited projects</span>
+                    </div>
+                `, { sticky: true });
+
+                polygon.on('mouseover', function(e) {
+                    polygon.setStyle({
+                        fillOpacity: 0.25,
+                        weight: 3
+                    });
+                });
+
+                polygon.on('mouseout', function(e) {
+                    if (name !== activeCorridorFilter) {
+                        polygon.setStyle({
+                            fillOpacity: style.fillOpacity,
+                            weight: style.weight
+                        });
+                    }
+                });
+
+                polygon.on('click', function() {
+                    // Uncheck sector selection to focus corridor selection
+                    document.querySelectorAll('#multiSelectSector input[type="checkbox"]').forEach(cb => cb.checked = false);
+                    activeCorridorFilter = name;
+                    setMapCorridor(name);
+                });
+
+                mapPolygonLayers.push(polygon);
+            }
+            
+            const mapData = activeCorridorFilter === 'all' 
+                ? filteredData 
+                : filteredData.filter(p => p.corridor === activeCorridorFilter);
+            
+            if (mapData.length === 0) return;
+
+            const bounds = [];
+            
+            mapData.forEach((p, idx) => {
+                const targetLink = p.id === 'm3m-altitude' ? '/project_detail.html' : '/project_detail_locked.html';
+                
+                let scoreColor = 'border-amber-500';
+                if (p.score >= 70) {
+                    scoreColor = 'border-emerald-500';
+                } else if (p.score >= 40) {
+                    scoreColor = 'border-amber-500';
+                } else {
+                    scoreColor = 'border-rose-500';
+                }
+
+                const customPin = L.divIcon({
+                    className: "custom-map-pin",
+                    html: `<div id="map-pin-${idx}" class="w-8 h-8 rounded-full bg-primary border-2 ${scoreColor} text-white text-[9px] font-bold flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95">${p.score}</div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+                
+                const marker = L.marker([p.lat, p.lng], { icon: customPin }).addTo(mapInstance);
+                
+                marker.bindPopup(`
+                    <div class="p-2.5 space-y-1.5 font-sans">
+                        <span class="text-[9px] bg-white/10 text-slate-300 font-bold px-1.5 py-0.5 rounded uppercase">${p.developer}</span>
+                        <h4 class="font-display font-extrabold text-xs text-white leading-none">${p.name}</h4>
+                        <p class="text-[10px] text-slate-400">${p.sector}, ${p.corridor}</p>
+                        <div class="flex justify-between items-center text-[10px] border-t border-white/10 pt-1.5 mt-1.5">
+                            <span class="font-extrabold text-secondary-container">₹${p.priceMin.toFixed(2)} - ${p.priceMax.toFixed(2)} Cr</span>
+                            <a href="${targetLink}" class="text-brandBlue font-bold hover:underline">Dossier →</a>
+                        </div>
+                    </div>
+                `);
+                
+                mapMarkers.push(marker);
+                bounds.push([p.lat, p.lng]);
+            });
+            
+            if (activeCorridorFilter !== 'all') {
+                const targetPoly = mapPolygonLayers.find((poly, idx) => Object.keys(CORRIDOR_POLYGONS)[idx] === activeCorridorFilter);
+                if (targetPoly) {
+                    mapInstance.fitBounds(targetPoly.getBounds(), { padding: [20, 20] });
+                }
+            } else if (bounds.length > 0) {
+                mapInstance.fitBounds(bounds, { padding: [40, 40] });
+            }
+        }
+
+        function highlightMarker(idx) {
+            const pin = document.getElementById(`map-pin-${idx}`);
+            if (pin) {
+                pin.classList.remove('bg-primary');
+                pin.classList.add('bg-secondary-container', 'text-primary', 'scale-115');
+            }
+        }
+
+        function resetMarker(idx) {
+            const pin = document.getElementById(`map-pin-${idx}`);
+            if (pin) {
+                pin.classList.remove('bg-secondary-container', 'text-primary', 'scale-115');
+                pin.classList.add('bg-primary');
+            }
+        }
+
+        function setMapCorridor(corridor) {
+            activeCorridorFilter = corridor;
+            
+            document.querySelectorAll('.map-corridor-btn').forEach(btn => {
+                const text = btn.textContent.trim();
+                const isAll = corridor === 'all' && text === 'All Corridors';
+                const isExt = corridor === 'Golf Course Extension Road' && text === 'Golf Course Ext Road';
+                const isGcr = corridor === 'Golf Course Road' && text === 'Golf Course Road';
+                const isSpr = corridor === 'Southern Peripheral Road' && text === 'Southern Peripheral Rd';
+                const isDwe = corridor === 'Dwarka Expressway' && text === 'Dwarka Expressway';
+                const isSohna = corridor === 'Sohna Road' && text === 'Sohna Road';
+                
+                if (isAll || isExt || isGcr || isSpr || isDwe || isSohna) {
+                    btn.classList.add('active', 'bg-amber-500', 'text-primary');
+                    btn.classList.remove('text-slate-300', 'bg-white/5', 'hover:bg-white/10');
+                } else {
+                    btn.classList.remove('active', 'bg-amber-500', 'text-primary');
+                    btn.classList.add('text-slate-300', 'bg-white/5', 'hover:bg-white/10');
+                }
+            });
+            
+            renderViews();
+            updateMapPolygonsAndMarkers();
+        }
+
+        /* ================= INITIALIZATION ================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            // Setup default sliders values
+            updateSliders('budget');
+            updateSliders('carpet');
+            updateSliders('area');
+
+            renderViews();
+            
+            // Search Input listener
+            document.getElementById('searchInput').addEventListener('input', handleSearchInput);
+
+            // Click outside to close multiselects
+            document.addEventListener('click', (event) => {
+                if (!event.target.closest('.custom-multiselect')) {
+                    document.querySelectorAll('.multiselect-popover').forEach(el => {
+                        el.classList.add('hidden');
+                    });
+                }
+            });
+        });
+</script>
+</body>
+</html>
+<script>
+(function(){
+  function postHeight(){
+    var h = Math.max(document.documentElement.scrollHeight, document.body ? document.body.scrollHeight : 0);
+    try { window.parent && window.parent.postMessage({ type: 'propium:height', height: h }, '*'); } catch(e){}
+  }
+  window.addEventListener('load', postHeight);
+  window.addEventListener('resize', postHeight);
+  try { new ResizeObserver(postHeight).observe(document.documentElement); } catch(e){}
+  setInterval(postHeight, 500);
+})();
+</script>
