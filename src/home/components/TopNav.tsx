@@ -33,8 +33,8 @@ export function TopNav({ activeTab = 'Home' }: TopNavProps = {}) {
 
   const mainLinks = [
     { label: 'Home', href: '/', beta: false },
-    { label: 'AI Search', href: '#', beta: true },
-    { label: 'Compare', href: '#', beta: false },
+    { label: 'AI Search', href: '/ai-search', beta: true },
+    { label: 'Compare', href: '/compare', beta: false },
   ];
 
   const searchDropdownItems = [
@@ -57,28 +57,6 @@ export function TopNav({ activeTab = 'Home' }: TopNavProps = {}) {
           <nav className="hidden md:flex gap-8 items-center">
             {mainLinks.map((item) => {
               const active = item.label === activeTab;
-              if (item.label === 'AI Search') {
-                return (
-                  <span
-                    key={item.label}
-                    className="transition-colors flex items-center gap-1 cursor-default"
-                    style={{
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      letterSpacing: '0.05em',
-                      textTransform: 'uppercase',
-                      color: '#cbd5e1',
-                      paddingBottom: 0,
-                    }}
-                  >
-                    {item.label}
-                    {item.beta && (
-                      <span style={{ fontSize: 9, background: 'rgba(245,158,11,0.2)', color: '#F59E0B', padding: '2px 8px', borderRadius: 999, fontWeight: 700 }}>BETA</span>
-                    )}
-                  </span>
-                );
-              }
               return (
                 <Link
                   key={item.label}

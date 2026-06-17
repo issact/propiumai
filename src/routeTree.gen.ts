@@ -15,6 +15,8 @@ import { Route as M3mDeveloperRouteImport } from './routes/m3m-developer'
 import { Route as GolfCourseExtensionRouteImport } from './routes/golf-course-extension'
 import { Route as DirectoriesRouteImport } from './routes/directories'
 import { Route as DeveloperScorecardsRouteImport } from './routes/developer-scorecards'
+import { Route as CompareRouteImport } from './routes/compare'
+import { Route as AiSearchRouteImport } from './routes/ai-search'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SearchRoute = SearchRouteImport.update({
@@ -47,6 +49,16 @@ const DeveloperScorecardsRoute = DeveloperScorecardsRouteImport.update({
   path: '/developer-scorecards',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiSearchRoute = AiSearchRouteImport.update({
+  id: '/ai-search',
+  path: '/ai-search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -55,6 +67,8 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-search': typeof AiSearchRoute
+  '/compare': typeof CompareRoute
   '/developer-scorecards': typeof DeveloperScorecardsRoute
   '/directories': typeof DirectoriesRoute
   '/golf-course-extension': typeof GolfCourseExtensionRoute
@@ -64,6 +78,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-search': typeof AiSearchRoute
+  '/compare': typeof CompareRoute
   '/developer-scorecards': typeof DeveloperScorecardsRoute
   '/directories': typeof DirectoriesRoute
   '/golf-course-extension': typeof GolfCourseExtensionRoute
@@ -74,6 +90,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-search': typeof AiSearchRoute
+  '/compare': typeof CompareRoute
   '/developer-scorecards': typeof DeveloperScorecardsRoute
   '/directories': typeof DirectoriesRoute
   '/golf-course-extension': typeof GolfCourseExtensionRoute
@@ -85,6 +103,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-search'
+    | '/compare'
     | '/developer-scorecards'
     | '/directories'
     | '/golf-course-extension'
@@ -94,6 +114,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-search'
+    | '/compare'
     | '/developer-scorecards'
     | '/directories'
     | '/golf-course-extension'
@@ -103,6 +125,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/ai-search'
+    | '/compare'
     | '/developer-scorecards'
     | '/directories'
     | '/golf-course-extension'
@@ -113,6 +137,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiSearchRoute: typeof AiSearchRoute
+  CompareRoute: typeof CompareRoute
   DeveloperScorecardsRoute: typeof DeveloperScorecardsRoute
   DirectoriesRoute: typeof DirectoriesRoute
   GolfCourseExtensionRoute: typeof GolfCourseExtensionRoute
@@ -165,6 +191,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DeveloperScorecardsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-search': {
+      id: '/ai-search'
+      path: '/ai-search'
+      fullPath: '/ai-search'
+      preLoaderRoute: typeof AiSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -177,6 +217,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiSearchRoute: AiSearchRoute,
+  CompareRoute: CompareRoute,
   DeveloperScorecardsRoute: DeveloperScorecardsRoute,
   DirectoriesRoute: DirectoriesRoute,
   GolfCourseExtensionRoute: GolfCourseExtensionRoute,
