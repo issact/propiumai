@@ -1,4 +1,4 @@
-port { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { MobileBottomNav } from "@/home/components/MobileBottomNav";
 
 export const Route = createFileRoute("/golf-course-extension")({
