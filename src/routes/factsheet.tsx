@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { IframePage } from "@/home/components/IframePage";
 
 export const Route = createFileRoute("/factsheet")({
   head: () => ({
