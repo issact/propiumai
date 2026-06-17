@@ -78,8 +78,9 @@ export function FAQSection() {
       </div>
 
       <Accordion
-        type="multiple"
-        className="grid grid-cols-1 md:grid-cols-2 gap-3"
+        type="single"
+        collapsible
+        className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start"
       >
         {faqItems.map((item, i) => (
           <AccordionItem
@@ -115,7 +116,7 @@ export function FAQSection() {
                 color: "#475569",
                 lineHeight: 1.7,
               }}
-              className="px-4 pb-4 pt-0 border-t border-slate-100"
+              className="px-4 pb-4 pt-0"
             >
               {item.answer}
             </AccordionContent>

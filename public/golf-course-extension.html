@@ -145,7 +145,7 @@
                 <p id="corridorDesc" class="text-slate-500 text-sm max-w-3xl mt-2">Loading description...</p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-                <a href="/micro-market" target="_top" class="px-4 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                <a href="micro_market.html" class="px-4 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
                     <span class="material-symbols-outlined text-sm">arrow_back</span> Back to Directory
                 </a>
             </div>
@@ -155,7 +155,7 @@
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
             <!-- Left Side: Corridor Telemetry Grid -->
-            <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="lg:col-span-5 grid grid-cols-2 gap-4">
                 <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
                     <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Average PSFT Rate</span>
                     <div>
@@ -217,9 +217,6 @@
                 <!-- Product Segment Mix Split -->
                 <div class="border-t border-slate-100 pt-4 mt-4 space-y-2">
                     <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Inventory Class Split</span>
-                    <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex" id="segmentProgress">
-                        <!-- Dynamic fills -->
-                    </div>
                     <div class="flex justify-between items-center text-[9px] text-slate-500 font-semibold" id="segmentLegend">
                         <!-- Dynamic legend -->
                     </div>
@@ -1410,14 +1407,8 @@
                 </li>
             `).join('');
 
-            // Segment Split Progress
+            // Segment Split Legend (bar removed per design)
             const seg = c.segments;
-            const segmentProgress = document.getElementById('segmentProgress');
-            segmentProgress.innerHTML = `
-                <div style="width: ${seg.ultraLuxury}%" class="bg-[#0F172A]" title="Ultra Luxury: ${seg.ultraLuxury}%"></div>
-                <div style="width: ${seg.luxury}%" class="bg-secondary-container" title="Luxury: ${seg.luxury}%"></div>
-                <div style="width: ${seg.premium}%" class="bg-brandBlue" title="Premium: ${seg.premium}%"></div>
-            `;
             const segmentLegend = document.getElementById('segmentLegend');
             segmentLegend.innerHTML = `
                 <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#0F172A]"></span> Ultra-Lux: <b>${seg.ultraLuxury}%</b></span>
@@ -1432,93 +1423,77 @@
         function renderSVGChart() {
             const data = activeCorridor.priceTrend;
             const container = document.getElementById('svgChartContainer');
-            
-            // Calculate coordinates
-            const width = 600;
-            const height = 180;
-            const paddingLeft = 45;
-            const paddingRight = 15;
-            const paddingTop = 25;
-            const paddingBottom = 25;
 
-            const xRange = width - paddingLeft - paddingRight;
-            const yRange = height - paddingTop - paddingBottom;
+            // Bucket the yearly pricing series into 4 era slices so the pie
+            // stays readable while still using the full pricing dataset.
+            const buckets = [
+                { label: 'Emerging  2015–17', color: '#1E3A8A', years: [2015, 2016, 2017] },
+                { label: 'Growth  2018–20',   color: '#2563EB', years: [2018, 2019, 2020] },
+                { label: 'Premium  2021–23',  color: '#F59E0B', years: [2021, 2022, 2023] },
+                { label: 'Luxury  2024–26',   color: '#0F172A', years: [2024, 2025, 2026] },
+            ];
 
-            const minX = data[0].year;
-            const maxX = data[data.length - 1].year;
-            
-            const prices = data.map(d => d.price);
-            const minY = 0; // Starts from 0 for clear scale perspective
-            const maxY = Math.ceil(Math.max(...prices) / 5000) * 5000;
+            const byYear = Object.fromEntries(data.map(d => [d.year, d.price]));
+            const slices = buckets.map(b => {
+                const vals = b.years.map(y => byYear[y]).filter(v => typeof v === 'number');
+                const avg = vals.length ? vals.reduce((a, v) => a + v, 0) / vals.length : 0;
+                return { ...b, value: avg };
+            }).filter(s => s.value > 0);
 
-            // Map points to SVG coordinates
-            const points = data.map(d => {
-                const x = paddingLeft + ((d.year - minX) / (maxX - minX)) * xRange;
-                const y = height - paddingBottom - ((d.price - minY) / (maxY - minY)) * yRange;
-                return { x, y, year: d.year, price: d.price };
-            });
+            const total = slices.reduce((a, s) => a + s.value, 0);
 
-            // Make Path
-            let pathData = `M ${points[0].x} ${points[0].y}`;
-            for (let i = 1; i < points.length; i++) {
-                pathData += ` L ${points[i].x} ${points[i].y}`;
-            }
+            // Donut geometry
+            const W = 360, H = 220;
+            const cx = 110, cy = H / 2;
+            const rOuter = 88, rInner = 52;
 
-            // Fill Path (for gradient underneath the line)
-            const fillPathData = `${pathData} L ${points[points.length - 1].x} ${height - paddingBottom} L ${points[0].x} ${height - paddingBottom} Z`;
+            const polar = (r, a) => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
 
-            // Draw Y Grid lines (4 divisions)
-            let grids = '';
-            for (let i = 0; i <= 4; i++) {
-                const priceVal = minY + (i / 4) * (maxY - minY);
-                const y = height - paddingBottom - (i / 4) * yRange;
-                grids += `
-                    <line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3,3" />
-                    <text x="${paddingLeft - 8}" y="${y + 3}" fill="#94A3B8" font-size="9" font-weight="bold" text-anchor="end">₹${(priceVal / 1000).toFixed(1)}k</text>
-                `;
-            }
-
-            // Draw X Ticks
-            let xTicks = '';
-            points.forEach(p => {
-                xTicks += `
-                    <line x1="${p.x}" y1="${height - paddingBottom}" x2="${p.x}" y2="${height - paddingBottom + 4}" stroke="#CBD5E1" stroke-width="1.5" />
-                    <text x="${p.x}" y="${height - paddingBottom + 16}" fill="#94A3B8" font-size="9" font-weight="bold" text-anchor="middle">${p.year}</text>
+            let acc = -Math.PI / 2; // start at top
+            let paths = '';
+            slices.forEach(s => {
+                const frac = s.value / total;
+                const a0 = acc;
+                const a1 = acc + frac * Math.PI * 2;
+                acc = a1;
+                const large = (a1 - a0) > Math.PI ? 1 : 0;
+                const [x0, y0] = polar(rOuter, a0);
+                const [x1, y1] = polar(rOuter, a1);
+                const [x2, y2] = polar(rInner, a1);
+                const [x3, y3] = polar(rInner, a0);
+                paths += `
+                    <path d="M ${x0} ${y0} A ${rOuter} ${rOuter} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${rInner} ${rInner} 0 ${large} 0 ${x3} ${y3} Z"
+                          fill="${s.color}" stroke="#ffffff" stroke-width="2">
+                        <title>${s.label}: ₹${Math.round(s.value).toLocaleString('en-IN')}/sqft (${(frac * 100).toFixed(1)}%)</title>
+                    </path>
                 `;
             });
 
-            // Dots and Interactive Labels
-            let dots = '';
-            points.forEach(p => {
-                dots += `
-                    <circle cx="${p.x}" cy="${p.y}" r="4" fill="#F59E0B" stroke="#ffffff" stroke-width="2" class="cursor-pointer transition-all hover:scale-150" />
-                    <text x="${p.x}" y="${p.y - 8}" fill="#0F172A" font-size="9" font-weight="bold" text-anchor="middle">₹${p.price.toLocaleString('en-IN')}</text>
+            // Center labels: latest price + CAGR across the series
+            const first = data[0], last = data[data.length - 1];
+            const years = last.year - first.year;
+            const cagr = years > 0 ? (Math.pow(last.price / first.price, 1 / years) - 1) * 100 : 0;
+
+            // Legend (right side)
+            const legendX = 220;
+            let legend = '';
+            slices.forEach((s, i) => {
+                const ly = 40 + i * 36;
+                const frac = s.value / total;
+                legend += `
+                    <rect x="${legendX}" y="${ly}" width="10" height="10" rx="2" fill="${s.color}" />
+                    <text x="${legendX + 16}" y="${ly + 9}" fill="#0F172A" font-size="10" font-weight="700">${s.label}</text>
+                    <text x="${legendX + 16}" y="${ly + 22}" fill="#64748B" font-size="9" font-weight="600">₹${Math.round(s.value).toLocaleString('en-IN')}/sqft · ${(frac * 100).toFixed(1)}%</text>
                 `;
             });
 
             container.innerHTML = `
-                <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
-                    <defs>
-                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.15" />
-                            <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
-                        </linearGradient>
-                    </defs>
-                    
-                    <!-- Grid Lines -->
-                    ${grids}
-
-                    <!-- X Axis Ticks -->
-                    ${xTicks}
-
-                    <!-- Area Fill -->
-                    <path d="${fillPathData}" fill="url(#chartGrad)" />
-
-                    <!-- Plot Line -->
-                    <path d="${pathData}" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-
-                    <!-- Dots & Values -->
-                    ${dots}
+                <svg viewBox="0 0 ${W} ${H}" class="w-full h-full">
+                    ${paths}
+                    <text x="${cx}" y="${cy - 6}" text-anchor="middle" fill="#94A3B8" font-size="9" font-weight="700" letter-spacing="1.2">LATEST</text>
+                    <text x="${cx}" y="${cy + 12}" text-anchor="middle" fill="#0F172A" font-size="18" font-weight="800">₹${(last.price / 1000).toFixed(1)}k</text>
+                    <text x="${cx}" y="${cy + 28}" text-anchor="middle" fill="#F59E0B" font-size="10" font-weight="700">CAGR ${cagr.toFixed(1)}%</text>
+                    ${legend}
                 </svg>
             `;
         }

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TopNav } from "@/home/components/TopNav";
 import { Footer } from "@/home/components/Footer";
@@ -333,142 +332,88 @@ function ScorecardRow({ label, score }: { label: string; score: number }) {
   );
 }
 
-function InventoryPieChart() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+const SEGMENTS = [
+  { name: "Luxury", value: 45, color: "#006AFF" },
+  { name: "Ultra Luxury", value: 35, color: "#0F172A" },
+  { name: "Premium", value: 20, color: "#F59E0B" },
+];
 
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: { name: string; value: number; payload: { color: string } }[];
-  }) => {
-    if (!active || !payload?.length) return null;
-    return (
-      <div
-        style={{
-          background: "#0F172A",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: 8,
-          padding: "8px 12px",
-          fontFamily: "Inter, sans-serif",
-        }}
-      >
-        <span style={{ color: "#F1F5F9", fontSize: 12, fontWeight: 700 }}>
-          {payload[0].name}
-        </span>
-        <span
-          style={{
-            color: "#F59E0B",
-            fontSize: 13,
-            fontWeight: 800,
-            marginLeft: 8,
-          }}
-        >
-          {payload[0].value}%
-        </span>
-      </div>
-    );
-  };
+function SegmentPieChart() {
+  const cx = 140, cy = 130, outerR = 105, innerR = 52;
+  let cumAngle = -Math.PI / 2;
+
+  const slices = SEGMENTS.map((seg) => {
+    const sweep = (seg.value / 100) * 2 * Math.PI;
+    const start = cumAngle;
+    const end = cumAngle + sweep;
+    cumAngle = end;
+
+    const cos0 = Math.cos(start), sin0 = Math.sin(start);
+    const cos1 = Math.cos(end), sin1 = Math.sin(end);
+    const large = sweep > Math.PI ? 1 : 0;
+
+    const d = [
+      `M ${cx + innerR * cos0} ${cy + innerR * sin0}`,
+      `L ${cx + outerR * cos0} ${cy + outerR * sin0}`,
+      `A ${outerR} ${outerR} 0 ${large} 1 ${cx + outerR * cos1} ${cy + outerR * sin1}`,
+      `L ${cx + innerR * cos1} ${cy + innerR * sin1}`,
+      `A ${innerR} ${innerR} 0 ${large} 0 ${cx + innerR * cos0} ${cy + innerR * sin0}`,
+      "Z",
+    ].join(" ");
+
+    const mid = start + sweep / 2;
+    const labelR = (outerR + innerR) / 2;
+    return { ...seg, d, lx: cx + labelR * Math.cos(mid), ly: cy + labelR * Math.sin(mid) };
+  });
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <div style={{ width: 120, height: 120, flexShrink: 0 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={CORRIDOR.segments}
-                cx="50%"
-                cy="50%"
-                innerRadius={32}
-                outerRadius={54}
-                paddingAngle={2}
-                dataKey="value"
-                onMouseEnter={(_, index) => setActiveIndex(index)}
-                onMouseLeave={() => setActiveIndex(null)}
-                stroke="none"
-              >
-                {CORRIDOR.segments.map((seg, i) => (
-                  <Cell
-                    key={seg.name}
-                    fill={seg.color}
-                    opacity={
-                      activeIndex === null || activeIndex === i ? 1 : 0.45
-                    }
-                    style={{ cursor: "pointer", outline: "none" }}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}
-        >
-          {CORRIDOR.segments.map((seg, i) => (
-            <div
-              key={seg.name}
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+      <svg viewBox="0 0 280 260" style={{ width: "100%", maxWidth: 260, display: "block" }}>
+        {slices.map((s) => (
+          <path key={s.name} d={s.d} fill={s.color} stroke="#ffffff" strokeWidth="2.5" />
+        ))}
+        {slices.map((s) => (
+          <text
+            key={`lbl-${s.name}`}
+            x={s.lx}
+            y={s.ly}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill={s.color === "#F59E0B" ? "#0F172A" : "#ffffff"}
+            fontSize="13"
+            fontWeight="800"
+            fontFamily="Outfit, sans-serif"
+          >
+            {s.value}%
+          </text>
+        ))}
+      </svg>
+      <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
+        {SEGMENTS.map((s) => (
+          <div key={s.name} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 8,
-                padding: "6px 10px",
-                background:
-                  activeIndex === i ? "rgba(245,158,11,0.06)" : "#f8fafc",
-                borderRadius: 6,
-                border: `1px solid ${activeIndex === i ? "rgba(245,158,11,0.25)" : "#f1f5f9"}`,
-                transition: "all 0.15s",
-                cursor: "default",
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                background: s.color,
+                display: "inline-block",
+                flexShrink: 0,
+                boxShadow: s.color === "#0F172A" ? "0 0 0 1px #cbd5e1" : "none",
               }}
-              onMouseEnter={() => setActiveIndex(i)}
-              onMouseLeave={() => setActiveIndex(null)}
+            />
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 11,
+                fontWeight: 600,
+                color: "#475569",
+              }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: seg.color,
-                    display: "inline-block",
-                    flexShrink: 0,
-                  }}
-                />
-                <span
-                  style={{
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: "#475569",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {seg.name}
-                </span>
-              </div>
-              <span
-                style={{
-                  fontFamily: "Outfit, sans-serif",
-                  fontSize: 13,
-                  fontWeight: 800,
-                  color: "#0F172A",
-                }}
-              >
-                {seg.value}%
-              </span>
-            </div>
-          ))}
-        </div>
+              {s.name}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -1461,49 +1406,6 @@ function GCEXPage() {
                 marginBottom: 2,
               }}
             >
-              Price Growth Trend (2015 – 2026)
-            </h3>
-            <p
-              style={{
-                fontFamily: "Inter, sans-serif",
-                fontSize: 10,
-                color: "#94a3b8",
-                marginBottom: 16,
-              }}
-            >
-              Trailing 90-day base residential pricing index
-            </p>
-            <PriceChart />
-          </div>
-
-          <div className="lg:col-span-5" style={{ minHeight: 0 }}>
-            <ExpertAnalysisCard />
-          </div>
-        </div>
-
-        {/* Inventory Class Split — standalone row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 20 }}>
-          <div
-            className="lg:col-span-7"
-            style={{
-              background: "#ffffff",
-              border: "1px solid rgba(226,232,240,0.8)",
-              borderRadius: 16,
-              padding: 20,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-            }}
-          >
-            <h3
-              style={{
-                fontFamily: "Outfit, sans-serif",
-                fontSize: 12,
-                fontWeight: 700,
-                color: "#0F172A",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                marginBottom: 2,
-              }}
-            >
               Inventory Class Split
             </h3>
             <p
@@ -1516,7 +1418,11 @@ function GCEXPage() {
             >
               Residential segment distribution across active GCEX projects
             </p>
-            <InventoryPieChart />
+            <SegmentPieChart />
+          </div>
+
+          <div className="lg:col-span-5" style={{ minHeight: 0 }}>
+            <ExpertAnalysisCard />
           </div>
         </div>
 
@@ -1653,137 +1559,5 @@ function GCEXPage() {
       <Footer />
       <MobileBottomNav />
     </div>
-  );
-}
-
-// ── SVG Price Chart (inline, no external deps) ───────────────────────────────
-
-const priceTrend = [
-  { year: 2015, price: 9500 },
-  { year: 2018, price: 12000 },
-  { year: 2020, price: 13500 },
-  { year: 2022, price: 16000 },
-  { year: 2024, price: 23000 },
-  { year: 2026, price: 27500 },
-];
-
-function PriceChart() {
-  const width = 600;
-  const height = 180;
-  const pl = 48;
-  const pr = 16;
-  const pt = 24;
-  const pb = 28;
-
-  const xRange = width - pl - pr;
-  const yRange = height - pt - pb;
-  const minX = priceTrend[0].year;
-  const maxX = priceTrend[priceTrend.length - 1].year;
-  const maxY = Math.ceil(Math.max(...priceTrend.map((d) => d.price)) / 5000) * 5000;
-
-  const pts = priceTrend.map((d) => ({
-    x: pl + ((d.year - minX) / (maxX - minX)) * xRange,
-    y: height - pb - (d.price / maxY) * yRange,
-    year: d.year,
-    price: d.price,
-  }));
-
-  const pathD = pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
-  const fillD = `${pathD} L ${pts[pts.length - 1].x} ${height - pb} L ${pts[0].x} ${height - pb} Z`;
-
-  const grids = Array.from({ length: 5 }, (_, i) => {
-    const val = (i / 4) * maxY;
-    const y = height - pb - (i / 4) * yRange;
-    return { val, y };
-  });
-
-  return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      style={{ width: "100%", height: "auto" }}
-    >
-      <defs>
-        <linearGradient id="gcexGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      {grids.map(({ val, y }) => (
-        <g key={val}>
-          <line
-            x1={pl}
-            y1={y}
-            x2={width - pr}
-            y2={y}
-            stroke="#E2E8F0"
-            strokeWidth="1"
-            strokeDasharray="3,3"
-          />
-          <text
-            x={pl - 6}
-            y={y + 3}
-            fill="#94A3B8"
-            fontSize="9"
-            fontWeight="bold"
-            textAnchor="end"
-          >
-            ₹{(val / 1000).toFixed(0)}k
-          </text>
-        </g>
-      ))}
-      {pts.map((p) => (
-        <g key={p.year}>
-          <line
-            x1={p.x}
-            y1={height - pb}
-            x2={p.x}
-            y2={height - pb + 4}
-            stroke="#CBD5E1"
-            strokeWidth="1.5"
-          />
-          <text
-            x={p.x}
-            y={height - pb + 16}
-            fill="#94A3B8"
-            fontSize="9"
-            fontWeight="bold"
-            textAnchor="middle"
-          >
-            {p.year}
-          </text>
-        </g>
-      ))}
-      <path d={fillD} fill="url(#gcexGrad)" />
-      <path
-        d={pathD}
-        fill="none"
-        stroke="#F59E0B"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {pts.map((p) => (
-        <g key={`dot-${p.year}`}>
-          <circle
-            cx={p.x}
-            cy={p.y}
-            r="4"
-            fill="#F59E0B"
-            stroke="#ffffff"
-            strokeWidth="2"
-          />
-          <text
-            x={p.x}
-            y={p.y - 9}
-            fill="#0F172A"
-            fontSize="9"
-            fontWeight="bold"
-            textAnchor="middle"
-          >
-            ₹{p.price.toLocaleString("en-IN")}
-          </text>
-        </g>
-      ))}
-    </svg>
   );
 }
