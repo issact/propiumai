@@ -15,11 +15,16 @@ export const Route = createFileRoute("/directories")({
 function Directories() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeHeight, setIframeHeight] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onMsg = (e: MessageEvent) => {
       const data = e.data;
       if (!data) return;
+      if (data.type === "propium:navigate" && typeof data.to === "string") {
+        navigate({ to: data.to });
+        return;
+      }
       if (data.type === "propium:height" && typeof data.height === "number") {
         setIframeHeight((prev) => (Math.abs(prev - data.height) > 1 ? data.height : prev));
       }
