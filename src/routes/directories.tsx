@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { TopNav } from "@/home/components/TopNav";
 import { Footer } from "@/home/components/Footer";
 import { MobileBottomNav } from "@/home/components/MobileBottomNav";
@@ -15,14 +14,13 @@ export const Route = createFileRoute("/directories")({
 function Directories() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeHeight, setIframeHeight] = useState<number>(0);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const onMsg = (e: MessageEvent) => {
       const data = e.data;
       if (!data) return;
       if (data.type === "propium:navigate" && typeof data.to === "string") {
-        navigate({ to: data.to });
+        window.location.assign(data.to);
         return;
       }
       if (data.type === "propium:height" && typeof data.height === "number") {
@@ -34,11 +32,11 @@ function Directories() {
     };
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
-  }, [navigate]);
+  }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: "#0F172A" }}>
-      <TopNav />
+      <TopNav activeTab="Search" />
       <iframe
         ref={iframeRef}
         src="/design.html"
