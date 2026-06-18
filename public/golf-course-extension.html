@@ -103,24 +103,54 @@
 <body class="bg-background text-[#0F172A] font-sans antialiased min-h-screen flex flex-col pt-16 relative blueprint-grid">
 
     <!-- Top Navigation Bar -->
-    <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0F172A]/85 border-b border-white/10 shadow-sm text-white">
-        <div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto w-full">
-            <div class="flex items-center gap-stack-md">
-                <a href="index.html" class="flex items-center gap-1 font-bold text-xl tracking-tight text-white hover:opacity-90">
-                    prOPIUM<span class="text-secondary-container">.ai</span>
+    <header class="fixed top-0 w-full z-40 backdrop-blur-md border-b border-white/10 shadow-sm text-white" style="background:rgba(15,23,42,0.85);">
+        <div class="flex justify-between items-center h-16 mx-auto gap-4" style="max-width:1280px;padding:0 16px;">
+            <!-- Logo -->
+            <div class="flex items-center gap-6 flex-shrink-0">
+                <a href="/" class="flex items-center gap-1 font-bold text-xl tracking-tight text-white hover:opacity-90" style="font-family:'Outfit',sans-serif;text-decoration:none;">
+                    prOPIUM<span style="color:#F59E0B;">.ai</span>
                 </a>
             </div>
+            <!-- Desktop nav -->
             <nav class="hidden md:flex gap-8 items-center">
-                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="index.html">Home</a>
-                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="project_search.html">Projects</a>
-                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="developer_search.html">Developers</a>
-                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="micro_market.html">Micro-Markets</a>
-            </nav>
-            <div class="flex items-center gap-stack-sm">
-                <div class="flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/10 rounded-full text-white">
-                    <span class="material-symbols-outlined text-sm">account_circle</span>
-                    <span class="font-sans text-xs font-semibold">Sahil Rajan</span>
+                <a href="/" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#cbd5e1;text-decoration:none;"
+                   onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#cbd5e1'">Home</a>
+                <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#cbd5e1;display:flex;align-items:center;gap:4px;cursor:default;">
+                    AI Search
+                    <span style="font-size:9px;background:rgba(245,158,11,0.2);color:#F59E0B;padding:2px 8px;border-radius:999px;font-weight:700;">BETA</span>
+                </span>
+                <a href="#" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#cbd5e1;text-decoration:none;"
+                   onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#cbd5e1'">Compare</a>
+                <!-- Search dropdown -->
+                <div style="position:relative;" id="nav-search-dropdown"
+                     onmouseenter="document.getElementById('nav-search-menu').style.display='block'"
+                     onmouseleave="setTimeout(()=>{if(!document.getElementById('nav-search-dropdown').matches(':hover'))document.getElementById('nav-search-menu').style.display='none'},150)">
+                    <a href="/search" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#cbd5e1;text-decoration:none;display:flex;align-items:center;gap:2px;"
+                       onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#cbd5e1'">
+                        Search
+                        <span class="material-symbols-outlined" style="font-size:14px;">expand_more</span>
+                    </a>
+                    <div id="nav-search-menu" style="display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:8px;padding:8px 0;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(15,23,42,0.95);backdrop-filter:blur(12px);min-width:180px;box-shadow:0 20px 50px rgba(0,0,0,0.4);z-index:100;">
+                        <a href="/directories" style="display:block;padding:10px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#e2e8f0;text-decoration:none;white-space:nowrap;"
+                           onmouseover="this.style.color='#F59E0B';this.style.background='rgba(245,158,11,0.08)'" onmouseout="this.style.color='#e2e8f0';this.style.background='transparent'">Projects</a>
+                        <a href="/micro-market" style="display:block;padding:10px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#e2e8f0;text-decoration:none;white-space:nowrap;"
+                           onmouseover="this.style.color='#F59E0B';this.style.background='rgba(245,158,11,0.08)'" onmouseout="this.style.color='#e2e8f0';this.style.background='transparent'">Micro Markets</a>
+                        <a href="/developer-scorecards" style="display:block;padding:10px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#e2e8f0;text-decoration:none;white-space:nowrap;"
+                           onmouseover="this.style.color='#F59E0B';this.style.background='rgba(245,158,11,0.08)'" onmouseout="this.style.color='#e2e8f0';this.style.background='transparent'">Developers</a>
+                    </div>
                 </div>
+            </nav>
+            <!-- Right: account pill + hamburger -->
+            <div class="flex items-center gap-2">
+                <div class="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full text-white" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);">
+                    <span class="material-symbols-outlined" style="font-size:18px;">account_circle</span>
+                    <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:500;">Sahil Rajan</span>
+                </div>
+                <button id="gcex-hamburger" aria-label="Open menu" class="md:hidden flex items-center justify-center"
+                    onclick="document.getElementById('gcex-mobile-menu').dataset.open='1'"
+                    style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#ffffff;cursor:pointer;">
+                    <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
+                </button>
             </div>
         </div>
     </header>
@@ -223,30 +253,22 @@
                 </div>
             </div>
 
-            <!-- Sector Matrix Breakdown Table -->
-            <div class="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-                <div>
-                    <h3 class="font-display font-bold text-xs uppercase tracking-wider text-primary mb-1">Sub-Market Sector Matrix</h3>
-                    <p class="text-[10px] text-slate-400 mb-3">Key residential sectors within the corridor</p>
+            <!-- Corridor Expert Analysis -->
+          <div class="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col" style="max-height: 480px;">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-amber-50 text-amber-600 text-[12px]">📊</span>
+                    <h3 class="font-display font-bold text-xs uppercase tracking-wider text-primary">Corridor Expert Analysis</h3>
                 </div>
-
-                <div class="flex-grow overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
-                                <th class="py-2 pr-4 font-sans text-[10px]">Sector / Node</th>
-                                <th class="py-2 px-4 font-sans text-[10px] text-center">Projects</th>
-                                <th class="py-2 pl-4 font-sans text-[10px] text-right">Avg Rate PSFT</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sectorMatrixBody" class="divide-y divide-slate-100">
-                            <!-- Dynamic rows in JS -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="text-[9px] text-slate-400 font-semibold mt-4 text-right">
-                    *Based on recent transaction registries & primary builder pricing
+                <p class="text-[10px] text-slate-400 mb-3">prOPIUM editorial intelligence — updated Q2 2026</p>
+                <div class="flex-grow overflow-y-auto pr-2 space-y-3 text-[12px] leading-relaxed text-slate-700" style="scrollbar-width: thin;">
+                    <p>Golf Course Extension Road has quietly emerged as Gurgaon's most compelling luxury investment corridor over the past five years — and the data now makes the thesis undeniable.</p>
+                    <p>The corridor's appreciation story is structural, not cyclical. Between 2015 and 2022, GCEX hovered in the ₹9,500–₹16,000/sqft band while Golf Course Road commanded a 3× premium. That gap has compressed decisively. As of 2026, GCEX trades at ₹27,500/sqft — a 189% appreciation over eleven years — while still offering meaningful headroom versus GCR's ₹37,500 average. This spread creates a rare entry window into luxury product at below-replacement-cost pricing in a fully-matured social infrastructure corridor.</p>
+                    <p>Builder quality on this corridor is best-in-class. M3M, TARC, DLF, Mahindra Lifespaces, and Emaar have all staked flagship projects here, keeping design and construction standards high and reducing buyer risk. The RERA compliance track record across active projects is strong, with most under-construction projects maintaining quarterly progress reporting.</p>
+                    <p>The inventory mix skews decidedly toward luxury and ultra-luxury (45% and 35% respectively), which is highly unusual for a corridor with 97 active projects. This reflects developer conviction that end-buyer profiles here are deep-pocketed professionals — NRIs, CXOs, and fund managers — rather than leveraged first-time buyers. Demand, accordingly, is sticky and less rate-sensitive.</p>
+                    <p>Infrastructure growth scores a 9.0 out of 10 — the highest in this metric across all Gurgaon corridors. The Southern Peripheral Road integration is operational, Cyber City connectivity has shortened materially, and the proposed Sector 55-56 Rapid Metro extension is in active planning. Each of these will compress travel times and push valuations further.</p>
+                    <p>Historical appreciation scores 9.4, reflecting the corridor's compounding track record. The 10-year CAGR on residential pricing here is approximately 10.2% — outperforming both fixed deposits and most equity mutual fund benchmarks over the same horizon.</p>
+                    <p>One risk to flag: carpet efficiency across the corridor averages 53–57%, which is on the lower end. Buyers should benchmark price-per-carpet-sq-ft rather than headline price-per-sq-ft to avoid overpaying for inefficient layouts. Ultra-luxury projects with sub-50% efficiency should be scrutinised closely.</p>
+                    <p>Our overall read: GCEX is in the late-growth phase of its value cycle — past the speculative risk, before the peak compression. For buyers with a 3–5 year horizon, it remains the highest conviction corridor in the Gurgaon matrix.</p>
                 </div>
             </div>
         </section>
@@ -349,22 +371,22 @@
             </div>
 
             <!-- VIEW 1: List View (Table) -->
-            <div id="viewList" class="overflow-x-auto w-full">
+            <div id="viewList" class="overflow-x-auto w-full rounded-xl border border-slate-200" style="background:#ffffff;">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                        <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider">
-                            <th class="py-3 pr-4 font-sans text-[10px]">Project Name</th>
-                            <th class="py-3 px-4 font-sans text-[10px]">Developer</th>
-                            <th class="py-3 px-4 font-sans text-[10px]">Sector</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-center">BHK Configurations</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-right">Price Range</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-center">Carpet Eff.</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-center">Built-up Eff.</th>
-                            <th class="py-3 px-4 font-sans text-[10px] text-center">prOPIUM Score</th>
-                            <th class="py-3 pl-4 font-sans text-[10px] text-right">Action</th>
+                        <tr style="background:#F1F5F9; border-bottom:2px solid #E2E8F0;">
+                            <th class="py-3 px-5 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500">Project Name</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500">Developer</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500">Sector</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500">BHK Configurations</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-right">Price Range</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Carpet Eff.</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Built-up Eff.</th>
+                            <th class="py-3 px-4 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">prOPIUM Score</th>
+                            <th class="py-3 px-5 font-sans text-[9px] font-bold uppercase tracking-widest text-slate-500 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="projectListBody" class="divide-y divide-slate-100">
+                    <tbody id="projectListBody">
                         <!-- Dynamically filled in JS -->
                     </tbody>
                 </table>
@@ -1365,15 +1387,7 @@
                 </div>`;
             }).join('');
 
-            // Matrix
-            const sectorMatrixBody = document.getElementById('sectorMatrixBody');
-            sectorMatrixBody.innerHTML = c.sectors.map(s => `
-                <tr class="project-row">
-                    <td class="py-2.5 pr-4 font-bold text-slate-800">${s.sector}</td>
-                    <td class="py-2.5 px-4 font-semibold text-slate-500 text-center">${s.projects} projects</td>
-                    <td class="py-2.5 pl-4 font-display font-extrabold text-secondary-container text-right">${s.price}/sqft</td>
-                </tr>
-            `).join('');
+            // Matrix replaced by Corridor Expert Analysis (static content)
 
             // Infrastructure Catalog
             document.getElementById('infraTransit').innerHTML = c.infrastructure.transit.map(item => `
@@ -1555,23 +1569,25 @@
             }
 
             // 1. Render List Table
-            listContainer.innerHTML = data.map(p => {
+            listContainer.innerHTML = data.map((p, idx) => {
                 const targetLink = p.id === 'm3m-altitude' ? 'project_detail.html' : 'project_detail_locked.html';
-                const statusColor = p.status === 'Ready to Move In' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50';
+                const score = p.score;
+                const scoreColor = score >= 75 ? '#16a34a' : score >= 50 ? '#d97706' : score >= 25 ? '#dc2626' : '#64748b';
+                const rowBg = idx % 2 === 0 ? '#ffffff' : '#F9FAFB';
                 return `
-                <tr class="project-row border-b border-slate-100">
-                    <td class="py-3.5 pr-4 font-bold text-slate-900">${p.name}</td>
-                    <td class="py-3.5 px-4 font-semibold text-slate-500">${p.developer}</td>
-                    <td class="py-3.5 px-4 text-slate-500">${p.sector}</td>
-                    <td class="py-3.5 px-4 text-slate-500 text-center font-medium">${p.bhk.join(', ')}</td>
-                    <td class="py-3.5 px-4 text-right font-display font-extrabold text-secondary-container">₹${p.priceMin} - ${p.priceMax} Cr</td>
-                    <td class="py-3.5 px-4 text-center text-slate-600 font-bold">${p.carpetEff}%</td>
-                    <td class="py-3.5 px-4 text-center text-slate-600 font-bold">${p.builtupEff}%</td>
-                    <td class="py-3.5 px-4 text-center font-display font-extrabold text-sm text-primary">${p.score}</td>
-                    <td class="py-3.5 pl-4 text-right">
-                        <a href="${targetLink}" class="text-brandBlue hover:underline font-bold text-xs flex items-center gap-0.5 justify-end">
-                            View Audit
-                            <span class="material-symbols-outlined text-[10px]">arrow_forward</span>
+                <tr class="project-row" style="background:${rowBg}; border-bottom:1px solid #E2E8F0;">
+                    <td class="py-3.5 px-5 font-sans font-semibold" style="color:#0F172A; font-size:12px;">${p.name}</td>
+                    <td class="py-3.5 px-4 font-sans font-bold" style="color:#0F172A; font-size:12px;">${p.developer}</td>
+                    <td class="py-3.5 px-4 font-sans" style="color:#475569; font-size:12px;">${p.sector}</td>
+                    <td class="py-3.5 px-4 font-sans" style="color:#475569; font-size:12px;">${p.bhk.join(', ')}</td>
+                    <td class="py-3.5 px-4 text-right font-display font-extrabold" style="color:#0F172A; font-size:12px;">₹${p.priceMin} – ${p.priceMax} Cr</td>
+                    <td class="py-3.5 px-4 text-center font-sans font-semibold" style="color:#475569; font-size:12px;">${p.carpetEff}%</td>
+                    <td class="py-3.5 px-4 text-center font-sans font-semibold" style="color:#475569; font-size:12px;">${p.builtupEff}%</td>
+                    <td class="py-3.5 px-4 text-center font-display font-extrabold" style="color:${scoreColor}; font-size:14px;">${p.score}<span style="font-size:9px; color:#94a3b8; font-weight:400; margin-left:1px;">/100</span></td>
+                    <td class="py-3.5 px-5 text-right">
+                        <a href="${targetLink}" class="inline-flex items-center gap-1 font-sans font-bold text-[11px] rounded-md px-3 py-1.5 hover:opacity-90 transition-opacity" style="background:#0F172A; color:#ffffff; text-decoration:none; letter-spacing:0.04em; white-space:nowrap;">
+                            DOSSIER
+                            <span class="material-symbols-outlined" style="font-size:11px;">arrow_forward</span>
                         </a>
                     </td>
                 </tr>`;
@@ -1737,53 +1753,56 @@
         });
     </script>
 
-<!-- LOVABLE_MOBILE_NAV_INJECT -->
+<!-- Mobile menu (matches TopNav/MobileMenu React components exactly) -->
 <style>
-@media (max-width: 767px) {
-  header .flex.items-center.gap-stack-sm { display: none !important; }
-  #lov-mobile-hamburger { display: flex !important; }
-  footer { padding-bottom: 8rem !important; }
-}
-#lov-mobile-hamburger { display: none; }
-#lov-mobile-menu-backdrop, #lov-mobile-menu-panel { transition: opacity .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1); }
+  #gcex-mobile-backdrop, #gcex-mobile-panel { transition: opacity .25s ease, transform .3s cubic-bezier(0.16,1,0.3,1); }
 </style>
-
-<!-- Mobile hamburger button (positioned over header right side) -->
-<button id="lov-mobile-hamburger" aria-label="Open menu"
-  onclick="document.getElementById('lov-mobile-menu').dataset.open='1'"
-  style="position:fixed;top:12px;right:16px;width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#fff;align-items:center;justify-content:center;z-index:60;cursor:pointer;">
-  <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
-</button>
-
-<!-- Mobile menu -->
-<div id="lov-mobile-menu" data-open="0" class="md:hidden">
-  <div id="lov-mobile-menu-backdrop"
-    onclick="document.getElementById('lov-mobile-menu').dataset.open='0'"
+<div id="gcex-mobile-menu" data-open="0">
+  <div id="gcex-mobile-backdrop"
+    onclick="document.getElementById('gcex-mobile-menu').dataset.open='0'"
     style="position:fixed;inset:0;background:rgba(2,6,23,0.6);backdrop-filter:blur(4px);z-index:70;opacity:0;pointer-events:none;"></div>
-  <aside id="lov-mobile-menu-panel"
-    style="position:fixed;top:0;right:0;bottom:0;width:min(82vw,320px);background:#0F172A;border-left:1px solid rgba(255,255,255,0.08);z-index:71;transform:translateX(100%);box-shadow:-20px 0 50px rgba(0,0,0,0.5);display:flex;flex-direction:column;font-family:Inter,sans-serif;">
+  <aside id="gcex-mobile-panel"
+    style="position:fixed;top:0;right:0;bottom:0;width:min(82vw,320px);background:#0F172A;border-left:1px solid rgba(255,255,255,0.08);z-index:71;transform:translateX(100%);box-shadow:-20px 0 50px rgba(0,0,0,0.5);display:flex;flex-direction:column;font-family:'Inter',sans-serif;">
+    <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);">
-      <a href="/" style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px;color:#fff;text-decoration:none;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
-      <button onclick="document.getElementById('lov-mobile-menu').dataset.open='0'" aria-label="Close menu"
-        style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <a href="/" style="font-family:'Outfit',sans-serif;font-weight:700;font-size:20px;color:#ffffff;text-decoration:none;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
+      <button onclick="document.getElementById('gcex-mobile-menu').dataset.open='0'" aria-label="Close menu"
+        style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer;">
         <span class="material-symbols-outlined" style="font-size:22px;">close</span>
       </button>
     </div>
+    <!-- Nav links -->
     <nav style="padding:16px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;">
       <div style="flex:1;">
         <a href="/" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
           <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">home</span>Home</a>
-        <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">auto_awesome</span>AI Search</a>
-        <a href="/search" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
-          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">search</span>Search</a>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;min-height:44px;margin-bottom:2px;cursor:default;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">auto_awesome</span>AI Search</div>
         <a href="#" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
           <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">compare_arrows</span>Compare</a>
+        <!-- Search expandable -->
+        <div style="margin-bottom:2px;">
+          <button id="gcex-search-toggle" onclick="(function(){var s=document.getElementById('gcex-search-sub');var ic=document.getElementById('gcex-search-ic');var open=s.style.display!=='none';s.style.display=open?'none':'block';ic.style.transform=open?'rotate(0deg)':'rotate(180deg)';})()"
+            style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-size:14px;font-weight:500;width:100%;background:transparent;border:none;text-align:left;min-height:44px;cursor:pointer;font-family:'Inter',sans-serif;">
+            <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">search</span>
+            Search
+            <span id="gcex-search-ic" class="material-symbols-outlined" style="margin-left:auto;font-size:18px;color:#94a3b8;transition:transform 0.2s ease;">expand_more</span>
+          </button>
+          <div id="gcex-search-sub" style="display:none;padding-left:46px;">
+            <a href="/directories" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-size:13px;font-weight:500;text-decoration:none;"
+               onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#cbd5e1'">Projects</a>
+            <a href="/micro-market" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-size:13px;font-weight:500;text-decoration:none;"
+               onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#cbd5e1'">Micro Markets</a>
+            <a href="/developer-scorecards" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-size:13px;font-weight:500;text-decoration:none;"
+               onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#cbd5e1'">Developers</a>
+          </div>
+        </div>
       </div>
+      <!-- Bottom CTA buttons -->
       <div style="padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:10px;padding-bottom:8px;">
-        <button style="background:#F59E0B;color:#0F172A;border:none;border-radius:10px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+        <button style="background:#F59E0B;color:#0F172A;border:none;border-radius:10px;padding:13px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
           <span class="material-symbols-outlined" style="font-size:20px;">mail</span>Enquiry</button>
-        <button style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+        <button style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
           <span class="material-symbols-outlined" style="font-size:20px;">call</span>Call Us</button>
       </div>
     </nav>
@@ -1791,9 +1810,9 @@
 </div>
 <script>
 (function(){
-  var m = document.getElementById('lov-mobile-menu');
-  var b = document.getElementById('lov-mobile-menu-backdrop');
-  var p = document.getElementById('lov-mobile-menu-panel');
+  var m = document.getElementById('gcex-mobile-menu');
+  var b = document.getElementById('gcex-mobile-backdrop');
+  var p = document.getElementById('gcex-mobile-panel');
   new MutationObserver(function(){
     var open = m.dataset.open === '1';
     b.style.opacity = open ? '1' : '0';
@@ -1803,7 +1822,6 @@
   }).observe(m, {attributes:true, attributeFilter:['data-open']});
 })();
 </script>
-<!-- /LOVABLE_MOBILE_NAV_INJECT -->
 
 
 <!-- LOVABLE_MOBILE_FOOTER -->

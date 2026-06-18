@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AI Search & Property Advisor | prOPIUM.ai</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0F172A",
+                        "secondary-container": "#F59E0B",
+                        background: "#F8FAFC",
+                        "surface-bright": "#F8FAFC",
+                        "on-surface-variant": "#64748B",
+                        "on-surface": "#0F172A",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#F1F5F9",
+                        "surface-container": "#E2E8F0",
+                        "outline-variant": "#E2E8F0",
+                        error: "#E11D48",
+                        brandBlue: "#006AFF"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.125rem",
+                        lg: "0.25rem",
+                        xl: "0.5rem",
+                        full: "0.75rem"
+                    },
+                    spacing: {
+                        "stack-md": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "48px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        gutter: "32px",
+                        unit: "4px",
+                        "stack-sm": "8px"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Outfit", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .blueprint-grid {
+            background-size: 24px 24px;
+            background-image: radial-gradient(circle, #E2E8F0 1px, transparent 1px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .typing-dot { animation: typing 1.4s infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-[#0F172A] font-sans antialiased min-h-screen flex flex-col pt-16 relative blueprint-grid">
+
+    <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0F172A]/85 border-b border-white/10 shadow-sm text-white no-print">
+        <div class="flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto w-full">
+            <div class="flex items-center gap-stack-md">
+                <a href="/" class="flex items-center gap-1 font-bold text-xl tracking-tight text-white hover:opacity-90">
+                    prOPIUM<span class="text-secondary-container">.ai</span>
+                </a>
+            </div>
+            <nav class="hidden md:flex gap-8 items-center">
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/">Home</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/directories">Projects</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/developer-scorecards">Developers</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/micro-market">Micro-Markets</a>
+                <a class="font-sans text-xs font-semibold text-slate-300 hover:text-white transition-colors uppercase tracking-wider" href="/compare">Compare</a>
+                <a class="font-sans text-xs font-semibold text-white border-b-2 border-secondary-container pb-1 uppercase tracking-wider flex items-center gap-1" href="/ai-search">
+                    AI Search
+                    <span class="text-[9px] bg-amber-500/20 text-secondary-container px-2 py-0.5 rounded-full font-bold">BETA</span>
+                </a>
+            </nav>
+            <div class="flex items-center gap-stack-sm">
+                <div class="hidden md:flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/10 rounded-full text-white">
+                    <span class="material-symbols-outlined text-sm">account_circle</span>
+                    <span class="font-sans text-xs font-semibold">Sahil Rajan</span>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center text-white" style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);cursor:pointer;" aria-label="Open menu">
+                    <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile slide-in overlay -->
+    <div id="mobile-menu-overlay" onclick="closeMobileMenu()" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(2,6,23,0.6);backdrop-filter:blur(4px);opacity:0;transition:opacity 0.25s ease;"></div>
+
+    <!-- Mobile slide-in panel -->
+    <aside id="mobile-menu-panel" style="position:fixed;top:0;right:0;bottom:0;z-index:101;width:min(82vw,320px);background:#0F172A;border-left:1px solid rgba(255,255,255,0.08);box-shadow:-20px 0 50px rgba(0,0,0,0.5);transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+            <a href="/" style="font-family:'Outfit',sans-serif;font-weight:700;font-size:20px;color:#fff;text-decoration:none;">prOPIUM<span style="color:#F59E0B;">.ai</span></a>
+            <button onclick="closeMobileMenu()" style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                <span class="material-symbols-outlined" style="font-size:22px;">close</span>
+            </button>
+        </div>
+        <nav style="padding:16px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+            <div style="flex:1;">
+                <a href="/" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">home</span>Home
+                </a>
+                <a href="/ai-search" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#F59E0B;background:rgba(245,158,11,0.1);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;text-decoration:none;min-height:44px;margin-bottom:2px;">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#F59E0B;">auto_awesome</span>AI Search
+                </a>
+                <a href="/compare" style="display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:10px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:2px;">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">compare_arrows</span>Compare
+                </a>
+                <div style="margin-bottom:2px;">
+                    <button onclick="toggleSearchSub()" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 12px;border-radius:10px;color:#e2e8f0;background:transparent;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;border:none;cursor:pointer;min-height:44px;text-align:left;">
+                        <span class="material-symbols-outlined" style="font-size:22px;color:#94a3b8;">search</span>
+                        Search
+                        <span id="search-chevron" class="material-symbols-outlined" style="margin-left:auto;font-size:18px;color:#94a3b8;transition:transform 0.2s ease;">expand_more</span>
+                    </button>
+                    <div id="search-sub" style="padding-left:46px;display:none;">
+                        <a href="/directories" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;text-decoration:none;">Projects</a>
+                        <a href="/micro-market" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;text-decoration:none;">Micro Markets</a>
+                        <a href="/developer-scorecards" style="display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;text-decoration:none;">Developers</a>
+                    </div>
+                </div>
+            </div>
+            <div style="padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:10px;padding-bottom:8px;">
+                <button style="background:#F59E0B;color:#0F172A;border:none;border-radius:10px;padding:13px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+                    <span class="material-symbols-outlined" style="font-size:20px;">mail</span>Enquiry
+                </button>
+                <button style="background:rgba(255,255,255,0.06);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;">
+                    <span class="material-symbols-outlined" style="font-size:20px;">call</span>Call Us
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <script>
+        function openMobileMenu() {
+            var overlay = document.getElementById('mobile-menu-overlay');
+            var panel = document.getElementById('mobile-menu-panel');
+            overlay.style.display = 'block';
+            requestAnimationFrame(function() { overlay.style.opacity = '1'; panel.style.transform = 'translateX(0)'; });
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMobileMenu() {
+            var overlay = document.getElementById('mobile-menu-overlay');
+            var panel = document.getElementById('mobile-menu-panel');
+            overlay.style.opacity = '0';
+            panel.style.transform = 'translateX(100%)';
+            setTimeout(function() { overlay.style.display = 'none'; }, 300);
+            document.body.style.overflow = '';
+        }
+        function toggleSearchSub() {
+            var sub = document.getElementById('search-sub');
+            var chevron = document.getElementById('search-chevron');
+            var isOpen = sub.style.display !== 'none';
+            sub.style.display = isOpen ? 'none' : 'block';
+            chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+        document.getElementById('mobile-menu-btn').addEventListener('click', openMobileMenu);
+    </script>
+
+    <!-- Main Container -->
+    <main class="max-w-container-max mx-auto px-6 lg:px-margin-desktop py-6 w-full flex-grow flex flex-col gap-4 max-h-[calc(100vh-4rem)]">
+
+        <div class="flex justify-between items-center border-b border-slate-200/60 pb-3 flex-shrink-0">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                <span class="w-2 h-2 bg-emerald-500 rounded-full absolute"></span>
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">prOPIUM Advisor Ready</span>
+            </div>
+            <button onclick="clearChat()" class="px-3.5 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                <span class="material-symbols-outlined text-sm">delete_sweep</span> Clear Chat
+            </button>
+        </div>
+
+        <div class="flex-grow overflow-y-auto pr-2 flex flex-col gap-6 no-scrollbar pb-24" id="chat-feed">
+
+            <div id="landing-view" class="flex-grow flex flex-col items-center justify-center text-center py-12 space-y-6 animate-fade-in">
+                <div class="text-4xl font-bold tracking-tight text-primary">
+                    prOPIUM<span class="text-secondary-container">.ai</span>
+                </div>
+                <div class="space-y-2 max-w-xl">
+                    <h2 class="text-xl lg:text-2xl font-extrabold font-display text-primary leading-tight">How can I help you today?</h2>
+                    <p class="text-slate-500 text-xs leading-relaxed">Ask questions about audited configurations, builder credentials, carpet areas, and nearby infrastructure in Gurgaon.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl w-full pt-6">
+                    <button onclick="submitSuggestedQuery('List all residential projects')" class="p-4 bg-white border border-slate-200/80 rounded-2xl hover:border-brandBlue/40 hover:shadow-md transition-all text-left group">
+                        <span class="text-brandBlue font-extrabold text-[9px] uppercase tracking-wider block mb-1">Residential Directory</span>
+                        <h4 class="text-xs font-bold text-slate-900 group-hover:text-brandBlue transition-colors">List all residential projects</h4>
+                        <p class="text-[10px] text-slate-400 mt-1">Shows top audited apartments and townships</p>
+                    </button>
+                    <button onclick="submitSuggestedQuery('Which projects have RERA approval?')" class="p-4 bg-white border border-slate-200/80 rounded-2xl hover:border-brandBlue/40 hover:shadow-md transition-all text-left group">
+                        <span class="text-brandBlue font-extrabold text-[9px] uppercase tracking-wider block mb-1">RERA Status</span>
+                        <h4 class="text-xs font-bold text-slate-900 group-hover:text-brandBlue transition-colors">Which projects have RERA approval?</h4>
+                        <p class="text-[10px] text-slate-400 mt-1">Validates legal approvals and registration numbers</p>
+                    </button>
+                    <button onclick="submitSuggestedQuery('List all ready to move projects')" class="p-4 bg-white border border-slate-200/80 rounded-2xl hover:border-brandBlue/40 hover:shadow-md transition-all text-left group">
+                        <span class="text-brandBlue font-extrabold text-[9px] uppercase tracking-wider block mb-1">Status Audit</span>
+                        <h4 class="text-xs font-bold text-slate-900 group-hover:text-brandBlue transition-colors">List all ready to move projects</h4>
+                        <p class="text-[10px] text-slate-400 mt-1">Filters ready possession versus under-construction</p>
+                    </button>
+                    <button onclick="submitSuggestedQuery('List all projects in range of 1.5cr to 2cr')" class="p-4 bg-white border border-slate-200/80 rounded-2xl hover:border-brandBlue/40 hover:shadow-md transition-all text-left group">
+                        <span class="text-brandBlue font-extrabold text-[9px] uppercase tracking-wider block mb-1">Budget Vector</span>
+                        <h4 class="text-xs font-bold text-slate-900 group-hover:text-brandBlue transition-colors">List all projects in range of 1.5cr to 2cr</h4>
+                        <p class="text-[10px] text-slate-400 mt-1">Identifies properties matching pricing sweet spots</p>
+                    </button>
+                </div>
+            </div>
+
+            <div id="messages-container" class="flex flex-col gap-6 hidden"></div>
+
+            <div id="typing-indicator" class="hidden flex items-start gap-3 w-full max-w-3xl">
+                <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center flex-shrink-0 font-bold text-[10px] uppercase font-display border border-slate-800">ai</div>
+                <div class="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm flex items-center gap-1.5">
+                    <span class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></span>
+                    <span class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></span>
+                    <span class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 left-0 right-0 py-4 bg-gradient-to-t from-background via-background/95 to-transparent border-t border-slate-200/60 no-print z-40">
+            <div class="max-w-container-max mx-auto px-6 lg:px-margin-desktop w-full relative">
+                <form onsubmit="handleChatSubmit(event)" class="relative flex items-center">
+                    <input type="text" id="chat-input" placeholder="Ask about properties, sectors, projects..." class="w-full pl-5 pr-14 py-3 border border-slate-200 bg-white rounded-xl text-xs font-medium focus:ring-1 focus:ring-brandBlue focus:border-brandBlue outline-none transition-all shadow-md placeholder-slate-400" autocomplete="off"/>
+                    <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-brandBlue hover:bg-[#0250C7] text-white rounded-lg transition-colors flex items-center justify-center shadow-sm">
+                        <span class="material-symbols-outlined text-sm">send</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const PROJECTS = [
+            { "id": "tarc-ishva", "name": "Tarc Ishva", "developer": "TARC Limited", "sector": "Sector 63A", "corridor": "Golf Course Extension Road", "bhk": ["3 BHK", "4 BHK", "Penthouse"], "area": 9.15, "units": 518, "status": "Under Construction", "priceMin": 8.5, "priceMax": 10.5, "score": 84, "carpetEff": 50, "builtupEff": 67, "img": "m3m_altitude_lobby.png", "lat": 28.415, "lng": 77.085, "targetSegment": "Luxury", "rera": "RC/REP/HARERA/GGM/761/493/2023/105" },
+            { "id": "trump-tower-gurgaon", "name": "Trump Tower (Gurgaon)", "developer": "M3M India Pvt Ltd", "sector": "Sector 65", "corridor": "Golf Course Extension Road", "bhk": ["2 BHK", "3 BHK", "4 BHK"], "area": 2.83, "units": 252, "status": "Ready to Move In", "priceMin": 11.5, "priceMax": 22.08, "score": 76, "carpetEff": 64, "builtupEff": 85, "img": "m3m_altitude_lounge.png", "lat": 28.411, "lng": 77.074, "targetSegment": "Ultra Luxury", "rera": "RC/REP/HARERA/GGM/2018/12" },
+            { "id": "dlf-the-arbour", "name": "DLF The Arbour", "developer": "DLF Limited", "sector": "Sector 63", "corridor": "Golf Course Extension Road", "bhk": ["4 BHK"], "area": 25.08, "units": 1137, "status": "Under Construction", "priceMin": 7.5, "priceMax": 8.5, "score": 72, "carpetEff": 57, "builtupEff": 74, "img": "m3m_altitude_hero.png", "lat": 28.4168, "lng": 77.0805, "targetSegment": "Ultra Luxury", "rera": "RC/REP/HARERA/GGM/688/420/2023/32" },
+            { "id": "m3m-altitude", "name": "M3M Altitude", "developer": "M3M India Pvt Ltd", "sector": "Sector 65", "corridor": "Golf Course Extension Road", "bhk": ["3 BHK", "4 BHK", "Penthouse"], "area": 2.79, "units": 342, "status": "Under Construction", "priceMin": 9.46, "priceMax": 11.31, "score": 27, "carpetEff": 57, "builtupEff": 73, "img": "m3m_altitude_hero.png", "lat": 28.4124, "lng": 77.0724, "targetSegment": "Ultra Luxury", "rera": "RC/REP/HARERA/GGM/792/524/2024/27" },
+            { "id": "mahindra-luminare", "name": "Mahindra Luminare", "developer": "Mahindra Lifespaces", "sector": "Sector 59", "corridor": "Golf Course Extension Road", "bhk": ["3 BHK", "4 BHK", "Penthouse"], "area": 6.94, "units": 380, "status": "Ready to Move In", "priceMin": 6.5, "priceMax": 9.0, "score": 68, "carpetEff": 56, "builtupEff": 76, "img": "m3m_altitude_balcony.png", "lat": 28.4215, "lng": 77.1002, "targetSegment": "Luxury", "rera": "RC/REP/HARERA/GGM/2018/09" },
+            { "id": "sobha-city", "name": "Sobha City", "developer": "Sobha Limited", "sector": "Sector 108", "corridor": "Dwarka Expressway", "bhk": ["2 BHK", "3 BHK"], "area": 23.0, "units": 1056, "status": "Ready to Move In", "priceMin": 2.2, "priceMax": 2.9, "score": 24, "carpetEff": 57, "builtupEff": 64, "img": "m3m_altitude_lobby.png", "lat": 28.517407, "lng": 76.9944, "targetSegment": "Luxury", "rera": "RC/REP/HARERA/GGM/2016/01" },
+            { "id": "tata-la-vida", "name": "Tata La Vida", "developer": "Tata Housing", "sector": "Sector 113", "corridor": "Dwarka Expressway", "bhk": ["2 BHK", "3 BHK"], "area": 12.0, "units": 674, "status": "Ready to Move In", "priceMin": 1.5, "priceMax": 2.3, "score": 23, "carpetEff": 59, "builtupEff": 71, "img": "m3m_altitude_lounge.png", "lat": 28.534515, "lng": 77.02028, "targetSegment": "Premium", "rera": "RC/REP/HARERA/GGM/2016/18" },
+            { "id": "dlf-privana-south", "name": "DLF Privana South", "developer": "DLF Limited", "sector": "Sector 77", "corridor": "Southern Peripheral Road", "bhk": ["4 BHK", "Penthouse"], "area": 25.14, "units": 1113, "status": "Under Construction", "priceMin": 7.2, "priceMax": 9.5, "score": 59, "carpetEff": 59, "builtupEff": 76, "img": "m3m_altitude_hero.png", "lat": 28.380354, "lng": 76.990843, "targetSegment": "Ultra Luxury", "rera": "RC/REP/HARERA/GGM/773/505/2023/117" },
+            { "id": "parq-by-conscient", "name": "Conscient ParQ", "developer": "Conscient Infrastructure", "sector": "Sector 80", "corridor": "Southern Peripheral Road", "bhk": ["2 BHK", "3 BHK", "4 BHK"], "area": 5.6, "units": 448, "status": "Under Construction", "priceMin": 3.5, "priceMax": 4.8, "score": 50, "carpetEff": 55, "builtupEff": 69, "img": "m3m_altitude_balcony.png", "lat": 28.374274, "lng": 76.961834, "targetSegment": "Luxury", "rera": "RC/REP/HARERA/GGM/724/456/2023/68" },
+            { "id": "dlf-carlton-estate", "name": "DLF Carlton Estate", "developer": "DLF Limited", "sector": "Sector 54", "corridor": "Golf Course Road", "bhk": ["2 BHK", "3 BHK", "4 BHK"], "area": 7.2, "units": 650, "status": "Ready to Move In", "priceMin": 3.2, "priceMax": 4.5, "score": 22, "carpetEff": 60, "builtupEff": 70, "img": "m3m_altitude_lobby.png", "lat": 28.447892, "lng": 77.094594, "targetSegment": "Luxury", "rera": "RC/REP/HARERA/GGM/2005/01" },
+            { "id": "central-park-ii-bellevue", "name": "Central Park II Bellevue", "developer": "Central Park", "sector": "Sector 48", "corridor": "Sohna Road", "bhk": ["3 BHK", "4 BHK"], "area": 12.5, "units": 350, "status": "Ready to Move In", "priceMin": 3.8, "priceMax": 4.9, "score": 20, "carpetEff": 58, "builtupEff": 68, "img": "m3m_altitude_lounge.png", "lat": 28.414324, "lng": 77.043512, "targetSegment": "Luxury", "rera": "RC/REP/HARERA/GGM/2012/05" }
+        ];
+
+        const MOCK_ANSWERS = {
+            "list all residential projects": { "text": "Based on our audited database, the following luxury residential projects are available in Gurgaon:\n\n1. **Tarc Ishva** (Sector 63A) - Under Construction\n2. **DLF The Arbour** (Sector 63) - Under Construction\n3. **M3M Altitude** (Sector 65) - Under Construction\n4. **Mahindra Luminare** (Sector 59) - Ready to Move In\n5. **Sobha City** (Sector 108) - Ready to Move In", "projects": ["tarc-ishva", "dlf-the-arbour", "m3m-altitude", "mahindra-luminare", "sobha-city"], "suggestions": ["Which projects have RERA approval?", "What is the carpet efficiency of Tarc Ishva?", "Compare DLF The Arbour and Tarc Ishva"] },
+            "which projects have rera approval?": { "text": "The following major projects have verified RERA registration numbers:\n\n* **Tarc Ishva**: RC/REP/HARERA/GGM/761/493/2023/105\n* **M3M Altitude**: RC/REP/HARERA/GGM/792/524/2024/27\n* **DLF Privana South**: RC/REP/HARERA/GGM/773/505/2023/117\n* **Conscient ParQ**: RC/REP/HARERA/GGM/724/456/2023/68", "projects": ["tarc-ishva", "m3m-altitude", "dlf-privana-south", "parq-by-conscient"], "suggestions": ["List all ready to move projects", "What is the possession date for M3M Altitude?", "List all residential projects"] },
+            "list all ready to move projects": { "text": "The following luxury residential assets are fully completed and ready for immediate possession:\n\n1. **Trump Tower (Gurgaon)** - Sector 65, Golf Course Extension Road\n2. **Mahindra Luminare** - Sector 59, Golf Course Extension Road\n3. **Sobha City** - Sector 108, Dwarka Expressway\n4. **Tata La Vida** - Sector 113, Dwarka Expressway\n5. **DLF Carlton Estate** - Sector 54, Golf Course Road", "projects": ["trump-tower-gurgaon", "mahindra-luminare", "sobha-city", "tata-la-vida", "dlf-carlton-estate"], "suggestions": ["Show price range for Trump Tower", "What is the density of Mahindra Luminare?", "Which projects have RERA approval?"] },
+            "list all projects in range of 1.5cr to 2cr": { "text": "Based on current price tags, the following projects offer configurations starting within the ₹1.5 Cr to ₹2.0 Cr budget range:\n\n* **Tata La Vida** (Dwarka Expressway) - Price tags ₹1.5 - 2.3 Cr\n* **Sobha City** (Dwarka Expressway) - Entry units starting around ₹2.2 Cr", "projects": ["tata-la-vida", "sobha-city"], "suggestions": ["What configurations are available in Tata La Vida?", "Show ready-to-move projects", "List all residential projects"] },
+            "compare dlf the arbour and tarc ishva": { "text": "Here is a quick telemetry head-to-head comparison:\n\n* **DLF The Arbour**: 4 BHK configuration, 57% Carpet Area Efficiency, 25.08 Acres total scale. Audit Score: **72**.\n* **Tarc Ishva**: 3 BHK, 4 BHK, and Penthouses. 50% Carpet Area Efficiency, 9.15 Acres. Audit Score: **84**.", "projects": ["dlf-the-arbour", "tarc-ishva"], "suggestions": ["Compare DLF The Arbour and M3M Altitude", "Which projects have RERA approval?"] },
+            "what is the carpet efficiency of tarc ishva?": { "text": "According to audited architectural layouts, **Tarc Ishva** has a Carpet Area Efficiency rating of **50%** and a Built-up Efficiency of **67%**.", "projects": ["tarc-ishva"], "suggestions": ["Compare DLF The Arbour and Tarc Ishva", "What is the density of Tarc Ishva?"] },
+            "what is the possession date for m3m altitude?": { "text": "The possession timeline for **M3M Altitude** is currently audited as **2029-2030**. Construction progress is tracked at approximately 80% on schedule.", "projects": ["m3m-altitude"], "suggestions": ["Show price range for M3M Altitude", "What configurations are available in M3M Altitude?"] },
+            "show price range for trump tower": { "text": "Audited pricing for **Trump Tower (Gurgaon)** ranges between **₹11.5 Cr and ₹22.08 Cr**, targeting the ultra-luxury buyer segment.", "projects": ["trump-tower-gurgaon"], "suggestions": ["List all ready to move projects", "Show price range for M3M Altitude"] }
+        };
+
+        function submitSuggestedQuery(queryText) {
+            document.getElementById('chat-input').value = queryText;
+            handleChatSubmit(null);
+        }
+
+        function handleChatSubmit(e) {
+            if (e) e.preventDefault();
+            const inputEl = document.getElementById('chat-input');
+            const query = inputEl.value.trim();
+            if (query.length === 0) return;
+
+            document.getElementById('landing-view').classList.add('hidden');
+            const msgsContainer = document.getElementById('messages-container');
+            msgsContainer.classList.remove('hidden');
+
+            appendUserMessage(query);
+            inputEl.value = '';
+
+            const typingIndicator = document.getElementById('typing-indicator');
+            typingIndicator.classList.remove('hidden');
+            scrollFeedToBottom();
+
+            setTimeout(() => {
+                typingIndicator.classList.add('hidden');
+                const lowerQuery = query.toLowerCase();
+                const matched = MOCK_ANSWERS[lowerQuery] || {
+                    "text": `I've audited Gurgaon's property intelligence database for "${query}". Here are the closest matched luxury projects:`,
+                    "projects": ["tarc-ishva", "dlf-the-arbour", "m3m-altitude"],
+                    "suggestions": ["List all residential projects", "Which projects have RERA approval?"]
+                };
+                appendAIMessage(matched);
+                scrollFeedToBottom();
+            }, 1200);
+        }
+
+        function appendUserMessage(text) {
+            const container = document.getElementById('messages-container');
+            const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            const msgEl = document.createElement('div');
+            msgEl.className = "flex items-start justify-end gap-3 w-full animate-fade-in";
+            msgEl.innerHTML = `<div class="flex flex-col items-end max-w-xl"><span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">${time} · You</span><div class="bg-secondary-container text-[#0F172A] px-4 py-3 rounded-2xl font-medium text-xs shadow-sm leading-relaxed">${text}</div></div>`;
+            container.appendChild(msgEl);
+        }
+
+        function parseMarkdown(text) {
+            let html = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
+            let lines = html.split('\n');
+            let inList = false, listType = '';
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if (line.startsWith('* ') || line.startsWith('- ')) {
+                    let content = line.substring(2);
+                    if (!inList) { lines[i] = '<ul class="list-disc pl-4 my-2 space-y-1">' + `<li>${content}</li>`; inList = true; listType = 'ul'; }
+                    else lines[i] = `<li>${content}</li>`;
+                } else if (/^\d+\.\s+/.test(line)) {
+                    let content = line.replace(/^\d+\.\s+/, '');
+                    if (!inList) { lines[i] = '<ol class="list-decimal pl-4 my-2 space-y-1">' + `<li>${content}</li>`; inList = true; listType = 'ol'; }
+                    else lines[i] = `<li>${content}</li>`;
+                } else {
+                    if (inList) { lines[i - 1] += `</${listType}>`; inList = false; listType = ''; }
+                }
+            }
+            if (inList) lines[lines.length - 1] += `</${listType}>`;
+            return lines.map(l => {
+                if (l.startsWith('<ul') || l.startsWith('<ol') || l.startsWith('<li>') || l.endsWith('</ul>') || l.endsWith('</ol>')) return l;
+                return l === '' ? '<div class="h-2"></div>' : `<div>${l}</div>`;
+            }).join('\n');
+        }
+
+        function appendAIMessage(matched) {
+            const container = document.getElementById('messages-container');
+            const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            const carouselId = `carousel-${Date.now()}`;
+            const msgEl = document.createElement('div');
+            msgEl.className = "flex items-start gap-3 w-full animate-fade-in";
+
+            let projectsHTML = '';
+            if (matched.projects && matched.projects.length > 0) {
+                const projectCards = matched.projects.map(projId => {
+                    const p = PROJECTS.find(proj => proj.id === projId);
+                    if (!p) return '';
+                    const targetLink = p.id === 'm3m-altitude' ? '/m3m-developer' : '/golf-course-extension';
+                    return `<div class="bg-slate-50 border border-slate-200/60 rounded-xl overflow-hidden flex-shrink-0 w-60 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-32 w-full overflow-hidden bg-slate-900">
+                                <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">
+                                <span class="absolute top-2 left-2 bg-[#0F172A] text-white text-[8px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">${p.status}</span>
+                            </div>
+                            <div class="p-3 space-y-2">
+                                <div>
+                                    <span class="text-[8px] bg-slate-200 text-slate-700 font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">${p.developer}</span>
+                                    <h4 class="font-display font-extrabold text-xs text-slate-900 mt-1">${p.name}</h4>
+                                    <p class="text-slate-400 text-[10px] truncate">${p.sector}, ${p.corridor}</p>
+                                </div>
+                                <div class="space-y-1.5 pt-1.5 border-t border-slate-200/40">
+                                    <div class="flex justify-between items-center text-[9px] text-slate-500"><span>Carpet Eff.</span><span class="font-bold text-slate-900">${p.carpetEff}%</span></div>
+                                    <div class="h-1 bg-slate-200 rounded-full overflow-hidden"><div class="h-full bg-emerald-500" style="width: ${p.carpetEff}%"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 pt-0 flex gap-2">
+                            <a href="/compare?ids=${p.id}" class="border border-slate-200 hover:bg-slate-100 text-slate-700 p-1.5 rounded-lg transition-all flex items-center justify-center flex-1 text-[10px] font-bold uppercase tracking-wider">Compare</a>
+                            <a href="${targetLink}" class="bg-primary hover:bg-slate-900 text-white p-1.5 rounded-lg transition-all flex items-center justify-center flex-1 text-[10px] font-bold uppercase tracking-wider">Audit</a>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                projectsHTML = `<div class="relative w-full max-w-xl mt-4">
+                    <div class="flex gap-4 overflow-x-auto no-scrollbar py-2" id="${carouselId}">${projectCards}</div>
+                    <button onclick="slideCarousel('${carouselId}', 'prev')" class="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 border border-slate-200 flex items-center justify-center text-slate-600 shadow-md hover:bg-white hover:text-brandBlue transition-all"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+                    <button onclick="slideCarousel('${carouselId}', 'next')" class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 border border-slate-200 flex items-center justify-center text-slate-600 shadow-md hover:bg-white hover:text-brandBlue transition-all"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+                </div>`;
+            }
+
+            let suggestionsHTML = '';
+            if (matched.suggestions && matched.suggestions.length > 0) {
+                suggestionsHTML = `<div class="mt-4 pt-4 border-t border-slate-100 w-full flex flex-col gap-2">
+                    <span class="text-[9px] uppercase tracking-wider font-extrabold text-slate-400 block mb-1">Related Suggestions</span>
+                    <div class="flex flex-wrap gap-2">${matched.suggestions.map(s => `<button onclick="submitSuggestedQuery('${s}')" class="px-3 py-1.5 bg-slate-50 border border-slate-200 hover:border-brandBlue/40 hover:bg-slate-100/50 text-slate-700 rounded-xl text-[10px] font-semibold transition-all">${s}</button>`).join('')}</div>
+                </div>`;
+            }
+
+            msgEl.innerHTML = `<div class="w-8 h-8 rounded-full bg-[#0F172A] text-white flex items-center justify-center flex-shrink-0 font-bold text-[10px] uppercase font-display border border-slate-800">ai</div>
+                <div class="flex flex-col items-start max-w-xl bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">${time} · prOPIUM · Database Only</span>
+                    <div class="text-xs text-slate-700 leading-relaxed font-normal whitespace-normal w-full">${parseMarkdown(matched.text)}</div>
+                    ${projectsHTML}
+                    ${suggestionsHTML}
+                </div>`;
+            container.appendChild(msgEl);
+        }
+
+        function slideCarousel(carouselId, direction) {
+            const el = document.getElementById(carouselId);
+            if (el) el.scrollBy({ left: direction === 'next' ? 260 : -260, behavior: 'smooth' });
+        }
+
+        function scrollFeedToBottom() {
+            const feed = document.getElementById('chat-feed');
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        function clearChat() {
+            document.getElementById('messages-container').innerHTML = '';
+            document.getElementById('messages-container').classList.add('hidden');
+            document.getElementById('landing-view').classList.remove('hidden');
+            scrollFeedToBottom();
+        }
+    </script>
+</body>
+</html>

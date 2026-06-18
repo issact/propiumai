@@ -151,7 +151,8 @@ export function TrendingProjects() {
           View All
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_forward</span>
         </a>
-        <button
+        <Link
+          to="/directories"
           className="hidden md:inline-block transition-all"
           style={{
             border: '1px solid #cbd5e1',
@@ -166,12 +167,13 @@ export function TrendingProjects() {
             background: 'transparent',
             cursor: 'pointer',
             whiteSpace: 'nowrap',
+            textDecoration: 'none',
           }}
           onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#0F172A'; (e.currentTarget as HTMLElement).style.color = '#ffffff'; }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#0F172A'; }}
         >
           View All
-        </button>
+        </Link>
       </div>
 
       {/* MOBILE: -mx-4 pulls to edges, pl-4 gives left padding for cards */}
