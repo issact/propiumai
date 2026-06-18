@@ -21,7 +21,7 @@ const MOBILE_FIXES = `
 
   /* Lift chat input above floating mobile bottom nav */
   .fixed.bottom-0.left-0.right-0 {
-    bottom: 84px !important;
+    bottom: calc(84px + env(safe-area-inset-bottom)) !important;
     padding-top: 8px !important;
     padding-bottom: 8px !important;
   }
