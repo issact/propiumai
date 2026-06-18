@@ -1,84 +1,128 @@
-import { useState } from "react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
-const audiences = [
+// TODO: Replace placeholder content with real FAQ copy
+const faqItems = [
   {
-    id: 1,
-    icon: 'handshake',
-    tag: 'For Channel Partners & Wealth Managers',
-    title: 'Pitch with Audited Authority.',
-    desc: 'Deliver institutional-grade diligence reports to clients. Eliminate speculation, build trust, and close high-value transactions faster.',
-    features: ['Cross-client portfolio overview', 'Side-by-side project comparison', 'White-labeled audit reports'],
+    question: "What is prOPIUM?",
+    answer:
+      "prOPIUM is a property intelligence platform for Gurugram. It consolidates project specs, builder credibility, live pricing, RERA status, and risk signals across micro-markets — so you can search, compare, and decide on proof, not persuasion.",
   },
   {
-    id: 2,
-    icon: 'person',
-    tag: 'For Buyers & Investors',
-    title: 'Buy with Complete Control.',
-    desc: 'Cut through broker noise and unverified listings. Rely on checked carpet areas, builder track records, and independent ratings.',
-    features: ['Real price search, not BSP', 'RERA and physical audit checks', 'Hidden risk signals detection'],
+    question: "How is the data sourced and updated?",
+    answer:
+      "Data is drawn from RERA filings, registry records, admin-verified project inputs, and live catalog updates. Project counts, pricing, delivery status, and intelligence scores refresh as the underlying data changes.",
   },
   {
-    id: 3,
-    icon: 'corporate_fare',
-    tag: 'For Developers & Institutional',
-    title: 'Market Intel at Speed.',
-    desc: 'Monitor micro-market demand signals, benchmark pricing against competitors, and optimize project positioning using real-time data.',
-    features: ['Supply-demand dynamics tracking', 'Competitor pricing benchmarks', 'Custom intelligence feeds'],
+    question: "Is prOPIUM free to use?",
+    answer:
+      "Yes. You can search projects, explore micro-markets, compare listings, and review intelligence scores at no cost. Some flows may ask you to sign in to save preferences or access personalized recommendations.",
+  },
+  {
+    question: "What is a micro-market?",
+    answer:
+      "A micro-market is one of Gurugram’s major corridors — such as Golf Course Road or Dwarka Expressway — mapped with live project inventory, average pricing, unit counts, and delivery-stage breakdowns for that corridor.",
+  },
+  {
+    question: "How does project scoring work?",
+    answer:
+      "Each project is evaluated across eight intelligence dimensions — including builder track record, pricing, location, legal status, construction progress, and risk signals — using a structured scoring model so you see strengths and gaps at a glance.",
+  },
+  {
+    question: "Can I compare multiple projects side by side?",
+    answer:
+      "Yes. Open any project and use Compare, or browse the project explorer to evaluate pricing, specifications, and intelligence scores across multiple projects in one view.",
+  },
+  {
+    question: "Who is prOPIUM for?",
+    answer:
+      "Home buyers, investors, channel partners, wealth managers, developers, and institutional teams who need verified, structured data — not broker pitches or brochure marketing.",
+  },
+  {
+    question: "How is this different from typical property portals?",
+    answer:
+      "Most portals list inventory. We layer structured intelligence on top — actual prices, RERA compliance, litigation and delay signals, micro-market dynamics, and builder credibility — so you understand what you are buying before you commit.",
   },
 ];
 
-function AudienceCard({ aud }: { aud: typeof audiences[0] }) {
-  const [hovered, setHovered] = useState(false);
-
+export function FAQSection() {
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: '#ffffff',
-        border: `1px solid ${hovered ? 'rgba(245,158,11,0.4)' : 'rgba(226,232,240,0.8)'}`,
-        borderRadius: 12,
-        padding: 24,
-        boxShadow: hovered ? '0 10px 25px -5px rgba(0,0,0,0.1)' : '0 1px 3px rgba(0,0,0,0.06)',
-        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
-        transition: 'all 0.3s ease',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      }}
-    >
-      <div>
-        <div className="flex items-center gap-2" style={{ marginBottom: 16 }}>
-          <span className="material-symbols-outlined" style={{ color: '#F59E0B', fontSize: 22 }}>{aud.icon}</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{aud.tag}</span>
-        </div>
-        <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 15, fontWeight: 800, color: '#0F172A', marginBottom: 12 }}>{aud.title}</h3>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#64748b', lineHeight: 1.6, marginBottom: 24 }}>{aud.desc}</p>
-        <ul style={{ display: 'flex', flexDirection: 'column', gap: 12, fontFamily: 'Inter, sans-serif' }}>
-          {aud.features.map((f) => (
-            <li key={f} className="flex items-start gap-2.5" style={{ fontSize: 12, color: '#334155', fontWeight: 500 }}>
-              <span className="material-symbols-outlined" style={{ color: '#10b981', fontSize: 16, marginTop: 1 }}>check_circle</span>
-              <span>{f}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-export function EcosystemSection() {
-  return (
-    <section className="px-4 py-5 md:p-12" style={{ background: '#f8fafc', border: '1px solid rgba(226,232,240,0.8)', borderRadius: 16, marginBottom: 48 }}>
+    <section style={{ marginBottom: 56 }}>
       <div style={{ marginBottom: 32 }}>
-        <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(22px, 4.5vw, 30px)', fontWeight: 700, color: '#0F172A', lineHeight: 1.3, marginBottom: 4 }}>Built for the Entire Real Estate Ecosystem</h2>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#64748b' }}>Different roles. Different needs. One platform with distinct, powerful intelligence for each.</p>
+        <h2
+          style={{
+            fontFamily: "Outfit, sans-serif",
+            fontSize: "clamp(22px, 4.5vw, 30px)",
+            fontWeight: 700,
+            color: "#0F172A",
+            lineHeight: 1.3,
+            marginBottom: 8,
+          }}
+        >
+          Frequently Asked Questions
+        </h2>
+        <p
+          style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: 14,
+            color: "#64748b",
+          }}
+        >
+          Quick answers on how prOPIUM works, what the data means, and who it is
+          built for.
+        </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-        {audiences.map((a) => (
-          <AudienceCard key={a.id} aud={a} />
+
+      <Accordion
+        type="single"
+        collapsible
+        className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start"
+      >
+        {faqItems.map((item, i) => (
+          <AccordionItem
+            key={i}
+            value={`item-${i}`}
+            style={{
+              background: "#ffffff",
+              border: "1px solid rgba(226,232,240,0.8)",
+              borderRadius: 8,
+              overflow: "hidden",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+              padding: "0 4px",
+            }}
+            className="border-b-0 [&[data-state=open]]:border-amber-200 [&[data-state=open]]:shadow-md"
+          >
+            <AccordionTrigger
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 14,
+                fontWeight: 600,
+                color: "#0F172A",
+                padding: "16px",
+                textDecoration: "none",
+              }}
+              className="hover:no-underline hover:text-amber-600 px-4"
+            >
+              {item.question}
+            </AccordionTrigger>
+            <AccordionContent
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: 13,
+                color: "#475569",
+                lineHeight: 1.7,
+              }}
+              className="px-4 pb-4 pt-0"
+            >
+              {item.answer}
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
     </section>
   );
 }
