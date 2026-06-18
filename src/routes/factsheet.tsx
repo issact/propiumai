@@ -103,6 +103,36 @@ const MOBILE_FIXES = `
   /* Price trend chart: make it taller so the line is readable */
   .factsheet-page .w-full.h-64 { height: 22rem !important; }
 }
+
+/* PDF View (preview-mode) uses fixed A4-landscape pages (297mm wide ≈ 1123px).
+   On tablet/mobile that overflows the viewport — scale the pages down so the
+   full PDF page is visible without horizontal clipping. */
+@media (max-width: 767px) {
+  .preview-mode #factsheet-wrapper {
+    padding: 8px !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  .preview-mode .factsheet-page {
+    zoom: 0.32;
+    -moz-transform: scale(0.32);
+    -moz-transform-origin: top left;
+    margin: 8px auto !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 1199px) {
+  .preview-mode #factsheet-wrapper {
+    padding: 12px !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  .preview-mode .factsheet-page {
+    zoom: 0.62;
+    -moz-transform: scale(0.62);
+    -moz-transform-origin: top left;
+    margin: 12px auto !important;
+  }
+}
 `;
 
 function FactsheetPage() {
