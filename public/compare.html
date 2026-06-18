@@ -190,8 +190,8 @@
         <div class="bg-[#0B0F19] rounded-2xl p-6 lg:p-8 text-white relative overflow-hidden shadow-lg border border-white/5 flex flex-col lg:flex-row justify-between gap-6">
             <div class="absolute inset-0 bg-gradient-to-r from-[#0F172A]/90 to-transparent pointer-events-none"></div>
 
-            <div class="relative z-10 flex flex-col justify-between max-w-2xl">
-                <div>
+            <div class="relative z-10 flex flex-col justify-between max-w-2xl items-center text-center lg:items-start lg:text-left">
+                <div class="flex flex-col items-center lg:items-start">
                     <span class="text-[9px] uppercase tracking-widest font-extrabold text-secondary-container bg-white/10 border border-white/10 px-2.5 py-1 rounded w-max block mb-3">Project Comparison</span>
                     <h1 id="reportTitle" class="text-2xl lg:text-3xl font-extrabold font-display tracking-tight text-white leading-tight">
                         Select Projects to Compare
@@ -200,17 +200,17 @@
                         Comparing architectural footprint, carpet efficiency, pricing telemetry, and local connectivity vectors.
                     </p>
                 </div>
-                <div class="mt-6 flex flex-wrap gap-3 no-print">
-                    <button onclick="window.print()" class="px-4 py-2 bg-secondary-container hover:bg-[#D97706] text-slate-950 text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                <div class="mt-6 flex flex-wrap gap-3 no-print w-full justify-center lg:justify-start lg:w-auto">
+                    <button onclick="window.print()" class="px-4 py-2 bg-secondary-container hover:bg-[#D97706] text-slate-950 text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-sm w-full sm:w-auto">
                         <span class="material-symbols-outlined text-sm">download</span> Export as PDF
                     </button>
-                    <button id="toggleWinnerBtn" onclick="toggleWinners()" class="px-4 py-2 border border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                    <button id="toggleWinnerBtn" onclick="toggleWinners()" class="px-4 py-2 border border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-all rounded-xl uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-sm w-full sm:w-auto">
                         <span class="material-symbols-outlined text-sm">emoji_events</span> Highlight Winners
                     </button>
                 </div>
             </div>
 
-            <div id="bestPickContainer" class="relative z-10 bg-white/5 border border-white/10 rounded-2xl p-5 min-w-[280px] lg:max-w-sm flex flex-col justify-between shadow-inner backdrop-blur-sm">
+            <div id="bestPickContainer" class="relative z-10 bg-white/5 border border-white/10 rounded-2xl p-5 min-w-0 lg:min-w-[280px] lg:max-w-sm w-full flex flex-col justify-between shadow-inner backdrop-blur-sm text-center lg:text-left">
                 <div>
                     <span class="text-[8px] uppercase tracking-widest font-extrabold text-slate-400 block mb-1">Overall Recommendation</span>
                     <h3 class="text-sm font-bold font-display text-white">Best Overall Pick</h3>
