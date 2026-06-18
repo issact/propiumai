@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { TopNav } from "@/home/components/TopNav";
 import { Footer } from "@/home/components/Footer";
 import { MobileBottomNav } from "@/home/components/MobileBottomNav";
