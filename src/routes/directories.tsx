@@ -34,7 +34,7 @@ function Directories() {
     };
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
-  }, []);
+  }, [navigate]);
 
   return (
     <div style={{ minHeight: "100vh", background: "#0F172A" }}>
