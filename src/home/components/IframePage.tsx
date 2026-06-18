@@ -68,7 +68,10 @@ export function IframePage({
           left: 0,
           width: "100vw",
           height: "100vh",
+          // @ts-expect-error - dvh fallback override for browsers that support it
+          ["height" as any]: "100dvh",
           border: "none",
+          zIndex: 0,
         }}
       />
       <MobileBottomNav defaultActive={bottomNavActive as any} />
