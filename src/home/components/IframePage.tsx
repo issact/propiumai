@@ -67,8 +67,9 @@ export function IframePage({
           top: 0,
           left: 0,
           width: "100vw",
-          height: "100vh",
+          height: "100dvh",
           border: "none",
+          zIndex: 0,
         }}
       />
       <MobileBottomNav defaultActive={bottomNavActive as any} />
